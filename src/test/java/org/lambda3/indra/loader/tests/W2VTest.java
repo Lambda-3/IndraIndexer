@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public final class W2VTest {
 
         while (iterator.hasNext()) {
             Map.Entry<String, double[]> entry = iterator.next();
-            System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue()));
+            //System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue()));
         }
     }
 
