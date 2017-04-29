@@ -63,8 +63,8 @@ public final class IndraLoader {
         @Parameter(names = {"-m", "--mongoURI"}, required = true, description = "Mongo URI target destination.", order = 10)
         String mongoURI;
 
-        @Parameter(names = {"--binary-vector"}, description = "Encode vector as a binary payload.", order = 30)
-        boolean binary = false;
+        @Parameter(names = {"--binary-vectors"}, description = "Encode vector as a binary payload.", arity = 1, order = 30)
+        boolean binary = true;
 
         @Parameter(names = {"--apply-stemmer"}, description = "Apply stemmer before query?", arity = 1, order = 31)
         boolean applyStemmer = true;
