@@ -55,7 +55,7 @@ public final class IndraLoader {
     /**
      * Captures only the relevants features of a Word2Vec model consumed by Indra.
      */
-    @Parameters(commandDescription = "Import Word2Vec models.")
+    @Parameters(commandDescription = "Import Word2Vec models.", separators = "=")
     private static final class ImportW2VCommand {
         @Parameter(names = {"-f", "--file"}, required = true, description = "W2V input model file.", order = 0)
         File dumpFile;
@@ -63,16 +63,16 @@ public final class IndraLoader {
         @Parameter(names = {"-m", "--mongoURI"}, required = true, description = "Mongo URI target destination.", order = 10)
         String mongoURI;
 
-        @Parameter(names = {"--binary"}, description = "Encode vector as a binary payload.", order = 30)
-        boolean binary = true;
+        @Parameter(names = {"--binary-vector"}, description = "Encode vector as a binary payload.", order = 30)
+        boolean binary = false;
 
-        @Parameter(names = {"--apply-stemmer"}, description = "Apply stemmer before query?", order = 31)
+        @Parameter(names = {"--apply-stemmer"}, description = "Apply stemmer before query?", arity = 1, order = 31)
         boolean applyStemmer = true;
 
-        @Parameter(names = {"--remove-accents"}, description = "Remove accents before query?", order = 32)
+        @Parameter(names = {"--remove-accents"}, description = "Remove accents before query?", arity = 1, order = 32)
         boolean removeAccents = true;
 
-        @Parameter(names = {"--apply-stopwords"}, description = "Apply stop words before query?", order = 33)
+        @Parameter(names = {"--apply-stopwords"}, description = "Apply stop words before query?", arity = 1, order = 33)
         boolean applyStopWords = true;
 
         @Parameter(names = {"--dimensions"},  description = "Number of dimensions being imported. No cut or check is performed!", order = 40)
@@ -86,7 +86,7 @@ public final class IndraLoader {
 
         ModelMetadata buildMetadata() {
             return ModelMetadata.createDefault()
-                    .sparse(false)
+                    .sparse(false) //w2v is always dense
                     .applyStemmer(applyStemmer)
                     .applyStopWords(applyStopWords)
                     .removeAccents(removeAccents)
@@ -95,6 +95,21 @@ public final class IndraLoader {
                     .maxWordLength(maxWordsLen)
                     .dimensions(dimensions);
 
+        }
+
+        @Override
+        public String toString() {
+            return "ImportW2VCommand{" +
+                    "dumpFile=" + dumpFile +
+                    ", mongoURI='" + mongoURI + '\'' +
+                    ", binary=" + binary +
+                    ", applyStemmer=" + applyStemmer +
+                    ", removeAccents=" + removeAccents +
+                    ", applyStopWords=" + applyStopWords +
+                    ", dimensions=" + dimensions +
+                    ", minWordsLen=" + minWordsLen +
+                    ", maxWordsLen=" + maxWordsLen +
+                    '}';
         }
     }
 
