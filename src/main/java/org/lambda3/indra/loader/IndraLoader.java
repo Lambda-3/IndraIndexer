@@ -86,6 +86,7 @@ public final class IndraLoader {
 
         ModelMetadata buildMetadata() {
             return ModelMetadata.createDefault()
+                    .loaderId("IndraLoader") // Could be improved to use the project version
                     .sparse(false) //w2v is always dense
                     .applyStemmer(applyStemmer)
                     .applyStopWords(applyStopWords)

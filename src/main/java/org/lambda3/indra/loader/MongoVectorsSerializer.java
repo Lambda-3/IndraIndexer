@@ -22,11 +22,6 @@ public class MongoVectorsSerializer {
             throw new UnsupportedOperationException("Sparse vectors not supported yet");
         }
 
-        if (metadata.isBinary()) { //TODO
-            throw new UnsupportedOperationException("Binary encoded vector is not supported yet.");
-
-        }
-
         logger.info("Writing to {}", mongoURI);
 
         try (MongoClient mongoClient = new MongoClient(mongoURI)) {
@@ -46,16 +41,29 @@ public class MongoVectorsSerializer {
             int c = 0;
             while (it.hasNext()) {
                 Map.Entry<String, double[]> entry = it.next();
-                DBObject obj = BasicDBObjectBuilder.start()
-                        .add("term", entry.getKey()).add("vector", entry.getValue()).get();
+                try {
+                    DBObject obj;
 
-                objects.add(obj);
-                c += 1;
+                    if (!metadata.isBinary()) {
+                        obj = BasicDBObjectBuilder.start()
+                                .add("term", entry.getKey()).add("vector", entry.getValue()).get();
+                    } else {
+                        byte[] marshalledVector = marshall(entry.getValue());
+                        obj = BasicDBObjectBuilder.start()
+                                .add("term", entry.getKey()).add("vector", marshalledVector).get();
+                    }
 
-                if (objects.size() % 101 == 0) {
-                    logger.info("{} - Sending batch of documents: {} ..", c, objects.get(0).get("term"));
-                    modelColl.insertMany(objects);
-                    objects.clear();
+                    objects.add(obj);
+                    c += 1;
+
+                    if (objects.size() % 101 == 0) {
+                        logger.info("{} - Sending batch of documents: {} ..", c, objects.get(0).get("term"));
+                        modelColl.insertMany(objects);
+                        objects.clear();
+                    }
+                }
+                catch (Exception e) {
+                    logger.error("Fail process {}. Skipped.", entry.getKey(), e);
                 }
             }
 
@@ -75,6 +83,7 @@ public class MongoVectorsSerializer {
     }
 
     /**
+     * Sparse vectors serialization to byte array.
      * This is the current implementation expected by Indra. Must be used for binary encoded vectors.
      * Look for MongoVectorSpace#unmarshall.
      *
@@ -96,6 +105,22 @@ public class MongoVectorsSerializer {
         }
     }
 
+    /**
+     * Dense vectors serialization to byte array.
+     * This is different the earlier model builders (dinfra) even for dense vectors.
+     * The difference must be taken into account by Indra consumer looking the metadata.loader-id.
+     */
+    private static byte[] marshall(double[] vector) throws IOException  {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (DataOutputStream tdos = new DataOutputStream(baos)) {
+                for (int i = 0; i < vector.length; i++) {
+                    tdos.writeDouble((vector[i]));
+                }
+                return baos.toByteArray();
+            }
+        }
+    }
+
     private static Map<String, Object> asMap(ModelMetadata metadata) {
         return new HashMap<String, Object>(){{
             put("sparse", metadata.isSparse());
@@ -107,6 +132,7 @@ public class MongoVectorsSerializer {
             put("max-word-length", metadata.getMaxWordLength());
             put("dimensions", metadata.getDimensions());
             put("stop-words", metadata.getStopWords());
+            put("loader-id", metadata.getLoaderId());
         }};
     }
 
