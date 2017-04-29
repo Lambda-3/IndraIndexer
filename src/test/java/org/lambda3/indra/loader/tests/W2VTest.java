@@ -13,7 +13,7 @@ import java.util.Map;
 
 public final class W2VTest {
 
-    @Test
+    @Test(enabled = false)
     public void generateTest() throws IOException {
         File inputFile = new ClassPathResource("wikipedia/data.txt").getFile();
         File outputFile = Files.createTempFile("w2v-model", ".bin").toFile();
