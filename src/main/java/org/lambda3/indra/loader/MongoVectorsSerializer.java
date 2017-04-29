@@ -5,12 +5,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.loader.codecs.BinaryCodecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 public class MongoVectorsSerializer {
@@ -48,7 +46,7 @@ public class MongoVectorsSerializer {
                         obj = BasicDBObjectBuilder.start()
                                 .add("term", entry.getKey()).add("vector", entry.getValue()).get();
                     } else {
-                        byte[] marshalledVector = marshall(entry.getValue());
+                        byte[] marshalledVector = BinaryCodecs.marshall(entry.getValue());
                         obj = BasicDBObjectBuilder.start()
                                 .add("term", entry.getKey()).add("vector", marshalledVector).get();
                     }
@@ -79,45 +77,6 @@ public class MongoVectorsSerializer {
             Document metaDoc = new Document(asMap(metadata));
             metaColl.insertOne(metaDoc);
 
-        }
-    }
-
-    /**
-     * Sparse vectors serialization to byte array.
-     * This is the current implementation expected by Indra. Must be used for binary encoded vectors.
-     * Look for MongoVectorSpace#unmarshall.
-     *
-     * TODO: Avoid this duplication and possible miss behavior between gnerated models and their consumption.
-     * Suggestion: Currently we have two options:
-     *  (1) Merge this with the whole Indra.
-     *  (2) Create a shared library between both projects (i.e indra-codecs)
-     */
-    private static byte[] marshall(Map<Integer, Double> vector) throws IOException {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (DataOutputStream tdos = new DataOutputStream(baos)) {
-                tdos.writeInt(vector.size());
-                for (Integer key : vector.keySet()) {
-                    tdos.writeInt(key);
-                    tdos.writeFloat(vector.get(key).floatValue());
-                }
-                return baos.toByteArray();
-            }
-        }
-    }
-
-    /**
-     * Dense vectors serialization to byte array.
-     * This is different the earlier model builders (dinfra) even for dense vectors.
-     * The difference must be taken into account by Indra consumer looking the metadata.loader-id.
-     */
-    private static byte[] marshall(double[] vector) throws IOException  {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (DataOutputStream tdos = new DataOutputStream(baos)) {
-                for (int i = 0; i < vector.length; i++) {
-                    tdos.writeDouble((vector[i]));
-                }
-                return baos.toByteArray();
-            }
         }
     }
 
