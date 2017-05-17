@@ -82,16 +82,17 @@ public class MongoVectorsSerializer {
 
     private static Map<String, Object> asMap(ModelMetadata metadata) {
         return new HashMap<String, Object>(){{
-            put("sparse", metadata.isSparse());
-            put("apply-stemmer", metadata.isApplyStemmer());
-            put("apply-stop-words", metadata.isApplyStopWords());
-            put("remove-accents", metadata.isRemoveAccents());
-            put("binary", metadata.isBinary());
-            put("min-word-length", metadata.getMinWordLength());
-            put("max-word-length", metadata.getMaxWordLength());
-            put("dimensions", metadata.getDimensions());
-            put("stop-words", metadata.getStopWords());
-            put("loader-id", metadata.getLoaderId());
+            put(ModelMetadata.SPARSE_PARAM, metadata.isSparse());
+            put(ModelMetadata.APPLY_STEMMER_PARAM, metadata.getApplyStemmer());
+            put(ModelMetadata.APPLY_STOP_WORDS_PARAM, metadata.isApplyStopWords());
+            put(ModelMetadata.REMOVE_ACCENTS_PARAM, metadata.isRemoveAccents());
+            put(ModelMetadata.APPLY_LOWERCASE_PARAM, metadata.isApplyLowercase());
+            put(ModelMetadata.BINARY_PARAM, metadata.isBinary());
+            put(ModelMetadata.MIN_WORD_LENGTH_PARAM, metadata.getMinWordLength());
+            put(ModelMetadata.MAX_WORD_LENGTH_PARAM, metadata.getMaxWordLength());
+            put(ModelMetadata.DIMENSIONS_PARAM, metadata.getDimensions());
+            put(ModelMetadata.STOP_WORDS_PARAM, metadata.getStopWords());
+            put(ModelMetadata.LOADER_ID_PARAM, metadata.getLoaderId());
         }};
     }
 

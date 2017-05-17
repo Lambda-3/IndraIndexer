@@ -15,10 +15,12 @@ import java.io.File;
  */
 public final class IndraLoader {
 
-    public static void main(String ... args) {
+    private static final String LOADER_ID = "IndraLoader";
+
+    public static void main(String... args) {
         MainCommand main = new MainCommand();
         JCommander jc = new JCommander(main);
-        jc.setProgramName("IndraLoader");
+        jc.setProgramName(LOADER_ID);
 
         ImportW2VCommand importW2VCmd = new ImportW2VCommand();
         jc.addCommand("import-w2v", importW2VCmd);
@@ -32,12 +34,10 @@ public final class IndraLoader {
                     MongoClientURI mongoClientURI = new MongoClientURI(importW2VCmd.mongoURI);
                     MongoVectorsSerializer.write(vectorGenerator, mongoClientURI, metadata);
                 }
-            }
-            else {
+            } else {
                 jc.usage();
             }
-        }
-        catch (ParameterException e) {
+        } catch (ParameterException e) {
             e.printStackTrace();
             jc.usage();
         }
@@ -66,36 +66,39 @@ public final class IndraLoader {
         @Parameter(names = {"--binary-vectors"}, description = "Encode vector as a binary payload.", arity = 1, order = 30)
         boolean binary = true;
 
-        @Parameter(names = {"--apply-stemmer"}, description = "Apply stemmer before query?", arity = 1, order = 31)
-        boolean applyStemmer = true;
+        @Parameter(names = {"--apply-stemmer"}, description = "Number of times the stemmer must be applied. 0 for none.", arity = 1, order = 31)
+        int applyStemmer = 3;
 
-        @Parameter(names = {"--remove-accents"}, description = "Remove accents before query?", arity = 1, order = 32)
+        @Parameter(names = {"--apply-lowercase"}, description = "Lowercase words before query?", arity = 1, order = 32)
+        boolean applyLowercase = true;
+
+        @Parameter(names = {"--remove-accents"}, description = "Remove accents before query?", arity = 1, order = 33)
         boolean removeAccents = true;
 
-        @Parameter(names = {"--apply-stopwords"}, description = "Apply stop words before query?", arity = 1, order = 33)
+        @Parameter(names = {"--apply-stopwords"}, description = "Apply stop words before query?", arity = 1, order = 34)
         boolean applyStopWords = true;
 
-        @Parameter(names = {"--dimensions"},  description = "Number of dimensions being imported. No cut or check is performed!", order = 40)
+        @Parameter(names = {"--dimensions"}, description = "Number of dimensions being imported. No cut or check is performed!", order = 40)
         int dimensions = 300;
 
-        @Parameter(names = {"--min-words-len"},  description = "Min length of each word", order = 50)
+        @Parameter(names = {"--min-words-len"}, description = "Min length of each word", order = 50)
         int minWordsLen = 3;
 
-        @Parameter(names = {"--max-words-len"},  description = "Max length of each word", order = 60)
+        @Parameter(names = {"--max-words-len"}, description = "Max length of each word", order = 60)
         int maxWordsLen = 100;
 
         ModelMetadata buildMetadata() {
             return ModelMetadata.createDefault()
-                    .loaderId("IndraLoader") // Could be improved to use the project version
+                    .loaderId(LOADER_ID) // Could be improved to use the project version
                     .sparse(false) //w2v is always dense
                     .applyStemmer(applyStemmer)
                     .applyStopWords(applyStopWords)
+                    .applyLowercase(applyLowercase)
                     .removeAccents(removeAccents)
                     .binary(binary)
                     .maxWordLength(minWordsLen)
                     .maxWordLength(maxWordsLen)
                     .dimensions(dimensions);
-
         }
 
         @Override
@@ -105,6 +108,7 @@ public final class IndraLoader {
                     ", mongoURI='" + mongoURI + '\'' +
                     ", binary=" + binary +
                     ", applyStemmer=" + applyStemmer +
+                    ", applyLowercase=" + applyLowercase +
                     ", removeAccents=" + removeAccents +
                     ", applyStopWords=" + applyStopWords +
                     ", dimensions=" + dimensions +
