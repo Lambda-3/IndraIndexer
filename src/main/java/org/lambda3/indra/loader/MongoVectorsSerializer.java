@@ -5,7 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.loader.codecs.BinaryCodecs;
+import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
