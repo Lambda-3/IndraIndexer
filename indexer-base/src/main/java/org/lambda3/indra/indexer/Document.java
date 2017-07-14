@@ -10,6 +10,12 @@ public class Document {
         this.title = title;
     }
 
+    public static Document simpleDocument(String content) {
+        Document doc = new Document(7, null);
+        doc.addContent(content);
+        return doc;
+    }
+
     public void addContent(String content) {
         this.content.append(content);
     }

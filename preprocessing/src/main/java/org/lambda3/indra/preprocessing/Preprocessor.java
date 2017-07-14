@@ -1,13 +1,13 @@
 package org.lambda3.indra.preprocessing;
 
-import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.indexer.CorpusMetadata;
 import org.lambda3.indra.indexer.Document;
 
 public abstract class Preprocessor {
 
-    public final ModelMetadata metadata;
+    public final CorpusMetadata metadata;
 
-    public Preprocessor(ModelMetadata metadata) {
+    public Preprocessor(CorpusMetadata metadata) {
         this.metadata = metadata;
     }
 
