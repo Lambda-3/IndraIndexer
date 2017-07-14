@@ -28,7 +28,7 @@ public abstract class SSpaceModelBuilder implements ModelBuilder {
                 Document doc = iter.next();
                 // TODO review dao.insertDocument(doc.id, doc.title);
 
-                String content = doc.getContent();
+                String content = doc.content;
                 if (content != null && !content.isEmpty())
                     sspace.processDocument(new BufferedReader(new StringReader(content)));
             }

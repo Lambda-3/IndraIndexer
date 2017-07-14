@@ -2,25 +2,15 @@ package org.lambda3.indra.indexer;
 
 public class Document {
     public final int id;
-    public final String title;
-    public StringBuilder content = new StringBuilder();
+    public final String content;
 
-    public Document(int id, String title) {
+    public Document(int id, String content) {
         this.id = id;
-        this.title = title;
+        this.content = content;
     }
 
     public static Document simpleDocument(String content) {
-        Document doc = new Document(7, null);
-        doc.addContent(content);
+        Document doc = new Document(0, content);
         return doc;
-    }
-
-    public void addContent(String content) {
-        this.content.append(content);
-    }
-
-    public String getContent() {
-        return this.content.toString();
     }
 }

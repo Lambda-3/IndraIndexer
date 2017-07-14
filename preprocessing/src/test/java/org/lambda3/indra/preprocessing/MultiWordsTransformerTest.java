@@ -21,7 +21,7 @@ public class MultiWordsTransformerTest {
     }
 
     @Test(timeOut = 20000)
-    public void test() {
+    public void foundTokensTest() {
         List<String> tokens = Arrays.asList("price action", "random movement", "high and low");
         StringBuilder content = new StringBuilder(text);
         new MultiWordsTransformer(tokens).transform(content);
@@ -31,5 +31,15 @@ public class MultiWordsTransformerTest {
             Assert.assertFalse(strContent.contains(token));
             Assert.assertTrue(strContent.contains(token.replace(" ", MultiWordsTransformer.TOKEN_SEPARATOR)));
         }
+    }
+
+    @Test(timeOut = 20000)
+    public void nonExistingTokensTest() {
+        List<String> tokens = Arrays.asList("frevo and samba", "financial crisis", "best of luck");
+        StringBuilder content = new StringBuilder(text);
+        new MultiWordsTransformer(tokens).transform(content);
+        String strContent = content.toString();
+
+        Assert.assertEquals(content.toString(), text);
     }
 }
