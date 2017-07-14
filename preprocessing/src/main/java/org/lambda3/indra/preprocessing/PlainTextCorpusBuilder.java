@@ -1,11 +1,12 @@
 package org.lambda3.indra.preprocessing;
 
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.indexer.Corpus;
 
 public class PlainTextCorpusBuilder extends CorpusBuilder {
 
-    public PlainTextCorpusBuilder(String name, String lang) {
-        super(name, lang);
+    public PlainTextCorpusBuilder(ModelMetadata metadata) {
+        super(metadata);
     }
 
     @Override

@@ -1,14 +1,13 @@
 package org.lambda3.indra.preprocessing;
 
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.indexer.Corpus;
 
 public abstract class CorpusBuilder {
-    public final String name;
-    public final String lang;
+    public final ModelMetadata metadata;
 
-    public CorpusBuilder(String name, String lang) {
-        this.name = name;
-        this.lang = lang;
+    public CorpusBuilder(ModelMetadata metadata) {
+        this.metadata = metadata;
     }
 
     public abstract Corpus getCorpus();
