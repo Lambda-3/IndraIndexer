@@ -5,7 +5,13 @@
     <groupId>org.lambda3.indra</groupId>
     <artifactId>indra-loader</artifactId>
     <version>1.0.0-rc1</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>mongo-loader</module>
+        <module>preprocessing</module>
+        <module>indra-indexer</module>
+        <module>indexer-base</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>Indra Loader</name>
     <description>A set of utilities to load distributional models for Indra consumption.</description>
@@ -32,7 +38,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <loader.mainClass>org.lambda3.indra.loader.IndraLoader</loader.mainClass>
+        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.indexer.IndraLoader</loader.mainClass>
         <license.licenseName>mit</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
     </properties>
@@ -154,18 +160,6 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>3.4.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-nlp</artifactId>
-            <version>0.8.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-platform</artifactId>
-            <version>0.8.0</version>
         </dependency>
 
         <dependency>
