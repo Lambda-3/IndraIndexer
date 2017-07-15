@@ -13,6 +13,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.lambda3.indra.indexer.CorpusMetadata;
 import org.lambda3.indra.indexer.Document;
+import org.lambda3.indra.preprocessing.transform.MultiWordsTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tartarus.snowball.SnowballProgram;
@@ -36,6 +37,17 @@ public class StandardPreprocessor extends Preprocessor {
         super(metadata);
         tokenizer = new StandardTokenizer();
         tokenStream = createStream(metadata, tokenizer);
+        setTransformers();
+    }
+
+    private void setTransformers() {
+        for (String trans : metadata.transformers.keySet()) {
+            if (trans.equalsIgnoreCase(MultiWordsTransformer.class.getSimpleName())) {
+                transformers.add(new MultiWordsTransformer(metadata.transformers.get(trans)));
+            } else {
+                throw new RuntimeException("Transformer not supported = " + trans);
+            }
+        }
     }
 
     @Override

@@ -7,10 +7,7 @@ import org.lambda3.indra.preprocessing.transform.MultiWordsTransformer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StandardPreprocessorEnglishTest {
 
@@ -38,9 +35,10 @@ public class StandardPreprocessorEnglishTest {
     public void transformerTest() {
         List<String> mwt = Arrays.asList("eduardo jorge martins alves sobrinho", "family planning",
                 "sistema único de saúde");
+        Map<String, Collection<String>> transformers = Collections.singletonMap("MultiWordsTransformer", mwt);
 
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
-                applyLowercase(true).removeAccents(true).applyStemmer(0).build();
+                applyLowercase(true).removeAccents(true).applyStemmer(0).transformers(transformers).build();
 
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         pp.addTransformer(new MultiWordsTransformer(mwt));
