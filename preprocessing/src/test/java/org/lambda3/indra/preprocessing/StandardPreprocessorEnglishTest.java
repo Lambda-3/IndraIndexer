@@ -31,10 +31,8 @@ public class StandardPreprocessorEnglishTest {
         Assert.assertTrue(doc.content.contains("unico"));
     }
 
-    @Test
-    public void transformerTest() {
-        List<String> mwt = Arrays.asList("eduardo jorge martins alves sobrinho", "family planning",
-                "sistema único de saúde");
+
+    public Document transformerTest(String text, List<String> mwt) {
         Map<String, Collection<String>> transformers = Collections.singletonMap("MultiWordsTransformer", mwt);
 
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
@@ -43,7 +41,16 @@ public class StandardPreprocessorEnglishTest {
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         pp.addTransformer(new MultiWordsTransformer(mwt));
 
-        Document doc = pp.process(Document.simpleDocument(content));
+        return pp.process(Document.simpleDocument(text));
+    }
+
+
+    @Test
+    public void firstTransformerTest() {
+        List<String> mwt = Arrays.asList("eduardo jorge martins alves sobrinho", "family planning",
+                "sistema único de saúde");
+
+        Document doc = transformerTest(content, mwt);
 
         Assert.assertFalse(doc.content.contains("eduardo jorge martins alves sobrinho"));
         Assert.assertTrue(doc.content.contains("eduardo_jorge_martins_alves_sobrinho"));
@@ -54,7 +61,42 @@ public class StandardPreprocessorEnglishTest {
         Assert.assertFalse(doc.content.contains("sistema único de saúde"));
         Assert.assertFalse(doc.content.contains("sistema_único_de_saúde"));
         Assert.assertTrue(doc.content.contains("sistema_unico_de_saude"));
+
     }
+
+    @Test
+    public void secondTransformerTest() {
+        String text = "A simplified version of the 1040A form for individual income tax.";
+        List<String> mwt = Arrays.asList("1040a form", "income tax");
+
+        Document doc = transformerTest(text, mwt);
+        Assert.assertFalse(doc.content.contains("1040a form"));
+        Assert.assertTrue(doc.content.contains("1040a_form"));
+
+        Assert.assertFalse(doc.content.contains("income tax"));
+        Assert.assertTrue(doc.content.contains("income_tax"));
+
+        Assert.assertEquals(text.toLowerCase(), doc.content.replace("_", " ") + ".");
+    }
+
+    @Test(timeOut = 10000, enabled = false)
+    public void thirdTransformerTest() {
+        String text = "What is 10-k? maybe it is a 10-year treasury note. Or it is 125% loan or 130/30 mutual fund" +
+                " or even a 1%/10 net 30.";
+        List<String> mwt = Arrays.asList("10-k", "10-year treasury note", "125% loan",
+                "130/30 mutual fund", "1%/10 net 30");
+
+        Document doc = transformerTest(text, mwt);
+        System.out.println(doc.content);
+        Assert.assertFalse(doc.content.contains("1040 form"));
+        Assert.assertTrue(doc.content.contains("1040_form"));
+
+        Assert.assertFalse(doc.content.contains("income tax"));
+        Assert.assertTrue(doc.content.contains("income_tax"));
+
+        Assert.assertEquals(text.toLowerCase(), doc.content.replace("_", " ") + ".");
+    }
+
 
     @Test
     public void stopWordsTest() {
@@ -112,7 +154,6 @@ public class StandardPreprocessorEnglishTest {
 
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         Document doc = pp.process(Document.simpleDocument("How money is written in English, $30.50 or $30,50?"));
-
-        //TODO write this one here.
+        Assert.assertEquals(doc.content, "how money is written in english <NUMBER> or <NUMBER>");
     }
 }
