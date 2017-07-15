@@ -35,8 +35,9 @@ public class MultiWordsTransformer implements Transformer {
         Map<String, List<Integer>> map = new LinkedHashMap<>();
         for (String s : multiWordTokens) {
             if (s.length() == 0) {
-                throw new RuntimeException("A multi-word token can't have 0 length.");
+                continue;
             }
+
             map.put(s, new LinkedList<>());
             List<Integer> spaces = map.get(s);
 
@@ -46,6 +47,8 @@ public class MultiWordsTransformer implements Transformer {
                 pos = s.indexOf(SPACE, pos);
                 if (pos > 0) {
                     spaces.add(pos);
+                } else if (spaces.isEmpty()) {
+                    map.remove(s);
                 }
             } while (pos >= 0);
         }
