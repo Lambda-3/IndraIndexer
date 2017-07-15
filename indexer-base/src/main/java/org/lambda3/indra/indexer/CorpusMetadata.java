@@ -35,6 +35,10 @@ public class CorpusMetadata {
         maxTokenLength = (int) data.get(CorpusMetadataBuilder.MAX_TOKEN_LENGTH);
         stopWords = (Set<String>) data.get(CorpusMetadataBuilder.STOP_WORDS);
         transformers = (Map<String, Collection<String>>) data.get(CorpusMetadataBuilder.TRANSFORMERS);
+
+        if (corpusName == null || language == null) {
+            throw new IllegalArgumentException("Neither 'corpusName' nor 'language' can be null.");
+        }
     }
 
     public Map<String, Object> asMap() {
