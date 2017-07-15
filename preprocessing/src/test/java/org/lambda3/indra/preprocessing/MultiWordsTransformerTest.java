@@ -30,6 +30,7 @@ public class MultiWordsTransformerTest {
         for (String token : tokens) {
             Assert.assertFalse(strContent.contains(token));
             Assert.assertTrue(strContent.contains(token.replace(" ", MultiWordsTransformer.TOKEN_SEPARATOR)));
+            Assert.assertEquals(text, strContent.replace(MultiWordsTransformer.TOKEN_SEPARATOR, " "));
         }
     }
 

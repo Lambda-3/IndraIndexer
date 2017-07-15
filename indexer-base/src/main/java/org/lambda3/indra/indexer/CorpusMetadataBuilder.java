@@ -1,42 +1,46 @@
 package org.lambda3.indra.indexer;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class CorpusMetadataBuilder {
 
     public static final String CORPUS_NAME = "corpusName";
     public static final String LANGUAGE = "language";
     public static final String DESCRIPTION = "description";
-    public static final String NUM_OF_DOCUMENTS = "numOfDocuments";
     public static final String ENCODING = "encoding";
     public static final String APPLY_STEMMER = "applyStemmer";
-    //TODO lemma???? //TODO MORE???? transformers???
     public static final String REMOVE_ACCENTS = "removeAccents";
     public static final String APPLY_LOWERCASE = "applyLowercase";
-    public static final String APPLY_STOP_WORDS = "applyStopWords";
+    public static final String REPLACE_NUMBERS = "replaceNumbers";
+    public static final String STOP_WORDS = "stopWords";
     public static final String MIN_TOKEN_LENGTH = "minTokenLength";
     public static final String MAX_TOKEN_LENGTH = "maxTokenLength";
+    public static final String TRANSFORMERS = "transformers";
 
     private Map<String, Object> data = new HashMap<>();
 
     private CorpusMetadataBuilder(String corpusName, String language) {
         data.put(CORPUS_NAME, corpusName);
         data.put(LANGUAGE, language);
+        data.put(DESCRIPTION, null);
+        data.put(ENCODING, StandardCharsets.UTF_8.name());
+        data.put(APPLY_STEMMER, 0);
+        data.put(REMOVE_ACCENTS, true);
+        data.put(APPLY_LOWERCASE, true);
+        data.put(REPLACE_NUMBERS, true);
+        data.put(STOP_WORDS, Collections.EMPTY_SET);
+        data.put(MIN_TOKEN_LENGTH, 1);
+        data.put(MAX_TOKEN_LENGTH, 100);
+        data.put(TRANSFORMERS, Collections.EMPTY_MAP);
     }
 
     public static CorpusMetadataBuilder newCorpusMetadata(String corpusName, String language) {
-        return newCorpusMetadata(corpusName, language);
+        return new CorpusMetadataBuilder(corpusName, language);
     }
 
     public CorpusMetadataBuilder desc(String description) {
         data.put(DESCRIPTION, description);
-        return this;
-    }
-
-    public CorpusMetadataBuilder numOfDocs(int numOfDocuments) {
-        data.put(NUM_OF_DOCUMENTS, numOfDocuments);
         return this;
     }
 
@@ -60,8 +64,13 @@ public class CorpusMetadataBuilder {
         return this;
     }
 
-    public CorpusMetadataBuilder applyStopWords(boolean applyStopWords) {
-        data.put(APPLY_STOP_WORDS, applyStopWords);
+    public CorpusMetadataBuilder replaceNumbers(boolean replaceNumbers) {
+        data.put(REPLACE_NUMBERS, replaceNumbers);
+        return this;
+    }
+
+    public CorpusMetadataBuilder stopWords(Set<String> stopWords) {
+        data.put(STOP_WORDS, stopWords);
         return this;
     }
 
@@ -72,6 +81,11 @@ public class CorpusMetadataBuilder {
 
     public CorpusMetadataBuilder maxTokenLength(int maxTokenLength) {
         data.put(MAX_TOKEN_LENGTH, maxTokenLength);
+        return this;
+    }
+
+    public CorpusMetadataBuilder transformers(Map<String, Collection<String>> transformers) {
+        data.put(TRANSFORMERS, transformers);
         return this;
     }
 

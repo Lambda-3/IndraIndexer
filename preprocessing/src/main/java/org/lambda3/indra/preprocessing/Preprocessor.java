@@ -4,12 +4,13 @@ import org.lambda3.indra.indexer.CorpusMetadata;
 import org.lambda3.indra.indexer.Document;
 import org.lambda3.indra.preprocessing.transform.Transformer;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Preprocessor {
 
     public final CorpusMetadata metadata;
-    protected List<Transformer> transformers;
+    protected List<Transformer> transformers = new LinkedList<>();
 
     public Preprocessor(CorpusMetadata metadata) {
         this.metadata = metadata;

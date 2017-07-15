@@ -5,6 +5,7 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.miscellaneous.LengthFilter;
+import org.apache.lucene.analysis.pattern.PatternReplaceFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
@@ -21,11 +22,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StandardPreprocessor extends Preprocessor {
     private static Logger logger = LoggerFactory.getLogger(StandardPreprocessor.class);
 
+    private static final String NUMBER_PLACEHOLDER = "<NUMBER>";
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d+");
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
 
@@ -110,8 +114,8 @@ public class StandardPreprocessor extends Preprocessor {
         TokenStream stream = new StandardFilter(tokenizer);
         stream = new LengthFilter(stream, metadata.minTokenLength, metadata.maxTokenLength);
 
-        if (metadata.applyStopWords) {
-            stream = getStopFilter(metadata.language, /*TODO metadata.getStopWords()*/null, stream);
+        if (!metadata.stopWords.isEmpty()) {
+            stream = getStopFilter(metadata.language, metadata.stopWords, stream);
         }
 
         if (metadata.applyStemmer > 0) {
@@ -120,6 +124,10 @@ public class StandardPreprocessor extends Preprocessor {
 
         if (metadata.removeAccents) {
             stream = new ASCIIFoldingFilter(stream);
+        }
+
+        if (metadata.replaceNumbers) {
+            stream = new PatternReplaceFilter(stream, NUMBER_PATTERN, NUMBER_PLACEHOLDER, true);
         }
 
         return stream;
