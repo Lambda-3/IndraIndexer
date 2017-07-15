@@ -1,14 +1,12 @@
 package org.lambda3.indra.indexer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Iterator;
 
 public class StreamCorpus extends Corpus {
 
-    private Iterator<? extends Document> iter;
+    private Iterator<Document> iter;
     private Writer out;
 
     StreamCorpus(CorpusMetadata metadata, Iterator<Document> iter, Writer out) {
@@ -18,8 +16,8 @@ public class StreamCorpus extends Corpus {
     }
 
     @Override
-    public Iterator<? extends Document> getDocumentsIterator() {
-        if(iter == null) {
+    public Iterator<Document> getDocumentsIterator() {
+        if (iter == null) {
             throw new RuntimeException("No document to read! Tthis instance is write-only.");
         }
         return iter;
@@ -27,7 +25,7 @@ public class StreamCorpus extends Corpus {
 
     @Override
     public void addDocument(Document document) throws IOException {
-        if(out == null) {
+        if (out == null) {
             throw new RuntimeException("can't add new documents! This instance is read-only.");
         }
         out.write(document.content);
@@ -36,7 +34,7 @@ public class StreamCorpus extends Corpus {
 
     @Override
     public void close() throws IOException {
-        if(out != null) {
+        if (out != null) {
             out.flush();
             out.close();
         }

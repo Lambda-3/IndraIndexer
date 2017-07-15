@@ -12,9 +12,8 @@ public abstract class Corpus implements Closeable {
         this.metadata = metadata;
     }
 
-    public abstract Iterator<? extends Document> getDocumentsIterator();
+    public abstract Iterator<Document> getDocumentsIterator();
 
     public abstract void addDocument(Document document) throws IOException;
-
 
 }

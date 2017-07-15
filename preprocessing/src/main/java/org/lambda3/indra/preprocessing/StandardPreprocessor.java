@@ -22,7 +22,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StandardPreprocessor extends Preprocessor {
@@ -112,14 +111,14 @@ public class StandardPreprocessor extends Preprocessor {
 
     private TokenStream createStream(CorpusMetadata metadata, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
-        stream = new LengthFilter(stream, metadata.minTokenLength, metadata.maxTokenLength);
+        stream = new LengthFilter(stream, (int) metadata.minTokenLength, (int) metadata.maxTokenLength);
 
         if (!metadata.stopWords.isEmpty()) {
             stream = getStopFilter(metadata.language, metadata.stopWords, stream);
         }
 
         if (metadata.applyStemmer > 0) {
-            stream = getStemmerFilter(metadata.language, metadata.applyStemmer, stream);
+            stream = getStemmerFilter(metadata.language, (int) metadata.applyStemmer, stream);
         }
 
         if (metadata.removeAccents) {

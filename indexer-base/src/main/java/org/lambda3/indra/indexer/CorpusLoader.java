@@ -1,17 +1,21 @@
 package org.lambda3.indra.indexer;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class CorpusLoader {
 
-    static final String METADATA_FILE_NAME = "corpus.metadata";
-    static final String CONTENT_FILE_NAME = "corpus.txt";
+    private static final String METADATA_FILE_NAME = "corpus.metadata";
+    private static final String CONTENT_FILE_NAME = "corpus.txt";
 
     private File baseDir;
 
@@ -45,7 +49,21 @@ public class CorpusLoader {
             try {
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(file));
-                return new CorpusMetadata(jsonObject);
+                Map<String, Object> data = CorpusMetadataBuilder.getDefaultData();
+                data.putAll(jsonObject);
+
+                Object objStopWords = data.get(CorpusMetadataBuilder.STOP_WORDS);
+                if (objStopWords instanceof JSONArray) {
+                    JSONArray array = ((JSONArray) objStopWords);
+                    Set<String> stopWords = new HashSet<>();
+
+                    for (Object sw : array) {
+                        stopWords.add((String) sw);
+                    }
+                    data.put(CorpusMetadataBuilder.STOP_WORDS, stopWords);
+                }
+
+                return new CorpusMetadata(data);
 
             } catch (ParseException | IOException e) {
                 throw new RuntimeException(e);
@@ -70,7 +88,15 @@ class DocumentIterator implements Iterator<Document> {
 
     DocumentIterator(BufferedReader reader) throws IOException {
         this.reader = reader;
-        this.line = reader.readLine();
+        nextNonEmptyLine();
+    }
+
+    public void nextNonEmptyLine() throws IOException {
+        while ((line = reader.readLine()) != null) {
+            if (!line.isEmpty()) {
+                break;
+            }
+        }
     }
 
     @Override
@@ -96,7 +122,7 @@ class DocumentIterator implements Iterator<Document> {
 
         Document doc = Document.simpleDocument(line);
         try {
-            line = reader.readLine();
+            nextNonEmptyLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

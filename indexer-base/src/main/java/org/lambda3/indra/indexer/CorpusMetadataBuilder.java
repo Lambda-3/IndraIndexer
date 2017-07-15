@@ -5,34 +5,42 @@ import java.util.*;
 
 public class CorpusMetadataBuilder {
 
-    public static final String CORPUS_NAME = "corpusName";
-    public static final String LANGUAGE = "language";
-    public static final String DESCRIPTION = "description";
-    public static final String ENCODING = "encoding";
-    public static final String APPLY_STEMMER = "applyStemmer";
-    public static final String REMOVE_ACCENTS = "removeAccents";
-    public static final String APPLY_LOWERCASE = "applyLowercase";
-    public static final String REPLACE_NUMBERS = "replaceNumbers";
-    public static final String STOP_WORDS = "stopWords";
-    public static final String MIN_TOKEN_LENGTH = "minTokenLength";
-    public static final String MAX_TOKEN_LENGTH = "maxTokenLength";
-    public static final String TRANSFORMERS = "transformers";
+    static final String CORPUS_NAME = "corpusName";
+    static final String LANGUAGE = "language";
+    static final String DESCRIPTION = "description";
+    static final String ENCODING = "encoding";
+    static final String APPLY_STEMMER = "applyStemmer";
+    static final String REMOVE_ACCENTS = "removeAccents";
+    static final String APPLY_LOWERCASE = "applyLowercase";
+    static final String REPLACE_NUMBERS = "replaceNumbers";
+    static final String STOP_WORDS = "stopWords";
+    static final String MIN_TOKEN_LENGTH = "minTokenLength";
+    static final String MAX_TOKEN_LENGTH = "maxTokenLength";
+    static final String TRANSFORMERS = "transformers";
 
     private Map<String, Object> data = new HashMap<>();
 
     private CorpusMetadataBuilder(String corpusName, String language) {
         data.put(CORPUS_NAME, corpusName);
         data.put(LANGUAGE, language);
-        data.put(DESCRIPTION, null);
-        data.put(ENCODING, StandardCharsets.UTF_8.name());
-        data.put(APPLY_STEMMER, 0);
-        data.put(REMOVE_ACCENTS, true);
-        data.put(APPLY_LOWERCASE, true);
-        data.put(REPLACE_NUMBERS, true);
-        data.put(STOP_WORDS, Collections.EMPTY_SET);
-        data.put(MIN_TOKEN_LENGTH, 1);
-        data.put(MAX_TOKEN_LENGTH, 100);
-        data.put(TRANSFORMERS, Collections.EMPTY_MAP);
+        data.putAll(getDefaultData());
+    }
+
+    static Map<String, Object> getDefaultData() {
+        Map<String, Object> defaultData = new HashMap<>();
+
+        defaultData.put(DESCRIPTION, null);
+        defaultData.put(ENCODING, StandardCharsets.UTF_8.name());
+        defaultData.put(APPLY_STEMMER, 0l);
+        defaultData.put(REMOVE_ACCENTS, true);
+        defaultData.put(APPLY_LOWERCASE, true);
+        defaultData.put(REPLACE_NUMBERS, true);
+        defaultData.put(STOP_WORDS, Collections.EMPTY_SET);
+        defaultData.put(MIN_TOKEN_LENGTH, 1l);
+        defaultData.put(MAX_TOKEN_LENGTH, 100l);
+        defaultData.put(TRANSFORMERS, Collections.EMPTY_MAP);
+
+        return defaultData;
     }
 
     public static CorpusMetadataBuilder newCorpusMetadata(String corpusName, String language) {
@@ -49,7 +57,7 @@ public class CorpusMetadataBuilder {
         return this;
     }
 
-    public CorpusMetadataBuilder applyStemmer(int times) {
+    public CorpusMetadataBuilder applyStemmer(long times) {
         data.put(APPLY_STEMMER, times);
         return this;
     }
@@ -74,12 +82,12 @@ public class CorpusMetadataBuilder {
         return this;
     }
 
-    public CorpusMetadataBuilder minTokenLength(int minTokenLength) {
+    public CorpusMetadataBuilder minTokenLength(long minTokenLength) {
         data.put(MIN_TOKEN_LENGTH, minTokenLength);
         return this;
     }
 
-    public CorpusMetadataBuilder maxTokenLength(int maxTokenLength) {
+    public CorpusMetadataBuilder maxTokenLength(long maxTokenLength) {
         data.put(MAX_TOKEN_LENGTH, maxTokenLength);
         return this;
     }
