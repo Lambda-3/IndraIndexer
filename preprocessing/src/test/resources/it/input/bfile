@@ -1,4 +1,3 @@
-
 \displaystyle d_{book}
 (w_{1,jar},w_{2,j},\dotsc ,w_{t,j})
 If a term occurs in the document, its value in the vector is non-zero.

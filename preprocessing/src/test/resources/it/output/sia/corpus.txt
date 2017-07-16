@@ -1,0 +1,18 @@
+indra is a vedic deity in hinduism <NUMBER>
+a guardian deity in buddhism <NUMBER> and the king of first heaven called <NUMBER> or <NUMBER> or <NUMBER> in jainism <NUMBER>
+his mythologies and powers are similar though not identical to
+those of the indo european deities such as zeus jupiter perun thor and odin wotan <NUMBER> <NUMBER> <NUMBER>
+displaystyle d_ book
+w_ <NUMBER> jar w_ <NUMBER> j dotsc w_ t j
+if a term occurs in the document its value in the vector is non zero
+several different ways of computing these values also known as term weights have been developed
+one of the best known schemes is tf idf weighting see the example below
+contents hide
+<NUMBER> development of technique
+<NUMBER> for biological sequences biovectors
+<NUMBER> thought vectors
+<NUMBER> software
+<NUMBER> see also
+<NUMBER> references
+development of technique by sistema unico de saude
+in linguistics word_embeddings were discussed in the research_area of distributional_semantics <NUMBER>

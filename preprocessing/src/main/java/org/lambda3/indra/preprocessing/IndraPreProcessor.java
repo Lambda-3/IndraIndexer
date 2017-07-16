@@ -217,14 +217,14 @@ public class IndraPreProcessor {
 
             if (stopWords != null) {
                 Set<String> stopWordsSet = getStringSetFromFile(stopWords,
-                        "Problem reading --stop-words file.");
+                        "Problem reading --stop-words file. " + stopWords);
                 cmb.stopWords(stopWordsSet);
             }
 
             if (multiWordTokens != null) {
                 String transName = MultiWordsTransformer.class.getSimpleName();
                 Set<String> multiWordTokensSet = getStringSetFromFile(multiWordTokens,
-                        "Problem reading --multi-words-tokens file.");
+                        "Problem reading --multi-words-tokens file. " + minTokenLength);
                 Map<String, Collection<String>> transformers = Collections.singletonMap(transName, multiWordTokensSet);
                 cmb.transformers(transformers);
             }
@@ -240,6 +240,7 @@ public class IndraPreProcessor {
 
                 return stopWordsSet;
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
                 System.out.println(errorMessage);
                 System.exit(3);
             }

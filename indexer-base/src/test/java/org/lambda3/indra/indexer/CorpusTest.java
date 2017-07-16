@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,8 +58,9 @@ public class CorpusTest {
         Corpus originalCorpus = loadCorpus(corpusName, CORPORA_PATH);
         List<Document> inDocs = getDocuments(originalCorpus);
 
-        Path tmpDir = Files.createTempDirectory("indra-");
-        CorpusLoader loader = new CorpusLoader(tmpDir.toFile());
+        File tmpDir = Files.createTempDirectory("indra-").toFile();
+        tmpDir.deleteOnExit();
+        CorpusLoader loader = new CorpusLoader(tmpDir);
         Corpus outCorpus = loader.getWriterCorpus(originalCorpus.metadata);
 
         for (Document doc : inDocs) {
@@ -69,15 +69,13 @@ public class CorpusTest {
 
         outCorpus.close();
 
-        Corpus writtenCorpus = loadCorpus(corpusName, tmpDir.toAbsolutePath().toString());
+        Corpus writtenCorpus = loadCorpus(corpusName, tmpDir.getAbsolutePath());
         List<Document> writtenDocs = getDocuments(writtenCorpus);
 
         Assert.assertEquals(inDocs.size(), writtenDocs.size());
         for (int i = 0; i < inDocs.size(); i++) {
             Assert.assertEquals(inDocs.get(i).content, writtenDocs.get(i).content);
         }
-
-        tmpDir.toFile().delete();
     }
 
     @Test

@@ -7,10 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CorpusLoader {
 
@@ -74,7 +71,19 @@ public class CorpusLoader {
     }
 
     private static void writeMetadata(CorpusMetadata metadata, File metadataFile) throws IOException {
-        JSONObject metadataJson = new JSONObject(metadata.asMap());
+        Map<String, Object> map = metadata.asMap();
+        Map<String, Collection<String>> trans = (Map<String, Collection<String>>) map.get(CorpusMetadataBuilder.TRANSFORMERS);
+
+        JSONObject transObject = new JSONObject();
+        for (String key : trans.keySet()) {
+            JSONArray array = new JSONArray();
+            trans.get(key).stream().forEach(array::add);
+            transObject.put(key, array);
+        }
+
+        JSONObject metadataJson = new JSONObject(map);
+        metadataJson.put(CorpusMetadataBuilder.TRANSFORMERS, transObject);
+
         Writer writer = new FileWriter(metadataFile);
         metadataJson.writeJSONString(writer);
         writer.close();

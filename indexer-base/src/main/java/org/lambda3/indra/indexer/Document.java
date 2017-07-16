@@ -29,4 +29,12 @@ public class Document {
     public int hashCode() {
         return Objects.hash(id, content);
     }
+
+    @Override
+    public String toString() {
+        return "Document{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

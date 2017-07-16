@@ -11,34 +11,34 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class IndraPreProcessorTest {
 
-    @Test
-    public void portugueseSmallCorpusTest() throws IOException {
-
-        String outputTmpDir = null;
+    public void corpusTest(String inputFileExpression, String corpusName, File outputDir,
+                           String multiWordTokens) throws IOException {
+        File outputTmpDir = null;
         try {
-            outputTmpDir = Files.createTempDirectory("indra-pp-test").toString();
+            outputTmpDir = Files.createTempDirectory("indra-pp-test").toFile();
+            outputTmpDir.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String corpusName = "pessoa";
-        String fileTemplate = Paths.get(PlainTextDocumentGeneratorTest.INPUT_DIR, "%s").toString();
-        String inputFiles = "\"" + String.format(fileTemplate, "mar_salgado.txt");
-        inputFiles += " " + String.format(fileTemplate, "more/heteronimos.a") + "\"";
+        List<String> lArgs = Arrays.asList("pp", "-f", inputFileExpression, "-n", corpusName, "-l", "pt", "-ct", "line",
+                "-ft", "text", "-o", outputTmpDir.toString());
+        lArgs = new LinkedList<>(lArgs);
+        if (multiWordTokens != null) {
+            lArgs.add("--multi-word-tokens");
+            lArgs.add(multiWordTokens);
+        }
 
-        String[] args = {"pp", "-f", inputFiles, "-n", corpusName, "-l", "pt", "-ct", "line",
-                "-ft", "text", "-o", outputTmpDir};
+        IndraPreProcessor.main(lArgs.toArray(new String[0]));
 
-        IndraPreProcessor.main(args);
-
-        File outputDir = Paths.get(PlainTextDocumentGeneratorTest.BASE_DIR, "output").toFile();
         Corpus manual = new CorpusLoader(outputDir).load(corpusName);
-        Corpus generated = new CorpusLoader(new File(outputTmpDir)).load(corpusName);
+        Corpus generated = new CorpusLoader(outputTmpDir).load(corpusName);
 
         List<Document> manualDocuments = new LinkedList<>();
         manual.getDocumentsIterator().forEachRemaining(manualDocuments::add);
@@ -48,7 +48,28 @@ public class IndraPreProcessorTest {
 
         Assert.assertEquals(manualDocuments.size(), generatedDocuments.size());
         for (int i = 0; i < manualDocuments.size(); i++) {
-            Assert.assertEquals(manualDocuments.get(i), generatedDocuments.get(i));
+            Assert.assertEquals(generatedDocuments.get(i), manualDocuments.get(i));
         }
+    }
+
+    @Test
+    public void portugueseSmallCorpusTest() throws IOException {
+        String fileTemplate = Paths.get(PlainTextDocumentGeneratorTest.INPUT_DIR, "%s").toString();
+        String inputFiles = "\"" + String.format(fileTemplate, "mar_salgado.txt");
+        inputFiles += " " + String.format(fileTemplate, "more/heteronimos.a") + "\"";
+        File outputDir = Paths.get(PlainTextDocumentGeneratorTest.BASE_DIR, "output").toFile();
+
+        corpusTest(inputFiles, "pessoa", outputDir, null);
+    }
+
+    @Test
+    public void englishSmallCorpusTest() throws IOException {
+        String baseInputDir = getClass().getClassLoader().getResource("it/input").getPath();
+        String input = "\"" + Paths.get(baseInputDir, "afile").toString()
+                + " " + Paths.get(baseInputDir, "bfile").toString()
+                + " " + Paths.get(baseInputDir, "cfile").toString() + "\"";
+        String outputDir = getClass().getClassLoader().getResource("it/output").getPath();
+        String mwt = Paths.get(baseInputDir, "multiWordTokens").toString();
+        corpusTest(input, "sia", new File(outputDir), mwt);
     }
 }
