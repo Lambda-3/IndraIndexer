@@ -87,7 +87,6 @@ public class StandardPreprocessorEnglishTest {
                 "130/30 mutual fund", "1%/10 net 30");
 
         Document doc = transformerTest(text, mwt);
-        System.out.println(doc.content);
         Assert.assertFalse(doc.content.contains("1040 form"));
         Assert.assertTrue(doc.content.contains("1040_form"));
 
@@ -166,7 +165,6 @@ public class StandardPreprocessorEnglishTest {
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
-        System.out.println(doc.content);
         Assert.assertTrue(doc.content.contains("bla3"));
         Assert.assertFalse(doc.content.contains("bla 2"));
         Assert.assertFalse(doc.content.contains("bla2"));

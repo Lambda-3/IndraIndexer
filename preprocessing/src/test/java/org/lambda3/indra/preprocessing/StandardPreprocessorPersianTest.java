@@ -53,12 +53,12 @@ public class StandardPreprocessorPersianTest {
 
     }
 
-    @Test
+    @Test(enabled = false)
     public void accentTest(){
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").removeAccents(true).applyStemmer(0).build();
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
-        System.out.println(doc.content);
+        //TODO please implement me.
 
 
     }
@@ -74,11 +74,7 @@ public class StandardPreprocessorPersianTest {
         StandardPreprocessor pp = new StandardPreprocessor(metadata);
         pp.addTransformer(new MultiWordsTransformer(mwt));
 
-
         Document doc = pp.process(Document.simpleDocument(content));
-
-        System.out.println(doc.content);
-
 
         Assert.assertFalse(doc.content.contains("فارسی زبان رسمی کشورهای ایران"));
         Assert.assertTrue(doc.content.contains("فارسی_زبان_رسمی_کشورهای_ایران"));
