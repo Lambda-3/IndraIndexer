@@ -4,18 +4,12 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import org.lambda3.indra.indexer.CorpusMetadata;
-import org.lambda3.indra.indexer.CorpusMetadataBuilder;
+import org.lambda3.indra.indexer.*;
 import org.lambda3.indra.preprocessing.transform.MultiWordsTransformer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class IndraPreProcessor {
@@ -35,20 +29,68 @@ public class IndraPreProcessor {
 
         try {
             jc.parse(args);
-            if (jc.getParsedCommand() != null) {
-                if (jc.getParsedCommand().equals(PreProcessCommand.CMD)) {
-                    CorpusMetadata metadata = ppCmd.getMetadata();
-
-                    DocumentGenerator cb;
-                    StandardPreprocessor pp = new StandardPreprocessor(metadata);
-
-                }
-            } else {
-                jc.usage();
-            }
         } catch (ParameterException e) {
             e.printStackTrace();
             jc.usage();
+        }
+
+        if (jc.getParsedCommand() == null) {
+            jc.usage();
+        }
+
+        switch (jc.getParsedCommand()) {
+            case PreProcessCommand.CMD:
+                doPreProcess(ppCmd);
+                break;
+            case CheckFilesCommand.CMD:
+                doCheckFiles(checkCmd);
+            default:
+                System.out.println("invalid command");
+                jc.usage();
+        }
+    }
+
+    private static void doCheckFiles(CheckFilesCommand checkCmd) {
+        Pattern pattern = (checkCmd.patternRegex != null ? Pattern.compile(checkCmd.patternRegex) : null);
+        List<File> files = PlainTextDocumentGenerator.defineFiles(checkCmd.corpusFiles.split(" "), pattern);
+        files.stream().forEach(System.out::println);
+    }
+
+    public static void doPreProcess(PreProcessCommand ppCmd) {
+        Corpus newCorpus = null;
+        try {
+            CorpusMetadata metadata = ppCmd.getMetadata();
+            StandardPreprocessor pp = new StandardPreprocessor(metadata);
+            newCorpus = new CorpusLoader(ppCmd.outputDir).getWriterCorpus(metadata);
+
+            Iterator<Document> generator = null;
+            switch (ppCmd.contentType) {
+                case "text":
+                    Pattern pattern = (ppCmd.patternRegex != null ? Pattern.compile(ppCmd.patternRegex) : null);
+                    generator = new PlainTextDocumentGenerator(metadata, ppCmd.getContentType(),
+                            pattern, ppCmd.corpusFiles.split(" ")).iterator();
+                    break;
+                case "wiki":
+                    generator = new WikipediaDocumentGenerator(metadata).iterator();
+                default:
+                    System.out.println(ppCmd.contentType + " is not a valid contentType. It should be 'text' or 'wiki'");
+            }
+
+
+            while (generator.hasNext()) {
+                Document doc = generator.next();
+                newCorpus.addDocument(pp.process(doc));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (newCorpus != null) {
+                try {
+                    newCorpus.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -65,18 +107,27 @@ public class IndraPreProcessor {
     private static final class CheckFilesCommand {
         static final String CMD = "check";
         @Parameter(names = {"-f", "--files"}, required = true, description = "Input text corpus files or directories.", order = 0)
-        File corpusFiles;
+        String corpusFiles;
 
         @Parameter(names = {"-r", "--regex"}, description = "Regex to filter files into the directories.", order = 1)
-        String patternRegex = null;
+        String patternRegex;
     }
 
     @Parameters(commandDescription = "Pre process text corpora.", separators = "=")
     private static class PreProcessCommand {
-        static final String CMD = "preprocess";
+        static final String CMD = "pp";
 
         @Parameter(names = {"-f", "--files"}, required = true, description = "Input text corpus files or directories.", order = 0)
-        File corpusFiles;
+        String corpusFiles;
+
+        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 0)
+        File outputDir;
+
+        @Parameter(names = {"-ft", "--file-type"}, required = true, description = "File type (wiki or text)", order = 0)
+        String fileType;
+
+        @Parameter(names = {"-ct", "--contentType"}, required = true, description = "Content type (line or file)", order = 0)
+        String contentType;
 
         @Parameter(names = {"-n", "--name"}, required = true, description = "Corpus name.", order = 1)
         String corpusName;
@@ -112,10 +163,23 @@ public class IndraPreProcessor {
         long maxTokenLength = -1;
 
         @Parameter(names = {"--stop-words"}, description = "File containing the set of stop-words to be removed.", order = 110)
-        String stopWords = null;
+        File stopWords = null;
 
         @Parameter(names = {"--multi-word-tokens"}, description = "File containing the set of multi-words tokens.", order = 120)
-        String multiWordTokens = null;
+        File multiWordTokens = null;
+
+        public PlainTextDocumentGenerator.ContentType getContentType() {
+            switch (this.contentType) {
+                case "line":
+                    return PlainTextDocumentGenerator.ContentType.LINE_DOCUMENT;
+                case "file":
+                    return PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT;
+                default:
+                    System.out.println("invalid contentType. It should be 'line' or 'file'");
+                    System.exit(9);
+                    return null;
+            }
+        }
 
         public CorpusMetadata getMetadata() {
             CorpusMetadataBuilder cmb = CorpusMetadataBuilder.newCorpusMetadata(corpusName, language);
@@ -169,9 +233,9 @@ public class IndraPreProcessor {
         }
 
 
-        public Set<String> getStringSetFromFile(String file, String errorMessage) {
+        public Set<String> getStringSetFromFile(File file, String errorMessage) {
             try {
-                Set<String> stopWordsSet = new BufferedReader(new FileReader(new File(file))).
+                Set<String> stopWordsSet = new BufferedReader(new FileReader(file)).
                         lines().collect(Collectors.toSet());
 
                 return stopWordsSet;

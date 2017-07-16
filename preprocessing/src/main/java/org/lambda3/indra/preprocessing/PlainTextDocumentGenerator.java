@@ -15,15 +15,13 @@ public class PlainTextDocumentGenerator extends DocumentGenerator {
     }
 
     public final ContentType type;
-    public final Pattern pattern;
     public Iterator<File> files;
     public final Preprocessor pp;
 
     public PlainTextDocumentGenerator(CorpusMetadata metadata, ContentType type, Pattern pattern, String... files) {
         super(metadata);
         this.type = type;
-        this.pattern = pattern;
-        this.files = defineFiles(files).iterator();
+        this.files = defineFiles(files, pattern).iterator();
         this.pp = new StandardPreprocessor(metadata);
     }
 
@@ -32,7 +30,7 @@ public class PlainTextDocumentGenerator extends DocumentGenerator {
         return new DocumentIterator(files, type);
     }
 
-    public List<File> defineFiles(String[] files) {
+    public static List<File> defineFiles(String[] files, Pattern pattern) {
         List<File> fList = new LinkedList<>();
 
         Queue<File> queue = new LinkedList<>();
