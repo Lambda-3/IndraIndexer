@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class IndraPreProcessor {
 
-    public static void main(String... args) {
+    public static void main(String[] args) {
         String version = IndraPreProcessor.class.getPackage().getImplementationVersion();
 
         MainCommand main = new MainCommand();
@@ -64,7 +64,7 @@ public class IndraPreProcessor {
             newCorpus = new CorpusLoader(ppCmd.outputDir).getWriterCorpus(metadata);
 
             Iterator<Document> generator = null;
-            switch (ppCmd.contentType) {
+            switch (ppCmd.fileType) {
                 case "text":
                     Pattern pattern = (ppCmd.patternRegex != null ? Pattern.compile(ppCmd.patternRegex) : null);
                     generator = new PlainTextDocumentGenerator(metadata, ppCmd.getContentType(),

@@ -110,8 +110,8 @@ public class PlainTextDocumentGenerator extends DocumentGenerator {
             String line = null;
             while (reader == null || (line = reader.readLine()) == null) {
                 if (files.hasNext()) {
-                    File file = files.next();
-                    reader = new BufferedReader(new FileReader(file));
+                    currentFile = files.next();
+                    reader = new BufferedReader(new FileReader(currentFile));
                 } else {
                     break;
                 }

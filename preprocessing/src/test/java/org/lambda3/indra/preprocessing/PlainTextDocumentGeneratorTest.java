@@ -14,7 +14,9 @@ import java.util.regex.Pattern;
 
 public class PlainTextDocumentGeneratorTest {
 
-    private final String BASE_DIR = getClass().getClassLoader().getResource("plainTextCorpus").getPath();
+    public static final String BASE_DIR = PlainTextDocumentGeneratorTest.class.getClassLoader()
+            .getResource("plainTextCorpus").getPath();
+    public static final String INPUT_DIR = Paths.get(BASE_DIR, "input").toString();
 
     public List<Document> countDocuments(String dir, PlainTextDocumentGenerator.ContentType type, String regex) {
         CorpusMetadata md = CorpusMetadataBuilder.newCorpusMetadata("pessoa", "pt").build();
@@ -33,20 +35,20 @@ public class PlainTextDocumentGeneratorTest {
 
     @Test
     public void countDocumentAllTypeFileTest() {
-        List<Document> docs = countDocuments(BASE_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, null);
+        List<Document> docs = countDocuments(INPUT_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, null);
         Assert.assertEquals(docs.size(), 6);
     }
 
     @Test(timeOut = 20000)
     public void countDocumentMoreTypeFileTest() {
-        String moreDir = Paths.get(BASE_DIR, "more").toString();
+        String moreDir = Paths.get(INPUT_DIR, "more").toString();
         List<Document> docs = countDocuments(moreDir, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, null);
         Assert.assertEquals(docs.size(), 3);
     }
 
     @Test
     public void marSalgadoDocumentTest() {
-        String file = Paths.get(BASE_DIR, "mar_salgado.txt").toString();
+        String file = Paths.get(INPUT_DIR, "mar_salgado.txt").toString();
         List<Document> docs = countDocuments(file, PlainTextDocumentGenerator.ContentType.LINE_DOCUMENT, null);
 
         Assert.assertEquals(docs.size(), 12);
@@ -56,7 +58,7 @@ public class PlainTextDocumentGeneratorTest {
 
     @Test(timeOut = 20000)
     public void tabacariaDocumentTest() {
-        String file = Paths.get(BASE_DIR, "tabacaria.txt").toString();
+        String file = Paths.get(INPUT_DIR, "tabacaria.txt").toString();
         List<Document> docs = countDocuments(file, PlainTextDocumentGenerator.ContentType.LINE_DOCUMENT, null);
 
         Assert.assertEquals(docs.size(), 167);
@@ -65,20 +67,20 @@ public class PlainTextDocumentGeneratorTest {
 
     @Test
     public void regex1FilterDocumentTest() {
-        List<Document> docs = countDocuments(BASE_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, "bio(.*)");
+        List<Document> docs = countDocuments(INPUT_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, "bio(.*)");
 
         Assert.assertEquals(docs.size(), 2);
-        for(Document doc : docs) {
+        for (Document doc : docs) {
             Assert.assertTrue(doc.content.startsWith("Fernando"));
         }
     }
 
     @Test
     public void regex2FilterDocumentTest() {
-        List<Document> docs = countDocuments(BASE_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, "(.*).txt$");
+        List<Document> docs = countDocuments(INPUT_DIR, PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT, "(.*).txt$");
 
         Assert.assertEquals(docs.size(), 3);
-        for(Document doc : docs) {
+        for (Document doc : docs) {
             Assert.assertTrue(doc.content.contains("!"));
         }
     }
