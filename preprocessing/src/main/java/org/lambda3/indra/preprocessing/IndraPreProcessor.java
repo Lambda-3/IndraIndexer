@@ -120,22 +120,22 @@ public class IndraPreProcessor {
         @Parameter(names = {"-f", "--files"}, required = true, description = "Input text corpus files or directories.", order = 0)
         String corpusFiles;
 
-        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 0)
+        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 1)
         File outputDir;
 
-        @Parameter(names = {"-ft", "--file-type"}, required = true, description = "File type (wiki or text)", order = 0)
+        @Parameter(names = {"-ft", "--file-type"}, required = true, description = "File type (wiki or text)", order = 2)
         String fileType;
 
-        @Parameter(names = {"-ct", "--contentType"}, required = true, description = "Content type (line or file)", order = 0)
+        @Parameter(names = {"-ct", "--contentType"}, required = true, description = "Content type (line or file)", order = 3)
         String contentType;
 
-        @Parameter(names = {"-n", "--name"}, required = true, description = "Corpus name.", order = 1)
+        @Parameter(names = {"-n", "--name"}, required = true, description = "Corpus name.", order = 4)
         String corpusName;
 
-        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 2)
+        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 5)
         String language;
 
-        @Parameter(names = {"-r", "--regex"}, description = "Regex to filter files into the directories.", order = 1)
+        @Parameter(names = {"-r", "--regex"}, description = "Regex to filter files into the directories.", order = 6)
         String patternRegex = null;
 
         @Parameter(names = {"-d", "--desc"}, description = "Corpus description.", order = 31)
