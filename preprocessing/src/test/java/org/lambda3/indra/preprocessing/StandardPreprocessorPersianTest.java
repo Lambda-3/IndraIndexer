@@ -17,7 +17,7 @@ import java.util.Set;
 public class StandardPreprocessorPersianTest {
     private String content = "فارسی یا پارسی ی ي  یکی از زبان\u200Cهای هندواروپایی در شاخهٔ زبان\u200Cهای ایرانی جنوب غربی است" +
             " که در کشورهای ایران٬ افغانستان،[۳] تاجیکستان[4] و ازبکستان[۵] به آن سخن می\u200Cگویند." +
-            " فارسی زبان رسمی کشورهای ایران و تاجیکستان و یکی از دو زبان رسمی افغانستان (در کنار پشتو) است." +
+            " فارسی زبان رسمی کشورهای ایران و تاجیکستان و یکی از دو زبان٬ًٍ رسمی افغانستان (در کنار پشتو) است." +
             " زبان رسمی کشور هندوستان نیز تا پیش از ورود استعمار انگلیس، فارسی بود.[۶]";
 
 
@@ -32,10 +32,34 @@ public class StandardPreprocessorPersianTest {
         String word = "کتاب\u200Cها";
         Document doc = pp.process(Document.simpleDocument(word));
         // https://github.com/htaghizadeh/PersianStemmer-Java
-        System.out.println(doc.content);
 
         Assert.assertFalse(doc.content.contains("کتاب\u200Cها"));
         Assert.assertTrue(doc.content.contains("کتاب"));
+
+    }
+
+    @Test
+    public void keepAlphaNumTokensTest(){
+
+        CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
+                applyLowercase(true).removeAccents(true).applyStemmer(0).build();
+
+        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        String content = " 2سیامک34" ;
+        Document doc = pp.process(Document.simpleDocument(content));
+
+        Assert.assertFalse(doc.content.contains("2 سیامک 34"));
+        Assert.assertTrue(doc.content.contains("2سیامک34"));
+
+    }
+
+    @Test
+    public void accentTest(){
+        CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").removeAccents(true).applyStemmer(0).build();
+        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        Document doc = pp.process(Document.simpleDocument(content));
+        System.out.println(doc.content);
+
 
     }
 
