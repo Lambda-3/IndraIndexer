@@ -1,5 +1,7 @@
 package org.lambda3.indra.indexer;
 
+import com.beust.jcommander.Parameters;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
