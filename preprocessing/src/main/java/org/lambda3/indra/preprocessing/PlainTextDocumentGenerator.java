@@ -48,6 +48,7 @@ public class PlainTextDocumentGenerator extends DocumentGenerator {
             }
         }
 
+        fList.sort(Comparator.comparing(File::getAbsolutePath));
         return Collections.unmodifiableList(fList);
     }
 
