@@ -1,0 +1,19 @@
+
+displaystyle dj
+w<NUMBER>jw<NUMBER>jdotsc wtj
+Each dimension corresponds to a separate term.
+If a term occurs in the document, its value in the vector is non-zero.
+Several different ways of computing these values, also known as (term) weights, have been developed.
+One of the best known schemes is tf-idf weighting (see the example below).
+
+contents  hide
+<NUMBER>	development of technique
+<NUMBER>	for biological sequences biovectors
+<NUMBER>	thought vectors
+<NUMBER>	software
+<NUMBER>	see also
+<NUMBER>	references
+
+development technique sistema unico de saude
+
+linguistics word_embeddings were discussed research area distributional_semantics <NUMBER>
