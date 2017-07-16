@@ -1,12 +1,17 @@
+indra    ɪndrə   sanskrit   is a vedic deity  hinduism <NUMBER>
+a guardian deity in Buddhism,[2] and the king of first heaven called  <NUMBER> or  <NUMBER> or  <NUMBER> jainism  <NUMBER>
+mythologies powers similar  identical
+indo european deities zeus  jupiter  perun  thor  and odin  wotan   <NUMBER>   <NUMBER>   <NUMBER>
 
-displaystyle dj
-w<NUMBER>jw<NUMBER>jdotsc wtj
-Each dimension corresponds to a separate term.
-If a term occurs in the document, its value in the vector is non-zero.
-Several different ways of computing these values, also known as (term) weights, have been developed.
-One of the best known schemes is tf-idf weighting (see the example below).
 
-contents  hide
+
+displaystyle d  book
+ w  <NUMBER> jar w  <NUMBER> j   dotsc  w  t j
+if term occurs document value vector zero
+several different ways computing values  term weights  developed.
+best schemes tf idf weighting see
+
+contents   hide
 <NUMBER>	development of technique
 <NUMBER>	for biological sequences biovectors
 <NUMBER>	thought vectors
