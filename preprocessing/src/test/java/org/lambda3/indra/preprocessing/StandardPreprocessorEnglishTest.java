@@ -156,4 +156,22 @@ public class StandardPreprocessorEnglishTest {
         Document doc = pp.process(Document.simpleDocument("How money is written in English, $30.50 or $30,50?"));
         Assert.assertEquals(doc.content, "how money is written in english <NUMBER> or <NUMBER>");
     }
+
+    @Test
+    public void keepAlphaNumTokensTest() {
+        String content = "Bla bla bla3. New bla[2], and bla bla[4].";
+        CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
+                replaceNumbers(true).build();
+
+        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        Document doc = pp.process(Document.simpleDocument(content));
+
+        System.out.println(doc.content);
+        Assert.assertTrue(doc.content.contains("bla3"));
+        Assert.assertFalse(doc.content.contains("bla 2"));
+        Assert.assertFalse(doc.content.contains("bla2"));
+        Assert.assertFalse(doc.content.contains("bla 4"));
+        Assert.assertFalse(doc.content.contains("bla4"));
+
+    }
 }

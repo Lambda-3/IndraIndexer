@@ -14,7 +14,7 @@ public class MultiWordsTransformerTest {
             "order in the sometimes seemingly random movement of price. Swings (high and low), tests of " +
             "resistance and consolidation are some examples of price action.";
 
-    @Test
+    @Test       
     public void emptyStringTest() {
         List<String> tokens = Arrays.asList("price action", "");
         new MultiWordsTransformer(tokens).transform(new StringBuilder(text));

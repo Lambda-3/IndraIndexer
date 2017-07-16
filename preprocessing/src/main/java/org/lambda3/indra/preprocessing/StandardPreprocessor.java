@@ -13,7 +13,6 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.lambda3.indra.indexer.CorpusMetadata;
 import org.lambda3.indra.indexer.Document;
-import org.lambda3.indra.preprocessing.lucene.filter.NumberFilter;
 import org.lambda3.indra.preprocessing.transform.MultiWordsTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,9 @@ import java.util.regex.Pattern;
 
 public class StandardPreprocessor extends Preprocessor {
     private static Logger logger = LoggerFactory.getLogger(StandardPreprocessor.class);
+
+    private static final String NUMBER_PLACEHOLDER = "<NUMBER>";
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+((,|\\.)[0-9]+)*$");
 
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
@@ -137,7 +139,7 @@ public class StandardPreprocessor extends Preprocessor {
         }
 
         if (metadata.replaceNumbers) {
-            stream = new NumberFilter(stream);
+            stream = new PatternReplaceFilter(stream, NUMBER_PATTERN, NUMBER_PLACEHOLDER, false);
         }
 
         return stream;
