@@ -1,7 +1,7 @@
 package org.lambda3.indra.indexer.builder;
 
-import org.deeplearning4j.models.word2vec.Word2Vec;
-import org.deeplearning4j.models.word2vec.Word2Vec.Builder;
+import org.deeplearning4j.models.glove.Glove;
+import org.deeplearning4j.models.glove.Glove.Builder;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
@@ -12,17 +12,17 @@ import org.lambda3.indra.indexer.ModelMetadata;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Word2VectorBuilder extends ModelBuilder {
+public class GloveBuilder extends ModelBuilder {
 
     public static final String MIN_WORD_FREQUENCY = "MIN_WORD_FREQUENCY";
     public static final String WINDOW_SIZE = "WINDOW_SIZE";
 
     private SentenceIterator iter;
     private TokenizerFactory tokenizer;
-    private Word2Vec vec;
+    private Glove vec;
     private VocabCache cache;
 
-    public Word2VectorBuilder(ModelMetadata mmdata, String outdir) {
+    public GloveBuilder(ModelMetadata mmdata, String outdir) {
         super(mmdata, outdir);
     }
 
@@ -32,7 +32,7 @@ public class Word2VectorBuilder extends ModelBuilder {
 
 
         Map<String, Object> params = mmdata.params;
-        Builder builder = new Word2Vec.Builder();
+        Builder builder = new Glove.Builder();
 
         int min_word_frequency = (Integer) params.get(MIN_WORD_FREQUENCY);
         int window_size = (Integer) params.get(WINDOW_SIZE);

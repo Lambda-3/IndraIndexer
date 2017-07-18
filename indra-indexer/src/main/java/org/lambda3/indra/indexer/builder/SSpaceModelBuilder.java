@@ -4,6 +4,7 @@ import edu.ucla.sspace.common.SemanticSpace;
 import edu.ucla.sspace.vector.Vector;
 import org.lambda3.indra.indexer.Corpus;
 import org.lambda3.indra.indexer.Document;
+import org.lambda3.indra.indexer.ModelMetadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,10 +14,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-public abstract class SSpaceModelBuilder implements ModelBuilder {
+public abstract class SSpaceModelBuilder extends ModelBuilder {
 
     protected SemanticSpace sspace;
     protected Properties properties = new Properties();
+
+
+    public SSpaceModelBuilder(ModelMetadata mmdata, String outdir) {
+        super(mmdata, outdir);
+    }
 
     @Override
     public void build(Corpus corpus) {
@@ -26,7 +32,6 @@ public abstract class SSpaceModelBuilder implements ModelBuilder {
         try {
             while (iter.hasNext()) {
                 Document doc = iter.next();
-                // TODO review dao.insertDocument(doc.id, doc.title);
 
                 String content = doc.content;
                 if (content != null && !content.isEmpty())
@@ -34,12 +39,14 @@ public abstract class SSpaceModelBuilder implements ModelBuilder {
             }
 
             sspace.processSpace(properties);
+            Map<Object, Map<Integer, Double>> model = new HashMap<>();
 
             for (String term : sspace.getWords()) {
-                @SuppressWarnings("unchecked")
                 Vector<Double> vector = sspace.getVector(term);
-                //dao.insertVector(term, convertVector(vector));
+                model.put(term, convertVector(vector));
             }
+            savemodel(model, outdir, mmdata);
+
 
         } catch (IOException e) {
             e.printStackTrace();
