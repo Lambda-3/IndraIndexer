@@ -11,5 +11,12 @@
 
     <artifactId>mongo-loader</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.lambda3.indra</groupId>
+            <artifactId>indra-indexer</artifactId>
+            <version>1.0.0-rc1</version>
+        </dependency>
+    </dependencies>
 
 </project>

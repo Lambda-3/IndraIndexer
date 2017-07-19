@@ -38,7 +38,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.indexer.IndraLoader</loader.mainClass>
+        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.mongo.IndraLoader</loader.mainClass>
         <license.licenseName>mit</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
     </properties>
