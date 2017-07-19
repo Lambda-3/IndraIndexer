@@ -1,5 +1,5 @@
 package org.lambda3.indra.pp;
 
-public class StandardPreprocessorPortugueseTest {
+public class StandardPreProcessorPortugueseTest {
     //TODO write me, please :)
 }

@@ -7,12 +7,12 @@ import org.lambda3.indra.pp.transform.Transformer;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Preprocessor {
+public abstract class PreProcessor {
 
     public final CorpusMetadata metadata;
     protected List<Transformer> transformers = new LinkedList<>();
 
-    public Preprocessor(CorpusMetadata metadata) {
+    public PreProcessor(CorpusMetadata metadata) {
         this.metadata = metadata;
     }
 

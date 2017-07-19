@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
-public class StandardPreprocessorEnglishTest {
+public class StandardPreProcessorEnglishTest {
 
     private String content = "Eduardo Jorge Martins Alves Sobrinho (born October 26, 1949),[1] most known simply" +
             " as Eduardo Jorge, is a Brazilian public health physician and politician. He is most known for creating " +
@@ -22,7 +22,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
         Assert.assertFalse(doc.content.contains("Eduardo Jorge Martins Alves Sobrinho"));
         Assert.assertTrue(doc.content.contains("eduardo jorge martins alves sobrinho"));
@@ -38,7 +38,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).transformers(transformers).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         pp.addTransformer(new MultiWordsTransformer(mwt));
 
         return pp.process(Document.simpleDocument(text));
@@ -104,7 +104,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).stopWords(stopWords).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         Assert.assertTrue(doc.content.startsWith("eduardo"));
@@ -120,7 +120,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 replaceNumbers(false).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         Assert.assertTrue(doc.content.contains("26"));
@@ -136,7 +136,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 replaceNumbers(true).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         Assert.assertFalse(doc.content.contains("26"));
@@ -151,7 +151,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 replaceNumbers(true).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument("How money is written in English, $30.50 or $30,50?"));
         Assert.assertEquals(doc.content, "how money is written in english <NUMBER> or <NUMBER>");
     }
@@ -162,7 +162,7 @@ public class StandardPreprocessorEnglishTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "en").
                 replaceNumbers(true).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         Assert.assertTrue(doc.content.contains("bla3"));

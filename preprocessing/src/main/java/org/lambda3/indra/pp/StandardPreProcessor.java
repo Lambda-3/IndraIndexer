@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class StandardPreprocessor extends Preprocessor {
-    private static Logger logger = LoggerFactory.getLogger(StandardPreprocessor.class);
+public class StandardPreProcessor extends PreProcessor {
+    private static Logger logger = LoggerFactory.getLogger(StandardPreProcessor.class);
 
     private static final String NUMBER_PLACEHOLDER = "<NUMBER>";
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+((,|\\.)[0-9]+)*$");
@@ -34,7 +34,7 @@ public class StandardPreprocessor extends Preprocessor {
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
 
-    public StandardPreprocessor(CorpusMetadata metadata) {
+    public StandardPreProcessor(CorpusMetadata metadata) {
         super(metadata);
         tokenizer = new StandardTokenizer();
         tokenStream = createStream(metadata, tokenizer);

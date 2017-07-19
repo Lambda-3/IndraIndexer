@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class StandardPreprocessorPersianTest {
+public class StandardPreProcessorPersianTest {
     private String content = "فارسی یا پارسی ی ي  یکی از زبان\u200Cهای هندواروپایی در شاخهٔ زبان\u200Cهای ایرانی جنوب غربی است" +
             " که در کشورهای ایران٬ افغانستان،[۳] تاجیکستان[4] و ازبکستان[۵] به آن سخن می\u200Cگویند." +
             " فارسی زبان رسمی کشورهای ایران و تاجیکستان و یکی از دو زبان٬ًٍ رسمی افغانستان (در کنار پشتو) است." +
@@ -25,7 +25,7 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 applyLowercase(true).removeAccents(true).applyStemmer(1).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
 
         String word = "کتاب\u200Cها";
         Document doc = pp.process(Document.simpleDocument(word));
@@ -42,7 +42,7 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         String content = " 2سیامک34" ;
         Document doc = pp.process(Document.simpleDocument(content));
 
@@ -54,7 +54,7 @@ public class StandardPreprocessorPersianTest {
     @Test(enabled = false)
     public void accentTest(){
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").removeAccents(true).applyStemmer(0).build();
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
         //TODO please implement me.
 
@@ -69,7 +69,7 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         pp.addTransformer(new MultiWordsTransformer(mwt));
 
         Document doc = pp.process(Document.simpleDocument(content));
@@ -90,7 +90,7 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).stopWords(stopWords).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
 
@@ -107,7 +107,7 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 replaceNumbers(false).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         // Convert Persian & Arabic number to English
@@ -126,7 +126,7 @@ public class StandardPreprocessorPersianTest {
                 replaceNumbers(true).build();
 
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
 
         // Convert Persian & Arabic number to English
@@ -144,14 +144,14 @@ public class StandardPreprocessorPersianTest {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 replaceNumbers(true).build();
 
-        StandardPreprocessor pp = new StandardPreprocessor(metadata);
+        StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument("How money is written in English, $30.50 or $30,50?"));
 
         //TODO write this one here.
     }
 
     public static void main(String[] args){
-        StandardPreprocessorPersianTest test = new StandardPreprocessorPersianTest();
+        StandardPreProcessorPersianTest test = new StandardPreProcessorPersianTest();
 
 
     }

@@ -16,7 +16,7 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class IndraCommandLine {
+public class IndraPreProcessorCommandLine {
 
     public static void main(String[] args) {
         String version = IndraPreProcessor.class.getPackage().getImplementationVersion();

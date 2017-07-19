@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IndraCommandLineTest {
+public class IndraPreProcessorCommandLineTest {
 
     public void corpusTest(String inputFileExpression, String corpusName, File outputDir,
                            String multiWordTokens, String regex) throws IOException {
@@ -39,7 +39,7 @@ public class IndraCommandLineTest {
             lArgs.add(regex);
         }
 
-        IndraCommandLine.main(lArgs.toArray(new String[0]));
+        IndraPreProcessorCommandLine.main(lArgs.toArray(new String[0]));
 
         Corpus manual = new CorpusLoader(outputDir).load(corpusName);
         Corpus generated = new CorpusLoader(outputTmpDir).load(corpusName);

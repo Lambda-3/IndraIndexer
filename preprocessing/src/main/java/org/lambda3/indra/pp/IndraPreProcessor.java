@@ -19,7 +19,7 @@ public class IndraPreProcessor {
                              PlainTextDocumentGenerator.ContentType contentType, File outputDir) {
         CorpusWriter writer = null;
         try {
-            StandardPreprocessor pp = new StandardPreprocessor(metadata);
+            StandardPreProcessor pp = new StandardPreProcessor(metadata);
             writer = new CorpusWriter(metadata, outputDir);
 
             Iterator<Document> generator = null;
