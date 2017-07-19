@@ -18,6 +18,8 @@ public abstract class PreProcessor {
 
     public abstract Document process(Document document);
 
+    public abstract List<String> process(String text);
+
     public void addTransformer(Transformer transformer) {
         this.transformers.add(transformer);
     }

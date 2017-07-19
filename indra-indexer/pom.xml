@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indexer-base</artifactId>
+            <artifactId>preprocessing</artifactId>
             <version>1.0.0-rc1</version>
         </dependency>
 

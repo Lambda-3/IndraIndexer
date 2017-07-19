@@ -9,7 +9,6 @@
         <module>mongo-loader</module>
         <module>preprocessing</module>
         <module>indra-indexer</module>
-        <module>indexer-base</module>
     </modules>
     <packaging>pom</packaging>
 

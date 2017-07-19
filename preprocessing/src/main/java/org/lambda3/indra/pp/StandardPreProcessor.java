@@ -21,6 +21,7 @@ import org.tartarus.snowball.ext.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -29,7 +30,7 @@ public class StandardPreProcessor extends PreProcessor {
     private static Logger logger = LoggerFactory.getLogger(StandardPreProcessor.class);
 
     private static final String NUMBER_PLACEHOLDER = "<NUMBER>";
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+((,|\\.)[0-9]+)*$");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+([,\\.][0-9]+)*$");
 
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
@@ -53,15 +54,20 @@ public class StandardPreProcessor extends PreProcessor {
 
     @Override
     public Document process(Document doc) {
-        if (doc.content == null || doc.content.isEmpty()) {
-            return doc;
+        return new Document(doc.id, String.join(" ", process(doc.content)));
+    }
+
+    @Override
+    public List<String> process(String text) {
+        if (text == null || text.isEmpty()) {
+            return Collections.EMPTY_LIST;
         }
 
-        String content = metadata.applyLowercase ? doc.content.toLowerCase() : doc.content;
+        String content = metadata.applyLowercase ? text.toLowerCase() : text;
 
         if (!transformers.isEmpty()) {
             StringBuilder sbContent = new StringBuilder(content);
-            transformers.stream().forEach(t -> t.transform(sbContent));
+            transformers.forEach(t -> t.transform(sbContent));
             content = sbContent.toString();
         }
 
@@ -84,7 +90,7 @@ public class StandardPreProcessor extends PreProcessor {
             }
         }
 
-        return new Document(doc.id, String.join(" ", tokens));
+        return tokens;
     }
 
     private TokenStream getStopFilter(String lang, Set<String> metadataStopWords, TokenStream stream) {

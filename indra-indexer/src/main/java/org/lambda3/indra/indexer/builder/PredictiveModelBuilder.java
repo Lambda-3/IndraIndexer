@@ -7,16 +7,16 @@ import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
-import org.lambda3.indra.indexer.Corpus;
-import org.lambda3.indra.indexer.ModelMetadata;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.corpus.Corpus;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PredictiveModelBuilder extends ModelBuilder {
 
-    public static final String MIN_WORD_FREQUENCY = "MIN_WORD_FREQUENCY";
-    public static final String WINDOW_SIZE = "WINDOW_SIZE";
+    public static final String MIN_WORD_FREQUENCY = "min-word-freq";
+    public static final String WINDOW_SIZE = "window-size";
 
     private SequenceVectors<VocabWord> vec;
 
@@ -32,14 +32,14 @@ public class PredictiveModelBuilder extends ModelBuilder {
         TokenizerFactory tokenizer = new DefaultTokenizerFactory();
 
 
-        Map<String, Object> params = mmdata.params;
+        Map<String, Object> params = metadata.params;
         Glove.Builder builder = new Glove.Builder();
 
         int min_word_frequency = (Integer) params.get(MIN_WORD_FREQUENCY);
         int window_size = (Integer) params.get(WINDOW_SIZE);
 
         builder.minWordFrequency(min_word_frequency).vocabCache(cache).
-                windowSize(window_size).layerSize(mmdata.numOfDimensions);
+                windowSize(window_size).layerSize(metadata.numOfDimensions);
         vec = builder.iterate(iter).tokenizerFactory(tokenizer).build();
 
         vec.fit();
@@ -57,7 +57,7 @@ public class PredictiveModelBuilder extends ModelBuilder {
         }
 
 
-        savemodel(model, outdir, mmdata);
+        savemodel(model, outdir, metadata);
     }
 
     private SentenceIterator getSentenceIterator(Corpus corpus) {

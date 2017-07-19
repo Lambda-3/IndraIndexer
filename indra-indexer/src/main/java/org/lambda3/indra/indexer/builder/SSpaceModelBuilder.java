@@ -2,9 +2,9 @@ package org.lambda3.indra.indexer.builder;
 
 import edu.ucla.sspace.common.SemanticSpace;
 import edu.ucla.sspace.vector.Vector;
-import org.lambda3.indra.indexer.Corpus;
-import org.lambda3.indra.indexer.Document;
-import org.lambda3.indra.indexer.ModelMetadata;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.corpus.Corpus;
+import org.lambda3.indra.corpus.Document;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
     protected Properties properties = new Properties();
 
 
-    public SSpaceModelBuilder(ModelMetadata mmdata, String outdir) {
-        super(mmdata, outdir);
+    public SSpaceModelBuilder(ModelMetadata metadata, String outdir) {
+        super(metadata, outdir);
     }
 
     @Override
@@ -45,7 +45,7 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
                 Vector<Double> vector = sspace.getVector(term);
                 model.put(term, convertVector(vector));
             }
-            savemodel(model, outdir, mmdata);
+            savemodel(model, outdir, metadata);
 
 
         } catch (IOException e) {

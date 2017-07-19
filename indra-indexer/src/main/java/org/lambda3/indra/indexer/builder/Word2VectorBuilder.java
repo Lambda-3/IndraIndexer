@@ -6,8 +6,8 @@ import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
-import org.lambda3.indra.indexer.Corpus;
-import org.lambda3.indra.indexer.ModelMetadata;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.corpus.Corpus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,8 @@ public class Word2VectorBuilder extends ModelBuilder {
     private Word2Vec vec;
     private VocabCache cache;
 
-    public Word2VectorBuilder(ModelMetadata mmdata, String outdir) {
-        super(mmdata, outdir);
+    public Word2VectorBuilder(ModelMetadata metadata, String outdir) {
+        super(metadata, outdir);
     }
 
     @Override
@@ -31,13 +31,13 @@ public class Word2VectorBuilder extends ModelBuilder {
         tokenizer = new DefaultTokenizerFactory();
 
 
-        Map<String, Object> params = mmdata.params;
+        Map<String, Object> params = metadata.params;
         Builder builder = new Word2Vec.Builder();
 
         int min_word_frequency = (Integer) params.get(MIN_WORD_FREQUENCY);
         int window_size = (Integer) params.get(WINDOW_SIZE);
 
-        builder.minWordFrequency(min_word_frequency).vocabCache(cache).windowSize(window_size).layerSize(mmdata.numOfDimensions);
+        builder.minWordFrequency(min_word_frequency).vocabCache(cache).windowSize(window_size).layerSize(metadata.numOfDimensions);
         vec = builder.iterate(iter).tokenizerFactory(tokenizer).build();
 
         vec.fit();
@@ -55,7 +55,7 @@ public class Word2VectorBuilder extends ModelBuilder {
         }
 
 
-        savemodel(model, outdir, mmdata);
+        savemodel(model, outdir, metadata);
 
 
     }
