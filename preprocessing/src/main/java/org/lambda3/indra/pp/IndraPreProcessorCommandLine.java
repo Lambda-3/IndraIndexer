@@ -6,7 +6,7 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import org.lambda3.indra.corpus.CorpusMetadata;
 import org.lambda3.indra.corpus.CorpusMetadataBuilder;
-import org.lambda3.indra.corpus.PlainTextDocumentGenerator;
+import org.lambda3.indra.corpus.DocumentGenerator;
 import org.lambda3.indra.pp.transform.MultiWordsTransformer;
 
 import java.io.BufferedReader;
@@ -45,7 +45,7 @@ public class IndraPreProcessorCommandLine {
         switch (jc.getParsedCommand()) {
             case PreProcessCommand.CMD:
                 new IndraPreProcessor().doPreProcess(ppCmd.getMetadata(), ppCmd.corpusFiles,
-                        ppCmd.patternRegex, ppCmd.fileType, ppCmd.getContentType(), ppCmd.outputDir);
+                        ppCmd.patternRegex, ppCmd.fileType, ppCmd.contentType, ppCmd.outputDir);
                 break;
             case CheckFilesCommand.CMD:
                 List<File> files = new IndraPreProcessor().doCheckFiles(checkCmd.corpusFiles, checkCmd.patternRegex);
@@ -86,10 +86,10 @@ public class IndraPreProcessorCommandLine {
         File outputDir;
 
         @Parameter(names = {"-ft", "--file-type"}, required = true, description = "File type (wiki or text)", order = 2)
-        String fileType;
+        DocumentGenerator.FileType fileType;
 
         @Parameter(names = {"-ct", "--contentType"}, required = true, description = "Content type (line or file)", order = 3)
-        String contentType;
+        DocumentGenerator.ContentType contentType;
 
         @Parameter(names = {"-n", "--name"}, required = true, description = "Corpus name.", order = 4)
         String corpusName;
@@ -129,19 +129,6 @@ public class IndraPreProcessorCommandLine {
 
         @Parameter(names = {"--multi-word-tokens"}, description = "File containing the set of multi-words tokens.", order = 120)
         File multiWordTokens = null;
-
-        public PlainTextDocumentGenerator.ContentType getContentType() {
-            switch (this.contentType) {
-                case "line":
-                    return PlainTextDocumentGenerator.ContentType.LINE_DOCUMENT;
-                case "file":
-                    return PlainTextDocumentGenerator.ContentType.FILE_DOCUMENT;
-                default:
-                    System.out.println("invalid contentType. It should be 'line' or 'file'");
-                    System.exit(9);
-                    return null;
-            }
-        }
 
         public CorpusMetadata getMetadata() {
             CorpusMetadataBuilder cmb = CorpusMetadataBuilder.newCorpusMetadata(corpusName, language);
