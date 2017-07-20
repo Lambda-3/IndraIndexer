@@ -34,6 +34,7 @@ public class MultiWordsTransformer implements Transformer {
 
         Map<String, List<Integer>> map = new LinkedHashMap<>();
         for (String s : multiWordTokens) {
+            s = s.trim();
             if (s.length() == 0) {
                 continue;
             }
