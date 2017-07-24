@@ -2,6 +2,7 @@ package org.lambda3.indra;
 
 import org.lambda3.indra.corpus.CorpusMetadata;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ModelMetadata {
@@ -24,5 +25,16 @@ public class ModelMetadata {
         this.numOfDimensions = numOfDimensions;
         this.corpusMetadata = corpusMetadata;
         this.params = params;
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(MODEL_NAME, this.modelName);
+        map.put(SPARSE, this.sparse);
+        map.put(DIMENSIONS, this.numOfDimensions);
+        map.put(PARAMS, this.params);
+        map.put(CORPUS_METADATA, corpusMetadata.asMap());
+
+        return map;
     }
 }

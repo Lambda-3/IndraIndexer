@@ -1,5 +1,7 @@
 package org.lambda3.indra.corpus;
 
+import org.lambda3.indra.JSONUtil;
+
 import java.io.*;
 import java.nio.file.Paths;
 
@@ -14,7 +16,10 @@ public class CorpusWriter implements Closeable {
             corpusDir.mkdirs();
         }
 
-        MetadataIO.writeCorpusMetadata(metadata, corpusDir);
+
+        File metadataFile = Paths.get(corpusDir.getAbsolutePath(), CorpusLoader.CORPUS_METADATA_FILE_NAME).toFile();
+        JSONUtil.writeMapAsJson(metadata.asMap(), metadataFile);
+
         File contentFile = Paths.get(corpusDir.getAbsolutePath(), CorpusLoader.CORPUS_CONTENT_FILE_NAME).toFile();
         this.documentWriter = new FileWriter(contentFile);
     }

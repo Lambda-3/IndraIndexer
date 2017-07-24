@@ -1,6 +1,7 @@
 package org.lambda3.indra.corpus;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class CorpusMetadata {
         replaceNumbers = (boolean) data.get(CorpusMetadataBuilder.REPLACE_NUMBERS);
         minTokenLength = (long) data.get(CorpusMetadataBuilder.MIN_TOKEN_LENGTH);
         maxTokenLength = (long) data.get(CorpusMetadataBuilder.MAX_TOKEN_LENGTH);
-        stopWords = (Set<String>) data.get(CorpusMetadataBuilder.STOP_WORDS);
+        stopWords = new HashSet<>((Collection<String>) data.get(CorpusMetadataBuilder.STOP_WORDS));
         transformers = (Map<String, Collection<String>>) data.get(CorpusMetadataBuilder.TRANSFORMERS);
 
         if (corpusName == null || language == null) {

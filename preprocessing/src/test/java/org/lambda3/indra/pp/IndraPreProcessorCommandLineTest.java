@@ -16,7 +16,7 @@ import java.util.List;
 
 public class IndraPreProcessorCommandLineTest {
 
-    public void corpusTest(String inputFileExpression, String corpusName, File outputDir,
+    public void corpusTest(String inputFileExpression, String corpusName, String language, File outputDir,
                            String multiWordTokens, String regex) throws IOException {
         File outputTmpDir = null;
         try {
@@ -26,7 +26,7 @@ public class IndraPreProcessorCommandLineTest {
             e.printStackTrace();
         }
 
-        List<String> lArgs = Arrays.asList("pp", "-f", inputFileExpression, "-n", corpusName, "-l", "pt", "-ct", "line",
+        List<String> lArgs = Arrays.asList("pp", "-f", inputFileExpression, "-n", corpusName, "-l", language, "-ct", "line",
                 "-ft", "text", "-o", outputTmpDir.toString());
         lArgs = new LinkedList<>(lArgs);
         if (multiWordTokens != null) {
@@ -63,7 +63,7 @@ public class IndraPreProcessorCommandLineTest {
         inputFiles += " " + String.format(fileTemplate, "more/heteronimos.a") + "\"";
         File outputDir = Paths.get(PlainTextDocumentGeneratorTest.BASE_DIR, "output").toFile();
 
-        corpusTest(inputFiles, "pessoa", outputDir, null, null);
+        corpusTest(inputFiles, "pessoa", "pt", outputDir, null, null);
     }
 
     @Test
@@ -71,6 +71,6 @@ public class IndraPreProcessorCommandLineTest {
         String inputDir = getClass().getClassLoader().getResource("it/input").getPath();
         String outputDir = getClass().getClassLoader().getResource("it/output").getPath();
         String mwt = Paths.get(inputDir, "multiWordTokens").toString();
-        corpusTest(inputDir, "sia", new File(outputDir), mwt, ".*file$");
+        corpusTest(inputDir, "sia", "en", new File(outputDir), mwt, ".*file$");
     }
 }

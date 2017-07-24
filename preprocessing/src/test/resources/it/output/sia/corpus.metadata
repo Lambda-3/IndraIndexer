@@ -1,0 +1,1 @@
+{"corpusName":"sia","transformers":{"MultiWordsTransformer":["research area","word embeddings","distributional semantics"]},"applyStemmer":0,"description":null,"language":"en","encoding":"UTF-8","applyLowercase":true,"stopWords":[],"replaceNumbers":true,"removeAccents":true,"maxTokenLength":100,"minTokenLength":1}

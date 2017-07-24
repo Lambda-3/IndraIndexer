@@ -1,0 +1,1 @@
+{"corpusName":"pessoa","transformers":{"MultiWordsTransformer":[]},"applyStemmer":0,"description":null,"language":"pt","encoding":"UTF-8","applyLowercase":true,"stopWords":[],"replaceNumbers":true,"removeAccents":true,"maxTokenLength":100,"minTokenLength":1}

@@ -18,15 +18,16 @@ public class CorpusMetadataBuilder {
     static final String MAX_TOKEN_LENGTH = "maxTokenLength";
     static final String TRANSFORMERS = "transformers";
 
+    static final Map<String, Object> DEFAULT_DATA = getDefaultData();
     private Map<String, Object> data = new HashMap<>();
 
     private CorpusMetadataBuilder(String corpusName, String language) {
         data.put(CORPUS_NAME, corpusName);
         data.put(LANGUAGE, language);
-        data.putAll(getDefaultData());
+        data.putAll(DEFAULT_DATA);
     }
 
-    static Map<String, Object> getDefaultData() {
+    private static Map<String, Object> getDefaultData() {
         Map<String, Object> defaultData = new HashMap<>();
 
         defaultData.put(DESCRIPTION, null);
@@ -40,7 +41,14 @@ public class CorpusMetadataBuilder {
         defaultData.put(MAX_TOKEN_LENGTH, 100l);
         defaultData.put(TRANSFORMERS, Collections.EMPTY_MAP);
 
-        return defaultData;
+        return Collections.unmodifiableMap(defaultData);
+    }
+
+    public static CorpusMetadata fromMap(Map<String, Object> map) {
+        Map<String, Object> data = new HashMap<>();
+        data.putAll(DEFAULT_DATA);
+        data.putAll(map);
+        return new CorpusMetadata(data);
     }
 
     public static CorpusMetadataBuilder newCorpusMetadata(String corpusName, String language) {
