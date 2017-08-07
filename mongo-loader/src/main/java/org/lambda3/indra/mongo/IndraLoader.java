@@ -97,7 +97,7 @@ public final class IndraLoader {
                     .applyLowercase(applyLowercase)
                     .removeAccents(removeAccents)
                     .binary(binary)
-                    .maxWordLength(minWordsLen)
+                    .minWordLength(minWordsLen)
                     .maxWordLength(maxWordsLen)
                     .dimensions(dimensions);
         }
