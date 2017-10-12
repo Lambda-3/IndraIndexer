@@ -3,7 +3,6 @@ package org.lambda3.indra.pp;
 import org.lambda3.indra.corpus.CorpusMetadata;
 import org.lambda3.indra.corpus.CorpusMetadataBuilder;
 import org.lambda3.indra.corpus.Document;
-import org.lambda3.indra.pp.transform.MultiWordsTransformer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -39,7 +38,6 @@ public class StandardPreProcessorEnglishTest {
                 applyLowercase(true).removeAccents(true).applyStemmer(0).transformers(transformers).build();
 
         StandardPreProcessor pp = new StandardPreProcessor(metadata);
-        pp.addTransformer(new MultiWordsTransformer(mwt));
 
         return pp.process(Document.simpleDocument(text));
     }

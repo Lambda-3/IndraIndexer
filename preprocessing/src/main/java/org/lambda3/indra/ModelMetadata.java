@@ -5,7 +5,7 @@ import org.lambda3.indra.corpus.CorpusMetadata;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModelMetadata {
+public class ModelMetadata implements Metadata {
 
     public static final String MODEL_NAME = "modelName";
     public static final String SPARSE = "sparse";
@@ -27,6 +27,7 @@ public class ModelMetadata {
         this.params = params;
     }
 
+    @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(MODEL_NAME, this.modelName);

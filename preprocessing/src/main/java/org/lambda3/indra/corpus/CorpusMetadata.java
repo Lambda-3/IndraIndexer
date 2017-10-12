@@ -1,11 +1,13 @@
 package org.lambda3.indra.corpus;
 
+import org.lambda3.indra.Metadata;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class CorpusMetadata {
+public class CorpusMetadata implements Metadata {
 
     public final String corpusName;
     public final String language;
@@ -42,6 +44,7 @@ public class CorpusMetadata {
         }
     }
 
+    @Override
     public Map<String, Object> asMap() {
         return data;
     }

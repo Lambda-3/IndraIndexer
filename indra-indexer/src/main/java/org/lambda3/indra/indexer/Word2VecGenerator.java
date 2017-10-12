@@ -20,8 +20,11 @@ public final class Word2VecGenerator implements DenseVectorGenerator {
     private Word2Vec model;
 
     private Word2VecGenerator(File modeFile) {
+        //the original word2vec output format WordVectorSerializer.readWord2VecModel
+        //models generated from learning4j loadGoogleModel - (sspace)
         this.model = WordVectorSerializer.readWord2VecModel(modeFile);
     }
+
 
     @Override
     public Iterator<Map.Entry<String, double[]>> iterator() {

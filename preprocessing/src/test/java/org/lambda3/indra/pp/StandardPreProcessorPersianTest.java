@@ -3,14 +3,10 @@ package org.lambda3.indra.pp;
 import org.lambda3.indra.corpus.CorpusMetadata;
 import org.lambda3.indra.corpus.CorpusMetadataBuilder;
 import org.lambda3.indra.corpus.Document;
-import org.lambda3.indra.pp.transform.MultiWordsTransformer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class StandardPreProcessorPersianTest {
     private String content = "فارسی یا پارسی ی ي  یکی از زبان\u200Cهای هندواروپایی در شاخهٔ زبان\u200Cهای ایرانی جنوب غربی است" +
@@ -37,13 +33,13 @@ public class StandardPreProcessorPersianTest {
     }
 
     @Test
-    public void keepAlphaNumTokensTest(){
+    public void keepAlphaNumTokensTest() {
 
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
                 applyLowercase(true).removeAccents(true).applyStemmer(0).build();
 
         StandardPreProcessor pp = new StandardPreProcessor(metadata);
-        String content = " 2سیامک34" ;
+        String content = " 2سیامک34";
         Document doc = pp.process(Document.simpleDocument(content));
 
         Assert.assertFalse(doc.content.contains("2 سیامک 34"));
@@ -52,7 +48,7 @@ public class StandardPreProcessorPersianTest {
     }
 
     @Test(enabled = false)
-    public void accentTest(){
+    public void accentTest() {
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").removeAccents(true).applyStemmer(0).build();
         StandardPreProcessor pp = new StandardPreProcessor(metadata);
         Document doc = pp.process(Document.simpleDocument(content));
@@ -66,11 +62,12 @@ public class StandardPreProcessorPersianTest {
         List<String> mwt = Arrays.asList("فارسی زبان رسمی کشورهای ایران", "زبان رسمی کشور هندوستان",
                 "که در کشورهای ایران٬ افغانستان،[۳]");
 
+        Map<String, Collection<String>> transformers = Collections.singletonMap("MultiWordsTransformer", mwt);
+
         CorpusMetadata metadata = CorpusMetadataBuilder.newCorpusMetadata("corpus-name", "fa").
-                applyLowercase(true).removeAccents(true).applyStemmer(0).build();
+                applyLowercase(true).removeAccents(true).applyStemmer(0).transformers(transformers).build();
 
         StandardPreProcessor pp = new StandardPreProcessor(metadata);
-        pp.addTransformer(new MultiWordsTransformer(mwt));
 
         Document doc = pp.process(Document.simpleDocument(content));
 
@@ -150,7 +147,7 @@ public class StandardPreProcessorPersianTest {
         //TODO write this one here.
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         StandardPreProcessorPersianTest test = new StandardPreProcessorPersianTest();
 
 
