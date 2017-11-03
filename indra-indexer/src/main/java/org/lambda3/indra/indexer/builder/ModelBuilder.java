@@ -4,7 +4,7 @@ import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.corpus.Corpus;
 
 
-abstract class ModelBuilder {
+public abstract class ModelBuilder {
     protected ModelMetadata metadata;
     protected String outDir;
 

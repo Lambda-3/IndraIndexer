@@ -1,35 +1,37 @@
-package org.lambda3.indra.pp;
+package org.lambda3.indra.indexer;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import org.lambda3.indra.corpus.CorpusMetadata;
-import org.lambda3.indra.corpus.CorpusMetadataBuilder;
-import org.lambda3.indra.corpus.DocumentGenerator;
+import org.lambda3.indra.corpus.*;
+import org.lambda3.indra.indexer.builder.PredictiveModelBuilder;
+import org.lambda3.indra.indexer.builder.SSpaceModelBuilder;
+import org.lambda3.indra.indexer.builder.ModelBuilder;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.indexer.builder.ExplicitSemanticAnalysisBuilder;
+import org.lambda3.indra.indexer.builder.LatentSemanticAnalysisBuilder;
 import org.lambda3.indra.pp.transform.MultiWordsTransformer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class IndraPreProcessorCommandLine {
 
-    public static void main(String[] args) {
-        String version = IndraPreProcessor.class.getPackage().getImplementationVersion();
+public class IndraIndexerCommmandLine {
+
+    private static final String Indexer_ID = "org.lambda3.indra.indexer.IndraIndexerCommmandLine";
+
+    public static void main(String... args) {
+        //String version = IndraPreProcessor.class.getPackage().getImplementationVersion();
 
         MainCommand main = new MainCommand();
         JCommander jc = new JCommander(main);
-        jc.setProgramName(IndraPreProcessor.class.getSimpleName() + "-" + (version != null ? version : "IDE"));
+        jc.setProgramName(Indexer_ID);
+        IndxerCommand indexCmd = new IndxerCommand();
+        jc.addCommand(IndxerCommand.modelname, indexCmd);
 
-        PreProcessCommand ppCmd = new PreProcessCommand();
-        jc.addCommand(PreProcessCommand.CMD, ppCmd);
 
-        CheckFilesCommand checkCmd = new CheckFilesCommand();
-        jc.addCommand(CheckFilesCommand.CMD, checkCmd);
 
         try {
             jc.parse(args);
@@ -42,18 +44,32 @@ public class IndraPreProcessorCommandLine {
             jc.usage();
         }
 
-        switch (jc.getParsedCommand()) {
-            case PreProcessCommand.CMD:
-                new IndraPreProcessor().doPreProcess(ppCmd.getMetadata(), ppCmd.corpusFiles,
-                        ppCmd.patternRegex, ppCmd.fileType, ppCmd.contentType, ppCmd.outputDir);
-                break;
-            case CheckFilesCommand.CMD:
-                List<File> files = new IndraPreProcessor().doCheckFiles(checkCmd.corpusFiles, checkCmd.patternRegex);
-                files.stream().forEach(System.out::println);
-            default:
-                System.out.println("invalid command");
-                jc.usage();
+        ModelBuilder builder;
+
+
+        try {
+            // making sure all data will be flushed.
+
+            Corpus corpus = new CorpusLoader(indexCmd.corpusDir).load(indexCmd.corpusName);
+
+                if (IndxerCommand.modelname.equalsIgnoreCase("ESA"))
+                    builder = new ExplicitSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
+                else if (IndxerCommand.modelname.equalsIgnoreCase("LSA"))
+                    builder = new LatentSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
+                else if (IndxerCommand.modelname.equalsIgnoreCase("GLOVE"))
+                    builder = PredictiveModelBuilder.createGloveModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
+                else if (IndxerCommand.modelname.equalsIgnoreCase("W2V"))
+                    builder = PredictiveModelBuilder.createWord2VecModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
+                else
+                    throw new IllegalStateException();
+
+                builder.build(corpus);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
 
     }
@@ -67,40 +83,32 @@ public class IndraPreProcessorCommandLine {
         boolean help;
     }
 
-    @Parameters(commandDescription = "See commands below.")
-    private static final class CheckFilesCommand {
-        static final String CMD = "check";
-        @Parameter(names = {"-f", "--files"}, required = true, description = "Input text corpus files or directories.", order = 0)
-        String corpusFiles;
 
-        @Parameter(names = {"-r", "--regex"}, description = "Regex to filter files into the directories.", order = 1)
-        String patternRegex;
-    }
+    @Parameters(commandDescription = "Generate Models.", separators = "=")
+    private static class IndxerCommand {
+        @Parameter(names = {"-m", "--modelname"}, required = true, description = "Input name of the model.", order = 0)
+        static String modelname;
 
-    @Parameters(commandDescription = "Pre process text corpora.", separators = "=")
-    private static class PreProcessCommand {
-        static final String CMD = "pp";
-
-        @Parameter(names = {"-f", "--files"}, required = true, description = "Input text corpus files or directories.", order = 0)
-        String corpusFiles;
-
-        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 1)
-        File outputDir;
-
-        @Parameter(names = {"-ft", "--file-type"}, required = true, description = "File type (wiki or text)", order = 2)
-        DocumentGenerator.FileType fileType;
-
-        @Parameter(names = {"-ct", "--contentType"}, required = true, description = "Content type (line or file)", order = 3)
-        DocumentGenerator.ContentType contentType;
-
-        @Parameter(names = {"-n", "--name"}, required = true, description = "Corpus name.", order = 4)
+        @Parameter(names = {"-n", "--name"}, required = true, description = "Input text corpus files or directories.", order = 1)
         String corpusName;
 
-        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 5)
-        String language;
+        @Parameter(names = {"-d", "--corpus-dir"}, required = true, description = "Input text corpus files or directories.", order = 2)
+        File corpusDir;
 
-        @Parameter(names = {"-r", "--regex"}, description = "Regex to filter files into the directories.", order = 6)
-        String patternRegex = null;
+        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 3)
+        String output;
+
+        @Parameter(names = {"-s", "--sparse"}, required = true, description = "The output directory.", order = 4)
+        boolean sparse;
+
+        @Parameter(names = {"-n", "--numOfDimensions"}, required = true, description = "The output directory.", order = 5)
+        int numOfDimensions;
+
+        @Parameter(names = {"-p", "--param"}, required = true, description = "The output directory.", order = 6)
+        Map<String, Object> param;
+
+        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 7)
+        String language;
 
         @Parameter(names = {"-d", "--desc"}, description = "Corpus description.", order = 31)
         String description = null;
@@ -183,7 +191,6 @@ public class IndraPreProcessorCommandLine {
             return cmb.build();
         }
 
-
         public Set<String> getStringSetFromFile(File file, String errorMessage) {
             try {
                 Set<String> stopWordsSet = new BufferedReader(new FileReader(file)).
@@ -197,5 +204,18 @@ public class IndraPreProcessorCommandLine {
             }
             return null;
         }
+
+        public ModelMetadata getModelMetadata() {
+
+            return new ModelMetadata(modelname, sparse, numOfDimensions, getMetadata(), param);
+
+        }
+
+
+
+
+
+
     }
+
 }
