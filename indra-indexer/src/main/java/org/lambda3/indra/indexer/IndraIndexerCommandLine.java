@@ -18,9 +18,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class IndraIndexerCommmandLine {
+public class IndraIndexerCommandLine {
 
-    private static final String Indexer_ID = "org.lambda3.indra.indexer.IndraIndexerCommmandLine";
+    private static final String Indexer_ID = "org.lambda3.indra.indexer.IndraIndexerCommandLine";
 
     public static void main(String... args) {
         //String version = IndraPreProcessor.class.getPackage().getImplementationVersion();
@@ -89,31 +89,31 @@ public class IndraIndexerCommmandLine {
         @Parameter(names = {"-m", "--modelname"}, required = true, description = "Input name of the model.", order = 0)
         static String modelname;
 
-        @Parameter(names = {"-n", "--name"}, required = true, description = "Input text corpus files or directories.", order = 1)
+        @Parameter(names = {"-n", "--name"}, required = true, description = "Input name of corpus.", order = 1)
         String corpusName;
 
-        @Parameter(names = {"-d", "--corpus-dir"}, required = true, description = "Input text corpus files or directories.", order = 2)
+        @Parameter(names = {"-c", "--corpus-dir"}, required = true, description = "Input directory.", order = 2)
         File corpusDir;
 
         @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 3)
         String output;
 
-        @Parameter(names = {"-s", "--sparse"}, required = true, description = "The output directory.", order = 4)
+        @Parameter(names = {"-s", "--sparse"}, required = true, description = "Is it sparse?.", order = 4)
         boolean sparse;
 
-        @Parameter(names = {"-n", "--numOfDimensions"}, required = true, description = "The output directory.", order = 5)
+        @Parameter(names = {"-d", "--dimensions"}, required = true, description = "The number of dimentions.", order = 5)
         int numOfDimensions;
 
-        @Parameter(names = {"-p", "--param"}, required = true, description = "The output directory.", order = 6)
+        @Parameter(names = {"-p", "--param"}, required = true, description = "The param.", order = 6)
         Map<String, Object> param;
 
         @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 7)
         String language;
 
-        @Parameter(names = {"-d", "--desc"}, description = "Corpus description.", order = 31)
+        @Parameter(names = {"--desc"}, description = "Corpus description.", order = 31)
         String description = null;
 
-        @Parameter(names = {"-e", "--encoding"}, description = "File text encoding.", order = 40)
+        @Parameter(names = {"--encoding"}, description = "File text encoding.", order = 40)
         String encoding = null;
 
         @Parameter(names = {"--stemmer"}, description = "Number of times the stemmer must be applied. 0 for none.", order = 50)
