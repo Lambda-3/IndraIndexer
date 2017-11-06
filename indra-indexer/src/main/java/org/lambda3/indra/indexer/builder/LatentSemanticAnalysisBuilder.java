@@ -23,7 +23,7 @@ public class LatentSemanticAnalysisBuilder extends SSpaceModelBuilder {
     @Override
     public Properties getProperties() {
         Properties properties = new Properties();
-        properties.put(LatentSemanticAnalysis.LSA_DIMENSIONS_PROPERTY, metadata.numOfDimensions);
+        properties.put(LatentSemanticAnalysis.LSA_DIMENSIONS_PROPERTY, metadata.params.get(PredictiveModelBuilder.VECTOR_SIZE));
         return properties;
     }
 

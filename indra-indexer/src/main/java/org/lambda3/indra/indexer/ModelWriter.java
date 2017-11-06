@@ -6,18 +6,23 @@ import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.indexer.builder.PredictiveModelBuilder;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class ModelWriter {
 
-    public static void save(String outDir, ModelMetadata metadata, SemanticSpace sspace) {
+    public static void save(String outDir, ModelMetadata metadata, SemanticSpace sspace) throws IOException {
+
         MetadataWriter.write(outDir, metadata);
+        File modelFile = Paths.get(outDir, metadata.modelName).toFile();
 
         FileWriter fw = null;
         try {
-            fw = new FileWriter(outDir);
+            fw = new FileWriter(modelFile);
 
             try {
 
@@ -42,10 +47,11 @@ public class ModelWriter {
 
     public static void save(String outDir, ModelMetadata metadata, VocabCache<VocabWord> cache, SequenceVectors<VocabWord> vectors) {
         MetadataWriter.write(outDir, metadata);
+        File modelFile = Paths.get(outDir, metadata.modelName).toFile();
 
         FileWriter fw = null;
         try {
-            fw = new FileWriter(outDir);
+            fw = new FileWriter(modelFile);
 
             try {
                 for (String word : cache.words()) {

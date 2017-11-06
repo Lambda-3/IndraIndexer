@@ -13,9 +13,12 @@ import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.sentenceiterator.SentencePreProcessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.lambda3.indra.ModelMetadata;
-import org.lambda3.indra.corpus.Corpus;
+import org.lambda3.indra.corpus.*;
 import org.lambda3.indra.indexer.ModelWriter;
+import java.io.File;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PredictiveModelBuilder extends ModelBuilder {
@@ -41,6 +44,7 @@ public class PredictiveModelBuilder extends ModelBuilder {
 
     @Override
     public void build(Corpus corpus) {
+
         SequenceIterator<VocabWord> iter = getSentenceIterator(corpus);
 
         Map<String, Object> params = metadata.params;
@@ -51,10 +55,11 @@ public class PredictiveModelBuilder extends ModelBuilder {
         VocabCache<VocabWord> cache = new AbstractCache.Builder<VocabWord>().build();
 
         SequenceVectors<VocabWord> vectors = this.builder.minWordFrequency(minWordFrequency).vocabCache(cache).
-                windowSize(windowSize).layerSize(metadata.numOfDimensions).layerSize(vectorSize).iterate(iter).build();
+                windowSize(windowSize).layerSize(vectorSize).iterate(iter).build();
         vectors.fit();
 
         ModelWriter.save(this.outDir, this.metadata, cache, vectors);
+
     }
 
     private SequenceIterator<VocabWord> getSentenceIterator(Corpus corpus) {
@@ -72,7 +77,7 @@ public class PredictiveModelBuilder extends ModelBuilder {
 
             @Override
             public void reset() {
-                throw new UnsupportedOperationException();
+                corpus.reset();
             }
 
             @Override

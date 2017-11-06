@@ -26,7 +26,12 @@ public class CorpusLoader {
         CorpusMetadata metadata = CorpusMetadataBuilder.fromMap(map);
 
         File contentFile = Paths.get(baseDir.getAbsolutePath(), corpusName, CORPUS_CONTENT_FILE_NAME).toFile();
-        return new Corpus(metadata, new DocumentIterator(DocumentGenerator.ContentType.LINE, contentFile));
+        return new Corpus(metadata, DocumentGenerator.ContentType.LINE, contentFile);
+    }
+
+    public Corpus read(CorpusMetadata metadata) throws IOException {
+
+        return new Corpus(metadata, DocumentGenerator.ContentType.LINE, baseDir);
     }
 }
 

@@ -1,17 +1,24 @@
 package org.lambda3.indra.indexer;
 
+import org.lambda3.indra.JSONUtil;
 import org.lambda3.indra.Metadata;
 import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.corpus.CorpusLoader;
 import org.lambda3.indra.corpus.CorpusMetadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 public class MetadataWriter {
 
     public static void write(String outDir, Metadata metadata) {
-        File file = Paths.get(outDir, getMetadataFileName(metadata)).toFile();
-        //TODO see how to write json file.
+        try {
+            File metadataFile = Paths.get(outDir, getMetadataFileName(metadata)).toFile();
+            JSONUtil.writeMapAsJson(metadata.asMap(), metadataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String getMetadataFileName(Metadata metadata) {

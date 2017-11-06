@@ -35,6 +35,7 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
             }
 
             sspace.processSpace(getProperties());
+            metadata.params.put(PredictiveModelBuilder.VECTOR_SIZE,sspace.getVectorLength());
             ModelWriter.save(outDir, metadata, sspace);
 
         } catch (IOException e) {

@@ -12,8 +12,8 @@ import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.indexer.builder.ExplicitSemanticAnalysisBuilder;
 import org.lambda3.indra.indexer.builder.LatentSemanticAnalysisBuilder;
 import org.lambda3.indra.pp.transform.MultiWordsTransformer;
-
-import java.io.*;
+ import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,8 +28,8 @@ public class IndraIndexerCommandLine {
         MainCommand main = new MainCommand();
         JCommander jc = new JCommander(main);
         jc.setProgramName(Indexer_ID);
-        IndxerCommand indexCmd = new IndxerCommand();
-        jc.addCommand(IndxerCommand.modelname, indexCmd);
+        IndexerCommand indexCmd = new IndexerCommand();
+        jc.addCommand("indexer", indexCmd);
 
 
 
@@ -44,27 +44,24 @@ public class IndraIndexerCommandLine {
             jc.usage();
         }
 
-        ModelBuilder builder;
-
 
         try {
+            ModelBuilder builder;
             // making sure all data will be flushed.
+            Corpus corpus = new CorpusLoader(indexCmd.corpusFile).read(indexCmd.getCorpusMetadata());
 
-            Corpus corpus = new CorpusLoader(indexCmd.corpusDir).load(indexCmd.corpusName);
+            if (indexCmd.modelName.equalsIgnoreCase("ESA"))
+                builder = new ExplicitSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
+            else if (indexCmd.modelName.equalsIgnoreCase("LSA"))
+                builder = new LatentSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
+            else if (indexCmd.modelName.equalsIgnoreCase("GLOVE"))
+                builder = PredictiveModelBuilder.createGloveModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
+            else if (indexCmd.modelName.equalsIgnoreCase("W2V"))
+                builder = PredictiveModelBuilder.createWord2VecModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
+            else
+                throw new IllegalStateException();
 
-                if (IndxerCommand.modelname.equalsIgnoreCase("ESA"))
-                    builder = new ExplicitSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
-                else if (IndxerCommand.modelname.equalsIgnoreCase("LSA"))
-                    builder = new LatentSemanticAnalysisBuilder(indexCmd.getModelMetadata(), indexCmd.output);
-                else if (IndxerCommand.modelname.equalsIgnoreCase("GLOVE"))
-                    builder = PredictiveModelBuilder.createGloveModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
-                else if (IndxerCommand.modelname.equalsIgnoreCase("W2V"))
-                    builder = PredictiveModelBuilder.createWord2VecModelBuilder(indexCmd.getModelMetadata(),indexCmd.output);
-                else
-                    throw new IllegalStateException();
-
-                builder.build(corpus);
-
+            builder.build(corpus);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,32 +82,32 @@ public class IndraIndexerCommandLine {
 
 
     @Parameters(commandDescription = "Generate Models.", separators = "=")
-    private static class IndxerCommand {
-        @Parameter(names = {"-m", "--modelname"}, required = true, description = "Input name of the model.", order = 0)
-        static String modelname;
+    private static class IndexerCommand {
+        @Parameter(names = {"-m", "--model-name"}, required = true, description = "Input name of the model.", order = 0)
+        String modelName;
 
-        @Parameter(names = {"-n", "--name"}, required = true, description = "Input name of corpus.", order = 1)
-        String corpusName;
+        @Parameter(names = {"-c", "--corpus-file"}, required = true, description = "Input text corpus file.", order = 1)
+        File corpusFile;
 
-        @Parameter(names = {"-c", "--corpus-dir"}, required = true, description = "Input directory.", order = 2)
-        File corpusDir;
-
-        @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 3)
-        String output;
-
-        @Parameter(names = {"-s", "--sparse"}, required = true, description = "Is it sparse?.", order = 4)
-        boolean sparse;
-
-        @Parameter(names = {"-d", "--dimensions"}, required = true, description = "The number of dimentions.", order = 5)
-        int numOfDimensions;
-
-        @Parameter(names = {"-p", "--param"}, required = true, description = "The param.", order = 6)
-        Map<String, Object> param;
-
-        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 7)
+        @Parameter(names = {"-l", "--lang"}, required = true, description = "Corpus language.", order = 2)
         String language;
 
-        @Parameter(names = {"--desc"}, description = "Corpus description.", order = 31)
+        @Parameter(names = {"-d", "--dimensions"}, required = true, description = "The number of dimentions.", order = 3)
+        int numOfDimensions;
+
+        @Parameter(names = {"-o", "--output"}, required = true, description = "Output directory.", order = 4)
+        String output;
+
+        @Parameter(names = {"-w", "--windows-size"}, description = "The param.", order = 10)
+        int windowsSize = 5;
+
+        @Parameter(names = {"-f", "--minWordFrequency"}, description = "The param.", order = 15)
+        int minWordFrequency = 3;
+
+        @Parameter(names = {"--sparse"}, description = "Is it sparse?.",arity = 1, order = 20)
+        boolean sparse = true;
+
+        @Parameter(names = {"--desc"}, description = "Corpus description.", order = 30)
         String description = null;
 
         @Parameter(names = {"--encoding"}, description = "File text encoding.", order = 40)
@@ -140,8 +137,9 @@ public class IndraIndexerCommandLine {
         @Parameter(names = {"--multi-word-tokens"}, description = "File containing the set of multi-words tokens.", order = 120)
         File multiWordTokens = null;
 
-        public CorpusMetadata getMetadata() {
-            CorpusMetadataBuilder cmb = CorpusMetadataBuilder.newCorpusMetadata(corpusName, language);
+
+        public CorpusMetadata getCorpusMetadata() {
+            CorpusMetadataBuilder cmb = CorpusMetadataBuilder.newCorpusMetadata(corpusFile.getName(), language);
             if (description != null) {
                 cmb.desc(description);
             }
@@ -207,9 +205,21 @@ public class IndraIndexerCommandLine {
 
         public ModelMetadata getModelMetadata() {
 
-            return new ModelMetadata(modelname, sparse, numOfDimensions, getMetadata(), param);
+            return new ModelMetadata(modelName, sparse, getCorpusMetadata(), getParams());
 
         }
+
+        public Map<String, Object> getParams(){
+
+
+            Map<String, Object> params = new HashMap<>();
+            params.put(PredictiveModelBuilder.MIN_WORD_FREQUENCY,  minWordFrequency);
+            params.put(PredictiveModelBuilder.WINDOW_SIZE,  windowsSize);
+            params.put(PredictiveModelBuilder.VECTOR_SIZE,  numOfDimensions);
+            return params;
+        }
+
+
 
 
 
