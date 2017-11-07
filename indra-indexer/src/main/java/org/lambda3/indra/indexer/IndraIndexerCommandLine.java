@@ -98,11 +98,11 @@ public class IndraIndexerCommandLine {
         @Parameter(names = {"-o", "--output"}, required = true, description = "Output directory.", order = 4)
         String output;
 
-        @Parameter(names = {"-w", "--windows-size"}, description = "The param.", order = 10)
+        @Parameter(names = {"-w", "--windows-size"}, description = "Window Size.", order = 10)
         int windowsSize = 5;
 
-        @Parameter(names = {"-f", "--minWordFrequency"}, description = "The param.", order = 15)
-        int minWordFrequency = 3;
+        @Parameter(names = {"-f", "--min-word-frequency"}, description = "Min word frequency.", order = 15)
+        int minWordFrequency = 5;
 
         @Parameter(names = {"--sparse"}, description = "Is it sparse?.",arity = 1, order = 20)
         boolean sparse = true;
