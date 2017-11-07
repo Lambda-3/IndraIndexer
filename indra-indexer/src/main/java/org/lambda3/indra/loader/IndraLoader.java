@@ -1,6 +1,8 @@
 package org.lambda3.indra.loader;
 
-public interface IndraLoader {
+import java.io.Closeable;
+
+public interface IndraLoader extends Closeable {
 
     void load(RawSpaceModel rsm);
 }

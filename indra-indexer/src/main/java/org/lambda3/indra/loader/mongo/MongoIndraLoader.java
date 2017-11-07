@@ -1,4 +1,4 @@
-package org.lambda3.indra.mongo;
+package org.lambda3.indra.loader.mongo;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -8,15 +8,18 @@ import com.mongodb.MongoClientURI;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.indexer.DenseVectorGenerator;
 import org.lambda3.indra.indexer.Word2VecGenerator;
+import org.lambda3.indra.loader.IndraLoader;
+import org.lambda3.indra.loader.RawSpaceModel;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Main Entry point of all loaders/importers/generators.
  */
-public final class MongoIndraLoader {
+public final class MongoIndraLoader implements IndraLoader {
 
-    private static final String LOADER_ID = "org.lambda3.indra.mongo.MongoIndraLoader";
+    private static final String LOADER_ID = "org.lambda3.indra.loader.mongo.MongoIndraLoader";
 
     public static void main(String... args) {
         MainCommand main = new MainCommand();
@@ -42,6 +45,16 @@ public final class MongoIndraLoader {
             e.printStackTrace();
             jc.usage();
         }
+    }
+
+    @Override
+    public void load(RawSpaceModel rsm) {
+        //TODO implement me
+    }
+
+    @Override
+    public void close() throws IOException {
+        //TODO implement me
     }
 
     /**

@@ -95,5 +95,4 @@ public class IndraIndexerCommandLine {
         @Parameter(names = {"-f", "--min-word-frequency"}, description = "Min word frequency.", order = 15)
         int minWordFrequency = 5;
     }
-
 }

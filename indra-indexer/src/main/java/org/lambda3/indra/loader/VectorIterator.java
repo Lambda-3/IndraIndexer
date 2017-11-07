@@ -6,13 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Iterator;
 
-public class VectorIterator implements Iterator<Vector> {
+public class VectorIterator<V extends Vector> implements Iterator<V> {
 
-    public final boolean sparse;
+    private final boolean sparse;
     private Iterator<String> iterator;
 
-    public VectorIterator(boolean sparse, File vectorsFile) throws FileNotFoundException {
-        this.sparse = sparse;
+    public VectorIterator(File vectorsFile, Class<V> clazz) throws FileNotFoundException {
+        this.sparse = clazz.equals(SparseVector.class);
         this.iterator = new BufferedReader(new FileReader(vectorsFile)).lines().iterator();
     }
 
@@ -22,9 +22,13 @@ public class VectorIterator implements Iterator<Vector> {
     }
 
     @Override
-    public Vector next() {
+    @SuppressWarnings("unchecked")
+    public V next() {
         String content = iterator.next();
-
-        return null;
+        if (this.sparse) {
+            return (V) new SparseVector(content);
+        } else {
+            return (V) new DenseVector(content);
+        }
     }
 }

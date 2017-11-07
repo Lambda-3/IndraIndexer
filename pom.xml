@@ -1,10 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
 
     <groupId>org.lambda3.indra</groupId>
     <artifactId>indra-loader</artifactId>
     <version>1.0.0-rc1</version>
+
     <modules>
         <module>indra-indexer</module>
         <module>indra-preprocessing</module>
@@ -12,7 +14,7 @@
         <module>annoy-loader</module>
         <module>lucene-loader</module>
     </modules>
-    <packaging>pom</packaging>
+
 
     <name>Indra Loader</name>
     <description>A set of utilities to load distributional models for Indra consumption.</description>
@@ -39,7 +41,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.mongo.MongoIndraLoader</loader.mainClass>
+        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.loader.mongo.MongoIndraLoader</loader.mainClass>
         <license.licenseName>mit</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
     </properties>

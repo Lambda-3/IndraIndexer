@@ -1,4 +1,4 @@
-package org.lambda3.indra.mongo;
+package org.lambda3.indra.loader.mongo;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
