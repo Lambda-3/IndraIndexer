@@ -1,65 +1,39 @@
 package org.lambda3.indra.indexer.builder;
 
-import org.deeplearning4j.models.glove.Glove;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.sequencevectors.interfaces.SequenceIterator;
 import org.deeplearning4j.models.sequencevectors.iterators.AbstractSequenceIterator;
 import org.deeplearning4j.models.sequencevectors.transformers.impl.SentenceTransformer;
 import org.deeplearning4j.models.word2vec.VocabWord;
-import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.AbstractCache;
 import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.sentenceiterator.SentencePreProcessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
-import org.lambda3.indra.ModelMetadata;
-import org.lambda3.indra.corpus.*;
+import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.indexer.ModelWriter;
-import java.io.File;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
-public class PredictiveModelBuilder extends ModelBuilder {
-
-    public static final String MIN_WORD_FREQUENCY = "minWordFrequency";
-    public static final String WINDOW_SIZE = "windoSize";
-    public static final String VECTOR_SIZE = "vectorSize";
+public abstract class PredictiveModelBuilder extends ModelBuilder {
 
     private SequenceVectors.Builder<VocabWord> builder;
 
-    private PredictiveModelBuilder(ModelMetadata metadata, String outDir, SequenceVectors.Builder<VocabWord> builder) {
-        super(metadata, outDir);
+    PredictiveModelBuilder(String outDir, int dimensions, int windowSize,
+                                  int minWordFrequency, SequenceVectors.Builder<VocabWord> builder) {
+        super(outDir, dimensions, windowSize, minWordFrequency);
         this.builder = builder;
-    }
-
-    public static ModelBuilder createGloveModelBuilder(ModelMetadata metadata, String outDir) {
-        return new PredictiveModelBuilder(metadata, outDir, new Glove.Builder());
-    }
-
-    public static ModelBuilder createWord2VecModelBuilder(ModelMetadata metadata, String outDir) {
-        return new PredictiveModelBuilder(metadata, outDir, new Word2Vec.Builder());
     }
 
     @Override
     public void build(Corpus corpus) {
 
         SequenceIterator<VocabWord> iter = getSentenceIterator(corpus);
-
-        Map<String, Object> params = metadata.params;
-        int minWordFrequency = (Integer) params.get(MIN_WORD_FREQUENCY);
-        int windowSize = (Integer) params.get(WINDOW_SIZE);
-        int vectorSize = (Integer) params.get(VECTOR_SIZE);
-
         VocabCache<VocabWord> cache = new AbstractCache.Builder<VocabWord>().build();
 
         SequenceVectors<VocabWord> vectors = this.builder.minWordFrequency(minWordFrequency).vocabCache(cache).
-                windowSize(windowSize).layerSize(vectorSize).iterate(iter).build();
+                windowSize(windowSize).layerSize(dimensions).iterate(iter).build();
         vectors.fit();
 
-        ModelWriter.save(this.outDir, this.metadata, cache, vectors);
-
+        ModelWriter.save(this.outDir, getModelMetadata(corpus), cache, vectors);
     }
 
     private SequenceIterator<VocabWord> getSentenceIterator(Corpus corpus) {

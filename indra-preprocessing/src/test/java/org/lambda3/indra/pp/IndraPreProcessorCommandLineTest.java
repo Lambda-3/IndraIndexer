@@ -16,7 +16,7 @@ import java.util.List;
 
 public class IndraPreProcessorCommandLineTest {
 
-    public void corpusTest(String inputFileExpression, String corpusName, String language, File outputDir,
+    public void corpusTest(String inputFileExpression, String corpusName, String language, String outputDir,
                            String multiWordTokens, String regex) throws IOException {
         File outputTmpDir = null;
         try {
@@ -41,8 +41,8 @@ public class IndraPreProcessorCommandLineTest {
 
         IndraPreProcessorCommandLine.main(lArgs.toArray(new String[0]));
 
-        Corpus manual = new CorpusLoader(outputDir).load(corpusName);
-        Corpus generated = new CorpusLoader(outputTmpDir).load(corpusName);
+        Corpus manual = CorpusLoader.load(Paths.get(outputDir, corpusName).toFile());
+        Corpus generated = CorpusLoader.load(Paths.get(outputTmpDir.getAbsolutePath(), corpusName).toFile());
 
         List<Document> manualDocuments = new LinkedList<>();
         manual.getDocumentsIterator().forEachRemaining(manualDocuments::add);
@@ -61,7 +61,7 @@ public class IndraPreProcessorCommandLineTest {
         String fileTemplate = Paths.get(PlainTextDocumentGeneratorTest.INPUT_DIR, "%s").toString();
         String inputFiles = "\"" + String.format(fileTemplate, "mar_salgado.txt");
         inputFiles += " " + String.format(fileTemplate, "more/heteronimos.a") + "\"";
-        File outputDir = Paths.get(PlainTextDocumentGeneratorTest.BASE_DIR, "output").toFile();
+        String outputDir = Paths.get(PlainTextDocumentGeneratorTest.BASE_DIR, "output").toString();
 
         corpusTest(inputFiles, "pessoa", "pt", outputDir, null, null);
     }
@@ -71,6 +71,6 @@ public class IndraPreProcessorCommandLineTest {
         String inputDir = getClass().getClassLoader().getResource("it/input").getPath();
         String outputDir = getClass().getClassLoader().getResource("it/output").getPath();
         String mwt = Paths.get(inputDir, "multiWordTokens").toString();
-        corpusTest(inputDir, "sia", "en", new File(outputDir), mwt, ".*file$");
+        corpusTest(inputDir, "sia", "en", outputDir, mwt, ".*file$");
     }
 }

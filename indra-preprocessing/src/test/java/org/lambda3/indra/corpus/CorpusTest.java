@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,7 @@ public class CorpusTest {
     private static final String CORPORA_PATH = CorpusTest.class.getClassLoader().getResource("corpora").getPath();
 
     public Corpus loadCorpus(String corpusName, String path) throws IOException {
-        CorpusLoader loader = new CorpusLoader(new File(path));
-        return loader.load(corpusName);
+        return CorpusLoader.load(Paths.get(path, corpusName).toFile());
     }
 
     public List<Document> getDocuments(Corpus corpus) {

@@ -32,13 +32,13 @@ public class CorpusMetadataBuilder {
 
         defaultData.put(DESCRIPTION, null);
         defaultData.put(ENCODING, StandardCharsets.UTF_8.name());
-        defaultData.put(APPLY_STEMMER, 0l);
+        defaultData.put(APPLY_STEMMER, 0L);
         defaultData.put(REMOVE_ACCENTS, true);
         defaultData.put(APPLY_LOWERCASE, true);
         defaultData.put(REPLACE_NUMBERS, true);
         defaultData.put(STOP_WORDS, Collections.EMPTY_SET);
-        defaultData.put(MIN_TOKEN_LENGTH, 1l);
-        defaultData.put(MAX_TOKEN_LENGTH, 100l);
+        defaultData.put(MIN_TOKEN_LENGTH, 1L);
+        defaultData.put(MAX_TOKEN_LENGTH, 100L);
         defaultData.put(TRANSFORMERS, Collections.EMPTY_MAP);
 
         return Collections.unmodifiableMap(defaultData);
@@ -55,8 +55,8 @@ public class CorpusMetadataBuilder {
         return new CorpusMetadataBuilder(corpusName, language);
     }
 
-    public CorpusMetadataBuilder desc(String description) {
-        data.put(DESCRIPTION, description);
+    public CorpusMetadataBuilder desc(String desc) {
+        data.put(DESCRIPTION, desc);
         return this;
     }
 

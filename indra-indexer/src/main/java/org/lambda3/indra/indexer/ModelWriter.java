@@ -6,31 +6,58 @@ import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.lambda3.indra.ModelMetadata;
-import org.lambda3.indra.indexer.builder.PredictiveModelBuilder;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModelWriter {
 
+    public static final String MODEL_METADATA_FILE_NAME = "model.metadata";
+    public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
+
+    private static File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
+        String targetModelName = String.format("%s-%s-%s", metadata.modelName, metadata.corpusMetadata.language,
+                metadata.corpusMetadata.corpusName);
+        File modelDir = Paths.get(outDir, targetModelName).toFile();
+        if (!modelDir.exists()) {
+            modelDir.mkdirs();
+        }
+
+        MetadataWriter.write(Paths.get(modelDir.getAbsolutePath(), MODEL_METADATA_FILE_NAME).toFile(), metadata);
+
+        return Paths.get(modelDir.getAbsolutePath(), MODEL_CONTENT_FILE_NAME).toFile();
+    }
+
     public static void save(String outDir, ModelMetadata metadata, SemanticSpace sspace) throws IOException {
 
-        MetadataWriter.write(outDir, metadata);
-        File modelFile = Paths.get(outDir, metadata.modelName).toFile();
+        File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
 
-        FileWriter fw = null;
+        FileWriter fw;
         try {
             fw = new FileWriter(modelFile);
 
             try {
 
-                for (String word : sspace.getWords()) {
-                    Vector<Double> vector = sspace.getVector(word);
-                    String repr = vectorRepresentation(word, convertVector(vector));
-                    fw.write(repr);
-                    fw.write("\n");
+                if (metadata.sparse) {
+                    for (String word : sspace.getWords()) {
+                        Vector<Double> vector = sspace.getVector(word);
+                        Map<Integer, Double> newVector = convertToSparseVector(vector);
+                        String repr = sparseVectorRepresentation(word, newVector);
+                        fw.write(repr);
+                        fw.write("\n");
+                    }
+                } else {
+                    for (String word : sspace.getWords()) {
+                        Vector<Double> vector = sspace.getVector(word);
+                        double[] newVector = convertToDenseVector(vector);
+                        String repr = denseVectorRepresentation(word, newVector);
+                        fw.write(repr);
+                        fw.write("\n");
+                    }
                 }
 
                 fw.flush();
@@ -46,17 +73,16 @@ public class ModelWriter {
     }
 
     public static void save(String outDir, ModelMetadata metadata, VocabCache<VocabWord> cache, SequenceVectors<VocabWord> vectors) {
-        MetadataWriter.write(outDir, metadata);
-        File modelFile = Paths.get(outDir, metadata.modelName).toFile();
+        File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
 
-        FileWriter fw = null;
+        FileWriter fw;
         try {
             fw = new FileWriter(modelFile);
 
             try {
                 for (String word : cache.words()) {
                     double[] vector = vectors.getWordVector(word);
-                    String repr = vectorRepresentation(word, vector);
+                    String repr = denseVectorRepresentation(word, vector);
                     fw.write(repr);
                     fw.write("\n");
                 }
@@ -73,7 +99,7 @@ public class ModelWriter {
         }
     }
 
-    public static double[] convertVector(Vector<Double> vector) {
+    private static double[] convertToDenseVector(Vector<Double> vector) {
 
         double[] newVector = new double[vector.length()];
         for (int i = 0; i < vector.length(); i++) {
@@ -83,13 +109,39 @@ public class ModelWriter {
         return newVector;
     }
 
-    public static String vectorRepresentation(String term, double[] vector) {
+    private static Map<Integer, Double> convertToSparseVector(Vector<Double> vector) {
+        Map<Integer, Double> newVector = new HashMap<>();
+        for (int i = 0; i < vector.length(); i++) {
+            double value = vector.getValue(i).doubleValue();
+            if (value != 0) {
+                newVector.put(i, value);
+            }
+        }
+
+        return newVector;
+    }
+
+    private static String sparseVectorRepresentation(String term, Map<Integer, Double> vector) {
+        StringBuilder sb = new StringBuilder(term);
+        sb.append("\t");
+
+        for (int key : vector.keySet()) {
+            sb.append(key);
+            sb.append(":");
+            sb.append(vector.get(key));
+            sb.append(" ");
+        }
+
+        return sb.toString().trim();
+    }
+
+    private static String denseVectorRepresentation(String term, double[] vector) {
         StringBuilder sb = new StringBuilder(term);
         sb.append("\t");
 
         for (double d : vector) {
             sb.append(d);
-            sb.append(" ");//TODO review the format here
+            sb.append(" ");
         }
 
         return sb.toString().trim();

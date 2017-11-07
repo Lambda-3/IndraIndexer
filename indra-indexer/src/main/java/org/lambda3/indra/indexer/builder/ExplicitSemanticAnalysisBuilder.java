@@ -1,26 +1,46 @@
 package org.lambda3.indra.indexer.builder;
 
+import edu.ucla.sspace.common.SemanticSpace;
 import edu.ucla.sspace.esa.ExplicitSemanticAnalysis;
-import org.lambda3.indra.ModelMetadata;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public class ExplicitSemanticAnalysisBuilder extends SSpaceModelBuilder {
 
-    public ExplicitSemanticAnalysisBuilder(ModelMetadata metadata, String outDir) throws IOException {
-        super(metadata, outDir);
-        this.sspace = new ExplicitSemanticAnalysis();
+    public ExplicitSemanticAnalysisBuilder(String outDir, int minWordFrequency) throws IOException {
+        super(outDir, -1, -1, minWordFrequency);
+    }
+
+    @Override
+    public boolean isSparse() {
+        return true;
+    }
+
+    @Override
+    public String getModelName() {
+        return "ESA";
     }
 
     @Override
     public Properties getProperties() {
-        //TODO add properties non default properties here.
+        // no properties for ESA.
         return new Properties();
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    public SemanticSpace getSemanticSpace() {
+        try {
+            return new ExplicitSemanticAnalysis();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void processPosRunningInformation(SemanticSpace sspace) {
+        this.dimensions = sspace.getVectorLength();
     }
 }

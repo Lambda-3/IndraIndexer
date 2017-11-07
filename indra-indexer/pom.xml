@@ -14,8 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>preprocessing</artifactId>
-            <version>1.0.0-rc1</version>
+            <artifactId>indra-preprocessing</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

@@ -14,9 +14,9 @@ import java.io.File;
 /**
  * Main Entry point of all loaders/importers/generators.
  */
-public final class IndraLoader {
+public final class MongoIndraLoader {
 
-    private static final String LOADER_ID = "org.lambda3.indra.mongo.IndraLoader";
+    private static final String LOADER_ID = "org.lambda3.indra.mongo.MongoIndraLoader";
 
     public static void main(String... args) {
         MainCommand main = new MainCommand();

@@ -14,15 +14,13 @@ import java.util.Properties;
 
 public abstract class SSpaceModelBuilder extends ModelBuilder {
 
-    SemanticSpace sspace;
-
-    public SSpaceModelBuilder(ModelMetadata metadata, String outdir) {
-        super(metadata, outdir);
+    SSpaceModelBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
+        super(outDir, dimensions, windowSize, minWordFrequency);
     }
 
     @Override
     public void build(Corpus corpus) {
-
+        SemanticSpace sspace = getSemanticSpace();
         Iterator<? extends Document> iter = corpus.getDocumentsIterator();
 
         try {
@@ -35,7 +33,9 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
             }
 
             sspace.processSpace(getProperties());
-            metadata.params.put(PredictiveModelBuilder.VECTOR_SIZE,sspace.getVectorLength());
+            processPosRunningInformation(sspace);
+
+            ModelMetadata metadata = getModelMetadata(corpus);
             ModelWriter.save(outDir, metadata, sspace);
 
         } catch (IOException e) {
@@ -44,4 +44,8 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
     }
 
     public abstract Properties getProperties();
+
+    public abstract SemanticSpace getSemanticSpace();
+
+    public abstract void processPosRunningInformation(SemanticSpace sspace);
 }

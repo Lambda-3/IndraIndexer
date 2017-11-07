@@ -6,9 +6,10 @@
     <artifactId>indra-loader</artifactId>
     <version>1.0.0-rc1</version>
     <modules>
-        <module>mongo-loader</module>
-        <module>preprocessing</module>
         <module>indra-indexer</module>
+        <module>indra-preprocessing</module>
+        <module>lucene-loader</module>
+        <module>mongo-loader</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -37,7 +38,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.mongo.IndraLoader</loader.mainClass>
+        <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.mongo.MongoIndraLoader</loader.mainClass>
         <license.licenseName>mit</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
     </properties>
