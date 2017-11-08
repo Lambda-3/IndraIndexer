@@ -28,10 +28,9 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     private static final String INDEXES_FIELD = "indexes";
 
     private IndexWriter writer;
-    private String baseDir;
 
-    public LuceneIndraLoader(String baseDir) throws IOException {
-        super(baseDir);
+    public LuceneIndraLoader(String modelDir) throws IOException {
+        super(modelDir);
         Directory dir = FSDirectory.open(Paths.get(this.modelDir.getAbsolutePath(), TERMS_INDEX));
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);

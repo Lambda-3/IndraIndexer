@@ -4,6 +4,9 @@ import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.corpus.Corpus;
 
 public abstract class ModelBuilder {
+    //TODO write warning when a paramter is NOT_APPLIED but is was provided by the command line.
+    protected static final int NOT_APPLIED = -1;
+
     String outDir;
     int dimensions;
     int windowSize;
@@ -16,7 +19,7 @@ public abstract class ModelBuilder {
         this.minWordFrequency = minWordFrequency;
     }
 
-    public abstract void build(Corpus corpus);
+    public abstract ModelMetadata build(Corpus corpus);
 
     ModelMetadata getModelMetadata(Corpus corpus) {
         return new ModelMetadata(getModelName(), isSparse(), this.dimensions,

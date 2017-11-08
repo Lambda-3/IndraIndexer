@@ -10,9 +10,6 @@
     <modules>
         <module>indra-indexer</module>
         <module>indra-preprocessing</module>
-        <module>mongo-loader</module>
-        <module>annoy-loader</module>
-        <module>lucene-loader</module>
     </modules>
 
 

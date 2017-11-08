@@ -2,10 +2,7 @@ package org.lambda3.indra.corpus;
 
 import org.lambda3.indra.Metadata;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CorpusMetadata implements Metadata {
 
@@ -42,6 +39,31 @@ public class CorpusMetadata implements Metadata {
         if (corpusName == null || language == null) {
             throw new IllegalArgumentException("Neither 'corpusName' nor 'language' can be null.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CorpusMetadata that = (CorpusMetadata) o;
+        return applyStemmer == that.applyStemmer &&
+                removeAccents == that.removeAccents &&
+                applyLowercase == that.applyLowercase &&
+                replaceNumbers == that.replaceNumbers &&
+                minTokenLength == that.minTokenLength &&
+                maxTokenLength == that.maxTokenLength &&
+                Objects.equals(corpusName, that.corpusName) &&
+                Objects.equals(language, that.language) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(encoding, that.encoding) &&
+                Objects.equals(stopWords, that.stopWords) &&
+                Objects.equals(transformers, that.transformers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(corpusName, language, description, encoding, applyStemmer, removeAccents,
+                applyLowercase, replaceNumbers, minTokenLength, maxTokenLength, stopWords, transformers, data);
     }
 
     @Override

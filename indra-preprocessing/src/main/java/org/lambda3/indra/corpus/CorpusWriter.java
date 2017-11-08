@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 
 public class CorpusWriter implements Closeable {
 
+    public static final String CORPUS_METADATA_FILE_NAME = "corpus.metadata";
+    static final String CORPUS_CONTENT_FILE_NAME = "corpus.txt";
+
     private Writer documentWriter;
     private boolean closed = false;
 
@@ -17,10 +20,10 @@ public class CorpusWriter implements Closeable {
         }
 
 
-        File metadataFile = Paths.get(corpusDir.getAbsolutePath(), CorpusLoader.CORPUS_METADATA_FILE_NAME).toFile();
+        File metadataFile = Paths.get(corpusDir.getAbsolutePath(), CORPUS_METADATA_FILE_NAME).toFile();
         JSONUtil.writeMapAsJson(metadata.asMap(), metadataFile);
 
-        File contentFile = Paths.get(corpusDir.getAbsolutePath(), CorpusLoader.CORPUS_CONTENT_FILE_NAME).toFile();
+        File contentFile = Paths.get(corpusDir.getAbsolutePath(), CORPUS_CONTENT_FILE_NAME).toFile();
         this.documentWriter = new FileWriter(contentFile);
     }
 

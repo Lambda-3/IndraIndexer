@@ -20,14 +20,12 @@ public class ModelWriter {
     public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
 
     private static File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
-        String targetModelName = String.format("%s-%s-%s", metadata.modelName, metadata.corpusMetadata.language,
-                metadata.corpusMetadata.corpusName);
-        File modelDir = Paths.get(outDir, targetModelName).toFile();
+        File modelDir = Paths.get(outDir, metadata.getConciseName()).toFile();
         if (!modelDir.exists()) {
             modelDir.mkdirs();
         }
 
-        MetadataWriter.write(Paths.get(modelDir.getAbsolutePath(), MODEL_METADATA_FILE_NAME).toFile(), metadata);
+        MetadataWriter.write(modelDir.getAbsolutePath(), metadata);
 
         return Paths.get(modelDir.getAbsolutePath(), MODEL_CONTENT_FILE_NAME).toFile();
     }
@@ -51,6 +49,7 @@ public class ModelWriter {
                         fw.write("\n");
                     }
                 } else {
+
                     for (String word : sspace.getWords()) {
                         Vector<Double> vector = sspace.getVector(word);
                         double[] newVector = convertToDenseVector(vector);

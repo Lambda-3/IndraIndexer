@@ -1,7 +1,6 @@
 package org.lambda3.indra.loader;
 
 import org.lambda3.indra.indexer.MetadataWriter;
-import org.lambda3.indra.indexer.ModelWriter;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -27,8 +26,7 @@ public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraL
             this.modelDir.mkdirs();
         }
 
-        MetadataWriter.write(Paths.get(this.modelDir.getAbsolutePath(), ModelWriter.MODEL_METADATA_FILE_NAME).toFile(),
-                rsm.modelMetadata);
+        MetadataWriter.write(this.modelDir.getAbsolutePath(), rsm.modelMetadata);
 
 
     }
