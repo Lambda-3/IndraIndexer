@@ -1,5 +1,6 @@
 package org.lambda3.indra.pp;
 
+import org.apache.commons.io.FileUtils;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.CorpusLoader;
 import org.lambda3.indra.corpus.Document;
@@ -21,7 +22,6 @@ public class IndraPreProcessorCommandLineTest {
         File outputTmpDir = null;
         try {
             outputTmpDir = Files.createTempDirectory("indra-pp-test").toFile();
-            outputTmpDir.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,6 +54,8 @@ public class IndraPreProcessorCommandLineTest {
         for (int i = 0; i < manualDocuments.size(); i++) {
             Assert.assertEquals(generatedDocuments.get(i), manualDocuments.get(i));
         }
+
+        FileUtils.deleteDirectory(outputTmpDir);
     }
 
     @Test
