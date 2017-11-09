@@ -15,11 +15,11 @@ import java.util.regex.Pattern;
 
 public class PlainTextDocumentGeneratorTest {
 
-    public static final String BASE_DIR = PlainTextDocumentGeneratorTest.class.getClassLoader()
+    static final String BASE_DIR = PlainTextDocumentGeneratorTest.class.getClassLoader()
             .getResource("plainTextCorpus").getPath();
-    public static final String INPUT_DIR = Paths.get(BASE_DIR, "input").toString();
+    static final String INPUT_DIR = Paths.get(BASE_DIR, "input").toString();
 
-    public List<Document> countDocuments(String dir, DocumentGenerator.ContentType type, String regex) {
+    private List<Document> countDocuments(String dir, DocumentGenerator.ContentType type, String regex) {
         CorpusMetadata md = CorpusMetadataBuilder.newCorpusMetadata("pessoa", "pt").build();
 
         Pattern pattern = (regex != null ? Pattern.compile(regex) : null);
@@ -31,6 +31,7 @@ public class PlainTextDocumentGeneratorTest {
             docs.add(generator.next());
 
         }
+
         return docs;
     }
 
