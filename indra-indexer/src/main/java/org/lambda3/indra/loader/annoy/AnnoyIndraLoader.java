@@ -26,7 +26,13 @@ public class AnnoyIndraLoader implements IndraLoader {
         try {
             VectorIterator vectors = rsm.getVectorIterator();
             while (vectors.hasNext()) {
-                Float[] doubleArray = ArrayUtils.toObject((float[]) vectors.next().content);
+                double[] vecDouble = vectors.next().content.toArray();
+                float[] vecFloat = new float[vecDouble.length];
+
+                for (int i=0; i< vecDouble.length; i++)
+                    vecFloat[i] = (float)vecDouble[i];
+
+                Float[] doubleArray = ArrayUtils.toObject(vecFloat);
                 List<Float> vec = Arrays.asList(doubleArray);
                 allVecs.add(vec);
 
@@ -36,10 +42,9 @@ public class AnnoyIndraLoader implements IndraLoader {
             e.printStackTrace();
         }
 
+        String filename = String.format("./?.annoy", rsm.modelMetadata.corpusMetadata.corpusName);
 
-        String filename = String.format("./" + rsm.modelMetadata.corpusMetadata.corpusName + ".annoy");
-
-        Annoy.newIndex(rsm.modelMetadata.dimensions)
+        Annoy.newIndex((int)rsm.modelMetadata.dimensions)
                 .addAllItems(allVecs)
                 .build(NTREES)
                 .save(filename);
