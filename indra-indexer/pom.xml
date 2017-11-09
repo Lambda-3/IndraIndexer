@@ -41,6 +41,13 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.4.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.spotify/annoy-jni -->
+        <dependency>
+            <groupId>com.spotify</groupId>
+            <artifactId>annoy-jni</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>
