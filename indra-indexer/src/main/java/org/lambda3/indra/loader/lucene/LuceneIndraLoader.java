@@ -11,15 +11,14 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
 import org.lambda3.indra.loader.SparseVector;
 import org.lambda3.indra.loader.VectorIterator;
 import org.lambda3.indra.model.ModelMetadata;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -54,14 +53,11 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     private Document createSparseDocument(SparseVector sv) throws IOException {
         Document doc = new Document();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(sv.content);
+        Map<Integer, Double> vecMap = RealVectorUtil.vectorToMap(sv.content);
 
-        doc.add(new StoredField(LuceneVectorSpace.VECTOR_FIELD, bos.toByteArray()));
+        doc.add(new StoredField(LuceneVectorSpace.VECTOR_FIELD, BinaryCodecs.marshall(vecMap)));
         doc.add(new StringField(LuceneVectorSpace.TERM_FIELD, sv.term, Field.Store.YES));
 
-        Map<Integer, Double> vecMap = RealVectorUtil.vectorToMap(sv.content);
         for (int i : vecMap.keySet()) {
             doc.add(new StringField(LuceneVectorSpace.INDEXES_FIELD, i + "", Field.Store.YES));
         }
@@ -73,4 +69,5 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     public void close() throws IOException {
         this.writer.close();
     }
+
 }

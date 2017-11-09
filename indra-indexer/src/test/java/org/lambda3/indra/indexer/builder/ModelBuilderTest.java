@@ -62,7 +62,7 @@ public class ModelBuilderTest {
             LatentSemanticAnalysisBuilder builder = new LatentSemanticAnalysisBuilder(baseDir, DIM);
             testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
-            Assert.fail();
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class ModelBuilderTest {
             return esa;
 
         } catch (IOException e) {
-            Assert.fail();
+            Assert.fail(e.getMessage());
         }
 
         return null;
@@ -111,7 +111,7 @@ public class ModelBuilderTest {
             Word2VecModelBuilder builder = new Word2VecModelBuilder(baseDir, DIM, 5, 5);
             testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
-            Assert.fail();
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class ModelBuilderTest {
             GloveModelBuilder builder = new GloveModelBuilder(baseDir, DIM, 5, 5);
             testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
-            Assert.fail();
+            Assert.fail(e.getMessage());
         }
     }
 
