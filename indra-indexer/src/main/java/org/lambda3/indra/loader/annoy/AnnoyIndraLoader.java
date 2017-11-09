@@ -30,8 +30,10 @@ public class AnnoyIndraLoader implements IndraLoader {
     @Override
     public void load(RawSpaceModel rsm) {
 
-        List<List<Float>> allVecs = new ArrayList<>();
         List<String> allItems = new ArrayList<>();
+
+        Annoy.Builder annoyBuilder = Annoy.newIndex((int)rsm.modelMetadata.dimensions);
+        int indexer = 0;
         try {
             VectorIterator vectors = rsm.getVectorIterator();
             while (vectors.hasNext()) {
@@ -44,9 +46,10 @@ public class AnnoyIndraLoader implements IndraLoader {
 
                 Float[] doubleArray = ArrayUtils.toObject(vecFloat);
                 List<Float> vec = Arrays.asList(doubleArray);
-                allVecs.add(vec);
+                annoyBuilder.addItem(indexer, vec);
+                //allVecs.add(vec);
                 allItems.add(vector.term);
-
+                indexer+=1;
             }
 
         } catch (FileNotFoundException e) {
@@ -62,16 +65,10 @@ public class AnnoyIndraLoader implements IndraLoader {
         String modelDir = modelDirFile.getAbsolutePath();
 
         File fileAnnoy =  Paths.get(modelDir, AnnoyVectorSpace.TREE_FILE).toFile();
-
-        Annoy.newIndex((int)rsm.modelMetadata.dimensions)
-                .addAllItems(allVecs)
-                .build(NTREES)
-                .save(fileAnnoy.toString());
+        annoyBuilder.build(NTREES).save(fileAnnoy.toString());
 
         File fileMapping =  Paths.get(modelDir, AnnoyVectorSpace.WORD_MAPPING_FILE).toFile();
         saveMapping(fileMapping,allItems);
-
-        System.out.println(fileMapping);
 
     }
 
