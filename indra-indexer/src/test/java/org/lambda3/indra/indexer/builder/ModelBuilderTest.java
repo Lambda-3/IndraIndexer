@@ -18,8 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.DoubleStream;
 
@@ -37,33 +36,35 @@ public class ModelBuilderTest {
         return Paths.get(baseDir, metadata.getConciseName()).toString();
     }
 
-    public void testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
+    public RawSpaceModel<DenseVector> testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
         String modelDir = buildModel(builder, baseDir);
 
         ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
-        RawSpaceModel<DenseVector> lsa = new RawSpaceModel<>(modelDir, mm, DenseVector.class);
+        RawSpaceModel<DenseVector> denseModel = new RawSpaceModel<>(modelDir, mm, DenseVector.class);
 
-        Assert.assertFalse(lsa.isSparse());
-        Assert.assertEquals(mm, lsa.modelMetadata);
+        Assert.assertFalse(denseModel.isSparse());
+        Assert.assertEquals(mm, denseModel.modelMetadata);
 
-        VectorIterator<DenseVector> vectors = lsa.getVectorIterator();
+        VectorIterator<DenseVector> vectors = denseModel.getVectorIterator();
         if (vectors.hasNext()) {
             DenseVector vector = vectors.next();
             Assert.assertEquals(DIM, vector.content.getDimension());
             Assert.assertTrue(DoubleStream.of(vector.content.toArray()).sum() != 0);
         }
+
+        return denseModel;
     }
 
     @Test
-    public void testLatentSemanticAnalysisBuilder() {
+    public RawSpaceModel<DenseVector> testLatentSemanticAnalysisBuilder(String baseDir) {
         try {
-            String baseDir = Files.createTempDirectory("indra-lsa-test").toString();
             tmpDir.add(new File(baseDir));
             LatentSemanticAnalysisBuilder builder = new LatentSemanticAnalysisBuilder(baseDir, DIM);
-            testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
             Assert.fail();
         }
+        return null;
     }
 
     public RawSpaceModel<SparseVector> createExplicitSemanticAnalysisBuilder() {
@@ -104,27 +105,27 @@ public class ModelBuilderTest {
     }
 
     @Test
-    public void testWord2VecModelBuilder() {
+    public  RawSpaceModel<DenseVector> testWord2VecModelBuilder(String baseDir) {
         try {
-            String baseDir = Files.createTempDirectory("indra-w2v-test").toString();
             tmpDir.add(new File(baseDir));
             Word2VecModelBuilder builder = new Word2VecModelBuilder(baseDir, DIM, 5, 5);
-            testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
             Assert.fail();
         }
+        return null;
     }
 
     @Test
-    public void testGloveModelBuilder() {
+    public RawSpaceModel<DenseVector> testGloveModelBuilder(String baseDir) {
         try {
-            String baseDir = Files.createTempDirectory("indra-glove-test").toString();
             tmpDir.add(new File(baseDir));
             GloveModelBuilder builder = new GloveModelBuilder(baseDir, DIM, 5, 5);
-            testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder);
         } catch (IOException e) {
             Assert.fail();
         }
+        return null;
     }
 
     @AfterTest
