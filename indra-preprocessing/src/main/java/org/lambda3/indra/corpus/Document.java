@@ -1,5 +1,6 @@
 package org.lambda3.indra.corpus;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 public class Document {
@@ -12,8 +13,12 @@ public class Document {
     }
 
     public static Document simpleDocument(String content) {
-        Document doc = new Document(0, content);
-        return doc;
+        return new Document(0, content);
+    }
+
+    public static Document simpleDocument(Iterator<String> content) {
+        Iterable<String> iterable = () -> content;
+        return Document.simpleDocument(String.join(" ", iterable));
     }
 
     @Override

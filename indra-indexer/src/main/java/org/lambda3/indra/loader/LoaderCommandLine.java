@@ -4,12 +4,12 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.indexer.IndraIndexerCommandLine;
-import org.lambda3.indra.indexer.MetadataWriter;
 import org.lambda3.indra.loader.annoy.AnnoyIndraLoader;
 import org.lambda3.indra.loader.lucene.LuceneIndraLoader;
 import org.lambda3.indra.loader.mongo.MongoIndraLoader;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.IOException;
 
@@ -38,11 +38,11 @@ public class LoaderCommandLine {
         }
 
         try {
-            ModelMetadata metadata = MetadataWriter.load(indexCmd.inputModelDir, ModelMetadata.class);
+            ModelMetadata metadata = MetadataIO.load(indexCmd.inputModelDir, ModelMetadata.class);
 
             IndraLoader loader;
             if (indexCmd.targetPlatform.equalsIgnoreCase("LUCENE"))
-                loader = new LuceneIndraLoader(indexCmd.output);
+                loader = new LuceneIndraLoader(indexCmd.output, metadata);
             else if (indexCmd.targetPlatform.equalsIgnoreCase("ANNOY"))
                 loader = new AnnoyIndraLoader();
             else if (indexCmd.targetPlatform.equalsIgnoreCase("MONGO"))

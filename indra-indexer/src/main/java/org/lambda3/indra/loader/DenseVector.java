@@ -1,19 +1,22 @@
 package org.lambda3.indra.loader;
 
-public class DenseVector extends Vector<double[]> {
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
+public class DenseVector extends Vector {
 
     public DenseVector(String content) {
-        super(content.split("\t"));
+        super(-1, content.split("\t"));
     }
 
     @Override
-    public double[] digestContent(String content) {
+    public RealVector digestContent(String content) {
         String[] parts = content.split(" ");
         double[] vector = new double[parts.length];
         for (int i = 0; i < parts.length; i++) {
             vector[i] = Double.parseDouble(parts[i]);
         }
 
-        return vector;
+        return new ArrayRealVector(vector, false);
     }
 }

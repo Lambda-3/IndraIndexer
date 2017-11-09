@@ -41,6 +41,7 @@
         <loader.mainClass>org.lambda3.indra.loader.org.lambda3.indra.loader.mongo.MongoIndraLoader</loader.mainClass>
         <license.licenseName>mit</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
+        <main.indra.version>2.2.0-rc1</main.indra.version>
     </properties>
 
     <build>
@@ -171,12 +172,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-core</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>

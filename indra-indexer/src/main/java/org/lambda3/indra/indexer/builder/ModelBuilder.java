@@ -1,7 +1,7 @@
 package org.lambda3.indra.indexer.builder;
 
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.corpus.Corpus;
+import org.lambda3.indra.model.ModelMetadata;
 
 public abstract class ModelBuilder {
     //TODO write warning when a paramter is NOT_APPLIED but is was provided by the command line.

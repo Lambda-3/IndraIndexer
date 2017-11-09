@@ -5,7 +5,8 @@ import edu.ucla.sspace.vector.Vector;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.MetadataIO;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +17,6 @@ import java.util.Map;
 
 public class ModelWriter {
 
-    public static final String MODEL_METADATA_FILE_NAME = "model.metadata";
     public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
 
     private static File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
@@ -25,7 +25,7 @@ public class ModelWriter {
             modelDir.mkdirs();
         }
 
-        MetadataWriter.write(modelDir.getAbsolutePath(), metadata);
+        MetadataIO.write(modelDir.getAbsolutePath(), metadata);
 
         return Paths.get(modelDir.getAbsolutePath(), MODEL_CONTENT_FILE_NAME).toFile();
     }

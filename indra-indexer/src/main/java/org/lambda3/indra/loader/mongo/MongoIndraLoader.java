@@ -5,11 +5,11 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.mongodb.MongoClientURI;
-import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.indexer.DenseVectorGenerator;
 import org.lambda3.indra.indexer.Word2VecGenerator;
 import org.lambda3.indra.loader.IndraLoader;
 import org.lambda3.indra.loader.RawSpaceModel;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +102,8 @@ public final class MongoIndraLoader implements IndraLoader {
         int maxWordsLen = 100;
 
         ModelMetadata buildMetadata() {
-            return ModelMetadata.createDefault()
+            return null;
+            /*return ModelMetadata.createDefault()
                     .loaderId(LOADER_ID) // Could be improved to use the project version
                     .sparse(false) //w2v is always dense
                     .applyStemmer(applyStemmer)
@@ -113,6 +114,7 @@ public final class MongoIndraLoader implements IndraLoader {
                     .minWordLength(minWordsLen)
                     .maxWordLength(maxWordsLen)
                     .dimensions(dimensions);
+                    */
         }
 
         @Override

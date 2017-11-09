@@ -1,25 +1,24 @@
 package org.lambda3.indra.loader;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.math3.linear.OpenMapRealVector;
+import org.apache.commons.math3.linear.RealVector;
 
-public class SparseVector extends Vector<Map<Integer, Double>> {
+public class SparseVector extends Vector {
 
-    public SparseVector(String content) {
-        super(content.split("\t"));
+    public SparseVector(int dimensions, String content) {
+        super(dimensions, content.split("\t"));
     }
 
     @Override
-    public Map<Integer, Double> digestContent(String content) {
-        Map<Integer, Double> map = new HashMap<>();
+    public RealVector digestContent(String content) {
+        RealVector vector = new OpenMapRealVector(dimensions);
 
         String[] parts = content.split(" ");
         for (String part : parts) {
             String[] np = part.split(":");
-
-            map.put(Integer.parseInt(np[0]), Double.parseDouble(np[1]));
+            vector.addToEntry(Integer.parseInt(np[0]), Double.parseDouble(np[1]));
         }
 
-        return map;
+        return vector;
     }
 }

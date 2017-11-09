@@ -1,10 +1,10 @@
 package org.lambda3.indra.indexer.builder;
 
 import edu.ucla.sspace.common.SemanticSpace;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.Document;
 import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
