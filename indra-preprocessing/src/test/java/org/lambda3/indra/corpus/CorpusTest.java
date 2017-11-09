@@ -1,5 +1,6 @@
 package org.lambda3.indra.corpus;
 
+import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -75,6 +76,8 @@ public class CorpusTest {
         for (int i = 0; i < inDocs.size(); i++) {
             Assert.assertEquals(inDocs.get(i).content, writtenDocs.get(i).content);
         }
+
+        FileUtils.deleteDirectory(tmpDir);
     }
 
     @Test

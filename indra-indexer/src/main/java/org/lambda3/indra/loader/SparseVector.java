@@ -15,8 +15,8 @@ public class SparseVector extends Vector {
 
         String[] parts = content.split(" ");
         for (String part : parts) {
-            String[] np = part.split(":");
-            vector.addToEntry(Integer.parseInt(np[0]), Double.parseDouble(np[1]));
+            int sep = part.lastIndexOf(":");
+            vector.addToEntry(Integer.parseInt(part.substring(0, sep)), Double.parseDouble(part.substring(sep + 1)));
         }
 
         return vector;
