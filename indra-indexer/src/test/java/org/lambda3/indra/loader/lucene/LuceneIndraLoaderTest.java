@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.AnalyzedTerm;
 import org.lambda3.indra.composition.SumVectorComposer;
-import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
 import org.lambda3.indra.loader.RawSpaceModel;
@@ -37,7 +36,6 @@ public class LuceneIndraLoaderTest {
             String modelDir = Paths.get(baseDir, esa.modelMetadata.getConciseName()).toString();
             LuceneVectorSpace vs = new LuceneVectorSpace(modelDir);
             Assert.assertEquals(esa.modelMetadata, vs.getMetadata());
-
 
             VectorIterator<SparseVector> iter = esa.getVectorIterator();
 

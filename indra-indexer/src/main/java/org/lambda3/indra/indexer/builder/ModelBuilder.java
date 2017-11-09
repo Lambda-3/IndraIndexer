@@ -1,6 +1,7 @@
 package org.lambda3.indra.indexer.builder;
 
 import org.lambda3.indra.corpus.Corpus;
+import org.lambda3.indra.exception.IndraRuntimeException;
 import org.lambda3.indra.model.ModelMetadata;
 
 public abstract class ModelBuilder {
@@ -11,6 +12,7 @@ public abstract class ModelBuilder {
     int dimensions;
     int windowSize;
     int minWordFrequency;
+    long vocabSize;
 
     ModelBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
         this.outDir = outDir;
@@ -22,8 +24,17 @@ public abstract class ModelBuilder {
     public abstract ModelMetadata build(Corpus corpus);
 
     ModelMetadata getModelMetadata(Corpus corpus) {
-        return new ModelMetadata(getModelName(), isSparse(), this.dimensions,
-                this.windowSize, this.minWordFrequency, corpus.metadata);
+        if (dimensions <= 0) {
+            throw new IndraRuntimeException("dimensions should be greater than 0 (dim=" + dimensions + ")");
+        }
+
+        if (vocabSize <= 0) {
+            throw new IndraRuntimeException("vocabSize should be greater than 0 (vocabSize=" + vocabSize + ")");
+        }
+
+
+        return new ModelMetadata(getModelName(), isSparse(), this.dimensions, this.vocabSize, this.windowSize,
+                this.minWordFrequency, corpus.metadata);
     }
 
     public abstract boolean isSparse();

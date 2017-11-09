@@ -18,7 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.DoubleStream;
 
@@ -55,9 +56,9 @@ public class ModelBuilderTest {
         return denseModel;
     }
 
-    @Test
-    public RawSpaceModel<DenseVector> testLatentSemanticAnalysisBuilder(String baseDir) {
+    public RawSpaceModel<DenseVector> createLatentSemanticAnalysisBuilder() {
         try {
+            String baseDir = Files.createTempDirectory("indra-lsa-test").toString();
             tmpDir.add(new File(baseDir));
             LatentSemanticAnalysisBuilder builder = new LatentSemanticAnalysisBuilder(baseDir, DIM);
             return testDenseBuilder(baseDir, builder);
@@ -99,14 +100,9 @@ public class ModelBuilderTest {
         return null;
     }
 
-    @Test
-    public void testExplicitSemanticAnalysisBuilder() {
-        createExplicitSemanticAnalysisBuilder();
-    }
-
-    @Test
-    public  RawSpaceModel<DenseVector> testWord2VecModelBuilder(String baseDir) {
+    public  RawSpaceModel<DenseVector> createWord2VecModelBuilder() {
         try {
+            String baseDir = Files.createTempDirectory("indra-w2v-test").toString();
             tmpDir.add(new File(baseDir));
             Word2VecModelBuilder builder = new Word2VecModelBuilder(baseDir, DIM, 5, 5);
             return testDenseBuilder(baseDir, builder);
@@ -116,9 +112,9 @@ public class ModelBuilderTest {
         return null;
     }
 
-    @Test
-    public RawSpaceModel<DenseVector> testGloveModelBuilder(String baseDir) {
+    public RawSpaceModel<DenseVector> createGloveModelBuilder() {
         try {
+            String baseDir = Files.createTempDirectory("indra-glove-test").toString();
             tmpDir.add(new File(baseDir));
             GloveModelBuilder builder = new GloveModelBuilder(baseDir, DIM, 5, 5);
             return testDenseBuilder(baseDir, builder);
@@ -126,6 +122,26 @@ public class ModelBuilderTest {
             Assert.fail(e.getMessage());
         }
         return null;
+    }
+
+    @Test
+    public void testExplicitSemanticAnalysisBuilder() {
+        createExplicitSemanticAnalysisBuilder();
+    }
+
+    @Test
+    public void testGloveModelBuilder() {
+        createGloveModelBuilder();
+    }
+
+    @Test
+    public void testWord2VecModelBuilder() {
+        createWord2VecModelBuilder();
+    }
+
+    @Test
+    public void testLatentSemanticAnalysisBuilder() {
+        createLatentSemanticAnalysisBuilder();
     }
 
     @AfterTest

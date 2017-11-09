@@ -35,6 +35,7 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
             sspace.processSpace(new Properties());
             processPosRunningInformation(sspace);
 
+            this.vocabSize = sspace.getWords().size();
             ModelMetadata metadata = getModelMetadata(corpus);
             ModelWriter.save(outDir, metadata, sspace);
 

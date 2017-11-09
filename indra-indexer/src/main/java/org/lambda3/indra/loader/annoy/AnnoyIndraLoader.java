@@ -1,106 +1,82 @@
 package org.lambda3.indra.loader.annoy;
 
 import com.spotify.annoy.jni.base.Annoy;
-import com.spotify.annoy.jni.base.AnnoyIndex;
-import edu.ucla.sspace.vector.*;
-import org.apache.commons.lang3.ArrayUtils;
 import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
-import org.lambda3.indra.loader.*;
-import org.lambda3.indra.loader.Vector;
+import org.lambda3.indra.exception.IndraRuntimeException;
+import org.lambda3.indra.loader.DenseVector;
+import org.lambda3.indra.loader.LocalStoredIndraLoader;
+import org.lambda3.indra.loader.VectorIterator;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-public class AnnoyIndraLoader implements IndraLoader {
+public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
-    private final Integer NTREES = 1000;
-    private String baseDir;
+    private static final Integer NTREES = 1000;
+    private int dimensions;
+    private long vocabSize;
+    private String indexFile;
+    private File mappingsFile;
 
-    public AnnoyIndraLoader(String baseDir){
-        this.baseDir = baseDir;
+    public AnnoyIndraLoader(String baseDir, ModelMetadata metadata) {
+        super(baseDir, metadata);
+        this.dimensions = (int) metadata.dimensions;
+        this.vocabSize = metadata.vocabSize;
+        this.indexFile = Paths.get(this.modelDir, AnnoyVectorSpace.TREE_FILE).toString();
+        this.mappingsFile = Paths.get(this.modelDir, AnnoyVectorSpace.WORD_MAPPING_FILE).toFile();
+    }
+
+    private List<Float> toList(double[] vector) {
+        List<Float> lf = new ArrayList<>(vector.length);
+
+        for (double aVector : vector) {
+            lf.add((float) aVector);
+        }
+
+        return lf;
     }
 
     @Override
-    public void load(RawSpaceModel rsm) {
+    protected void doLoad(VectorIterator<DenseVector> iter) {
+        Annoy.Builder annoyBuilder = Annoy.newIndex(dimensions);
 
-        List<String> allItems = new ArrayList<>();
-
-        Annoy.Builder annoyBuilder = Annoy.newIndex((int)rsm.modelMetadata.dimensions);
-        int indexer = 0;
+        FileWriter fw = null;
         try {
-            VectorIterator vectors = rsm.getVectorIterator();
-            while (vectors.hasNext()) {
-                Vector vector = vectors.next();
-                double[] vecDouble = vector.content.toArray();
-                float[] vecFloat = new float[vecDouble.length];
+            fw = new FileWriter(this.mappingsFile);
+            fw.write(vocabSize + "\n");
 
-                for (int i=0; i< vecDouble.length; i++)
-                    vecFloat[i] = (float)vecDouble[i];
+            int counter = 0;
+            while (iter.hasNext()) {
+                DenseVector dv = iter.next();
+                List<Float> vec = toList(dv.content.toArray());
+                annoyBuilder.addItem(counter, vec);
 
-                Float[] doubleArray = ArrayUtils.toObject(vecFloat);
-                List<Float> vec = Arrays.asList(doubleArray);
-                annoyBuilder.addItem(indexer, vec);
-                //allVecs.add(vec);
-                allItems.add(vector.term);
-                indexer+=1;
+                fw.write(String.format("%d|%s", counter, dv.term));
+                fw.write("\n");
+
+                counter++;
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            annoyBuilder.build(NTREES).save(indexFile);
+        } catch (IOException e) {
+            throw new IndraRuntimeException("error indxing annoy", e);
+        } finally {
+            try {
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-
-        File modelDirFile = Paths.get(baseDir, rsm.modelMetadata.getConciseName()).toFile();
-        if (!modelDirFile.exists()) {
-            modelDirFile.mkdirs();
-        }
-
-        String modelDir = modelDirFile.getAbsolutePath();
-
-        File fileAnnoy =  Paths.get(modelDir, AnnoyVectorSpace.TREE_FILE).toFile();
-        annoyBuilder.build(NTREES).save(fileAnnoy.toString());
-
-        File fileMapping =  Paths.get(modelDir, AnnoyVectorSpace.WORD_MAPPING_FILE).toFile();
-        saveMapping(fileMapping,allItems);
 
     }
 
     @Override
     public void close() throws IOException {
-        //TODO implement me.
-    }
-
-    public void saveMapping(File file, List<String> allItems){
-        FileWriter fw;
-        try {
-            fw = new FileWriter(file);
-
-            try {
-                fw.write(String.format("%d", allItems.size()));
-                fw.write("\n");
-                    for (int i = 0; i < allItems.size(); i++) {
-                        fw.write(String.format("%d|%s", i,allItems.get(i)));
-                        fw.write("\n");
-                    }
-
-
-                fw.flush();
-                fw.close();
-            } finally {
-                fw.close();
-            }
-
-        } catch (IOException e) {
-            //TODO review here - log
-            throw new RuntimeException(e);
-        }
-
+        //do nothing
     }
 }

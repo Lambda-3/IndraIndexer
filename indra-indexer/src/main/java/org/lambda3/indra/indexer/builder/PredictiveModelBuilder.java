@@ -32,6 +32,7 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
                 windowSize(windowSize).layerSize(dimensions).vocabCache(cache).iterate(getSentenceIterator(corpus)).build();
         vectors.fit();
 
+        this.vocabSize = cache.vocabWords().size();
         ModelMetadata metadata = getModelMetadata(corpus);
         ModelWriter.save(this.outDir, metadata, cache, vectors);
 
