@@ -31,7 +31,6 @@ public class AnnoyIndraLoader implements IndraLoader {
     public void load(RawSpaceModel rsm) {
 
         List<String> allItems = new ArrayList<>();
-
         Annoy.Builder annoyBuilder = Annoy.newIndex((int)rsm.modelMetadata.dimensions);
         int indexer = 0;
         try {
@@ -47,7 +46,6 @@ public class AnnoyIndraLoader implements IndraLoader {
                 Float[] doubleArray = ArrayUtils.toObject(vecFloat);
                 List<Float> vec = Arrays.asList(doubleArray);
                 annoyBuilder.addItem(indexer, vec);
-                //allVecs.add(vec);
                 allItems.add(vector.term);
                 indexer+=1;
             }
@@ -69,6 +67,7 @@ public class AnnoyIndraLoader implements IndraLoader {
 
         File fileMapping =  Paths.get(modelDir, AnnoyVectorSpace.WORD_MAPPING_FILE).toFile();
         saveMapping(fileMapping,allItems);
+        allItems.clear();
 
     }
 
