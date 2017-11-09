@@ -44,7 +44,7 @@ public class LoaderCommandLine {
             if (indexCmd.targetPlatform.equalsIgnoreCase("LUCENE"))
                 loader = new LuceneIndraLoader(indexCmd.output, metadata);
             else if (indexCmd.targetPlatform.equalsIgnoreCase("ANNOY"))
-                loader = new AnnoyIndraLoader();
+                loader = new AnnoyIndraLoader(indexCmd.output);
             else if (indexCmd.targetPlatform.equalsIgnoreCase("MONGO"))
                 loader = new MongoIndraLoader();
             else
