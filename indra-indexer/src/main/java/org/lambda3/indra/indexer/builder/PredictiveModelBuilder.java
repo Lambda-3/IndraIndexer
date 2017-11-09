@@ -1,5 +1,6 @@
 package org.lambda3.indra.indexer.builder;
 
+import org.deeplearning4j.models.embeddings.loader.VectorsConfiguration;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.sequencevectors.interfaces.SequenceIterator;
 import org.deeplearning4j.models.sequencevectors.iterators.AbstractSequenceIterator;
@@ -18,20 +19,17 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
 
     private SequenceVectors.Builder<VocabWord> builder;
 
-    PredictiveModelBuilder(String outDir, int dimensions, int windowSize,
-                           int minWordFrequency, SequenceVectors.Builder<VocabWord> builder) {
+    PredictiveModelBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
         super(outDir, dimensions, windowSize, minWordFrequency);
-        this.builder = builder;
+        this.builder = getBuilder();
     }
 
     @Override
     public ModelMetadata build(Corpus corpus) {
 
-        SequenceIterator<VocabWord> iter = getSentenceIterator(corpus);
         VocabCache<VocabWord> cache = new AbstractCache.Builder<VocabWord>().build();
-
-        SequenceVectors<VocabWord> vectors = this.builder.minWordFrequency(minWordFrequency).vocabCache(cache).
-                windowSize(windowSize).layerSize(dimensions).iterate(iter).build();
+        SequenceVectors<VocabWord> vectors = builder.iterations(1).minWordFrequency(minWordFrequency).
+                windowSize(windowSize).layerSize(dimensions).vocabCache(cache).iterate(getSentenceIterator(corpus)).build();
         vectors.fit();
 
         ModelMetadata metadata = getModelMetadata(corpus);
@@ -40,11 +38,18 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
         return metadata;
     }
 
-    private SequenceIterator<VocabWord> getSentenceIterator(Corpus corpus) {
+    VectorsConfiguration getConfiguration() {
+        VectorsConfiguration config = new VectorsConfiguration();
+        config.setSeed(31);
+        return config;
+    }
 
-        SentenceIterator sentenceIterator = new SentenceIterator() {
+    private SentenceIterator getIterator(Corpus corpus) {
+
+        return new SentenceIterator() {
+
             @Override
-            public String nextSentence() {
+            public synchronized String nextSentence() {
                 return corpus.getDocumentsIterator().next().content;
             }
 
@@ -74,9 +79,17 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
             }
         };
 
+    }
+
+    private SequenceIterator<VocabWord> getSentenceIterator(Corpus corpus) {
+        SentenceIterator sentenceIterator = getIterator(corpus);
+
         DefaultTokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
         SentenceTransformer transformer = new SentenceTransformer.Builder().iterator(sentenceIterator)
                 .tokenizerFactory(tokenizerFactory).allowMultithreading(false).build();
+
         return new AbstractSequenceIterator.Builder<>(transformer).build();
     }
+
+    public abstract SequenceVectors.Builder<VocabWord> getBuilder();
 }

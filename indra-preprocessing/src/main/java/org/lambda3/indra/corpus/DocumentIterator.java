@@ -33,7 +33,7 @@ public class DocumentIterator implements Iterator<Document> {
     }
 
     @Override
-    public Document next() {
+    public synchronized Document next() {
         try {
             switch (type) {
                 case LINE:
@@ -92,7 +92,6 @@ public class DocumentIterator implements Iterator<Document> {
         } else {
             next = null;
         }
-
 
         return thisNext;
     }

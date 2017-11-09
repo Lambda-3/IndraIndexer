@@ -15,12 +15,12 @@ public class Corpus {
         reset();
     }
 
-    public Iterator<Document> getDocumentsIterator() {
+    public synchronized Iterator<Document> getDocumentsIterator() {
         return iter;
     }
 
 
-    public void reset(){
+    public synchronized void reset(){
         this.iter = new DocumentIterator(type, file);
     }
 }
