@@ -4,20 +4,23 @@ import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.indexer.DenseVectorGenerator;
+import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MongoVectorsSerializer {
     private static Logger logger = LoggerFactory.getLogger(MongoVectorsSerializer.class);
 
     public static void write(DenseVectorGenerator gen, MongoClientURI mongoURI, ModelMetadata metadata) {
 
-        if (metadata.isSparse()) { //TODO
+        if (metadata.sparse) { //TODO
             throw new UnsupportedOperationException("Sparse vectors not supported yet");
         }
 
@@ -41,16 +44,9 @@ public class MongoVectorsSerializer {
             while (it.hasNext()) {
                 Map.Entry<String, double[]> entry = it.next();
                 try {
-                    DBObject obj;
-
-                    if (!metadata.isBinary()) {
-                        obj = BasicDBObjectBuilder.start()
-                                .add("term", entry.getKey()).add("vector", entry.getValue()).get();
-                    } else {
-                        byte[] marshalledVector = BinaryCodecs.marshall(entry.getValue());
-                        obj = BasicDBObjectBuilder.start()
-                                .add("term", entry.getKey()).add("vector", marshalledVector).get();
-                    }
+                    byte[] marshalledVector = BinaryCodecs.marshall(entry.getValue());
+                    DBObject obj = BasicDBObjectBuilder.start()
+                            .add("term", entry.getKey()).add("vector", marshalledVector).get();
 
                     objects.add(obj);
                     c += 1;
@@ -60,8 +56,7 @@ public class MongoVectorsSerializer {
                         modelColl.insertMany(objects);
                         objects.clear();
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     logger.error("Fail process {}. Skipped.", entry.getKey(), e);
                 }
             }
@@ -75,26 +70,9 @@ public class MongoVectorsSerializer {
             modelColl.createIndex(new BasicDBObject("term", 1));
 
             logger.info("Updating metadata");
-            Document metaDoc = new Document(asMap(metadata));
+            Document metaDoc = new Document(metadata.asMap());
             metaColl.insertOne(metaDoc);
 
         }
     }
-
-    private static Map<String, Object> asMap(ModelMetadata metadata) {
-        return new HashMap<String, Object>(){{
-            put(ModelMetadata.SPARSE_PARAM, metadata.isSparse());
-            put(ModelMetadata.APPLY_STEMMER_PARAM, metadata.getApplyStemmer());
-            put(ModelMetadata.APPLY_STOP_WORDS_PARAM, metadata.isApplyStopWords());
-            put(ModelMetadata.REMOVE_ACCENTS_PARAM, metadata.isRemoveAccents());
-            put(ModelMetadata.APPLY_LOWERCASE_PARAM, metadata.isApplyLowercase());
-            put(ModelMetadata.BINARY_PARAM, metadata.isBinary());
-            put(ModelMetadata.MIN_WORD_LENGTH_PARAM, metadata.getMinWordLength());
-            put(ModelMetadata.MAX_WORD_LENGTH_PARAM, metadata.getMaxWordLength());
-            put(ModelMetadata.DIMENSIONS_PARAM, metadata.getDimensions());
-            put(ModelMetadata.STOP_WORDS_PARAM, metadata.getStopWords());
-            put(ModelMetadata.LOADER_ID_PARAM, metadata.getLoaderId());
-        }};
-    }
-
 }

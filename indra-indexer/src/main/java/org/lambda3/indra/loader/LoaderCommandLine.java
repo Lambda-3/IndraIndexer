@@ -4,18 +4,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import org.lambda3.indra.JSONUtil;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.indexer.IndraIndexerCommandLine;
-import org.lambda3.indra.indexer.ModelWriter;
 import org.lambda3.indra.loader.annoy.AnnoyIndraLoader;
 import org.lambda3.indra.loader.lucene.LuceneIndraLoader;
 import org.lambda3.indra.loader.mongo.MongoIndraLoader;
+import org.lambda3.indra.model.ModelMetadata;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Map;
 
 public class LoaderCommandLine {
 
@@ -42,13 +38,11 @@ public class LoaderCommandLine {
         }
 
         try {
-            File metadataFile = Paths.get(indexCmd.inputModelDir, ModelWriter.MODEL_METADATA_FILE_NAME).toFile();
-            Map<String, Object> map = JSONUtil.loadJSONAsMap(metadataFile);
-            ModelMetadata metadata = new ModelMetadata(map);
+            ModelMetadata metadata = MetadataIO.load(indexCmd.inputModelDir, ModelMetadata.class);
 
             IndraLoader loader;
             if (indexCmd.targetPlatform.equalsIgnoreCase("LUCENE"))
-                loader = new LuceneIndraLoader(indexCmd.output);
+                loader = new LuceneIndraLoader(indexCmd.output, metadata);
             else if (indexCmd.targetPlatform.equalsIgnoreCase("ANNOY"))
                 loader = new AnnoyIndraLoader();
             else if (indexCmd.targetPlatform.equalsIgnoreCase("MONGO"))

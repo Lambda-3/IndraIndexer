@@ -10,9 +10,11 @@ public class VectorIterator<V extends Vector> implements Iterator<V> {
 
     private final boolean sparse;
     private Iterator<String> iterator;
+    private int dimensions;
 
-    public VectorIterator(File vectorsFile, Class<V> clazz) throws FileNotFoundException {
+    public VectorIterator(File vectorsFile, long dimensions, Class<V> clazz) throws FileNotFoundException {
         this.sparse = clazz.equals(SparseVector.class);
+        this.dimensions = (int) dimensions;
         this.iterator = new BufferedReader(new FileReader(vectorsFile)).lines().iterator();
     }
 
@@ -26,7 +28,7 @@ public class VectorIterator<V extends Vector> implements Iterator<V> {
     public V next() {
         String content = iterator.next();
         if (this.sparse) {
-            return (V) new SparseVector(content);
+            return (V) new SparseVector(dimensions, content);
         } else {
             return (V) new DenseVector(content);
         }

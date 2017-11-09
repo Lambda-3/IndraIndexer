@@ -1,10 +1,10 @@
 package org.lambda3.indra.indexer.builder;
 
 import edu.ucla.sspace.common.SemanticSpace;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.Document;
 import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,12 +14,12 @@ import java.util.Properties;
 
 public abstract class SSpaceModelBuilder extends ModelBuilder {
 
-    SSpaceModelBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
-        super(outDir, dimensions, windowSize, minWordFrequency);
+    SSpaceModelBuilder(String outDir, int dimensions, int windowSize) {
+        super(outDir, dimensions, windowSize, NOT_APPLIED);
     }
 
     @Override
-    public void build(Corpus corpus) {
+    public ModelMetadata build(Corpus corpus) {
         SemanticSpace sspace = getSemanticSpace();
         Iterator<? extends Document> iter = corpus.getDocumentsIterator();
 
@@ -32,18 +32,19 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
                     sspace.processDocument(new BufferedReader(new StringReader(content)));
             }
 
-            sspace.processSpace(getProperties());
+            sspace.processSpace(new Properties());
             processPosRunningInformation(sspace);
 
             ModelMetadata metadata = getModelMetadata(corpus);
             ModelWriter.save(outDir, metadata, sspace);
 
+            return metadata;
+
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
-
-    public abstract Properties getProperties();
 
     public abstract SemanticSpace getSemanticSpace();
 

@@ -40,11 +40,14 @@ public class IndraIndexerCommandLine {
             ModelBuilder builder;
             Corpus corpus = CorpusLoader.load(indexCmd.corpusDir);
 
-            if (indexCmd.modelName.equalsIgnoreCase("ESA"))
-                builder = new ExplicitSemanticAnalysisBuilder(indexCmd.output, indexCmd.minWordFrequency);
-            else if (indexCmd.modelName.equalsIgnoreCase("LSA"))
-                builder = new LatentSemanticAnalysisBuilder(indexCmd.output, indexCmd.numOfDimensions,
-                        indexCmd.windowsSize, indexCmd.minWordFrequency);
+            if (indexCmd.modelName.equalsIgnoreCase("ESA")) {
+                if (indexCmd.numOfDimensions > 0) {
+                    System.out.println("WARN: 'numOfDimensions' was provided but it's value is ignored by ESA.");
+                }
+                builder = new ExplicitSemanticAnalysisBuilder(indexCmd.output);
+
+            } else if (indexCmd.modelName.equalsIgnoreCase("LSA"))
+                builder = new LatentSemanticAnalysisBuilder(indexCmd.output, indexCmd.numOfDimensions);
             else if (indexCmd.modelName.equalsIgnoreCase("GLOVE"))
                 builder = new GloveModelBuilder(indexCmd.output, indexCmd.numOfDimensions,
                         indexCmd.windowsSize, indexCmd.minWordFrequency);
@@ -84,7 +87,7 @@ public class IndraIndexerCommandLine {
         File corpusDir;
 
         @Parameter(names = {"-d", "--dimensions"}, required = true, description = "The number of dimensions.", order = 3)
-        int numOfDimensions;
+        int numOfDimensions = -1;
 
         @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 4)
         String output;

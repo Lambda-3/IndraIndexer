@@ -8,8 +8,8 @@ import java.util.Properties;
 
 public class ExplicitSemanticAnalysisBuilder extends SSpaceModelBuilder {
 
-    public ExplicitSemanticAnalysisBuilder(String outDir, int minWordFrequency) throws IOException {
-        super(outDir, -1, -1, minWordFrequency);
+    public ExplicitSemanticAnalysisBuilder(String outDir) throws IOException {
+        super(outDir, NOT_APPLIED, NOT_APPLIED);
     }
 
     @Override
@@ -20,12 +20,6 @@ public class ExplicitSemanticAnalysisBuilder extends SSpaceModelBuilder {
     @Override
     public String getModelName() {
         return "ESA";
-    }
-
-    @Override
-    public Properties getProperties() {
-        // no properties for ESA.
-        return new Properties();
     }
 
     @Override

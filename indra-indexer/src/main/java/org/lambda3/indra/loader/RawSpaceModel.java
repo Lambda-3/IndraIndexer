@@ -1,7 +1,7 @@
 package org.lambda3.indra.loader;
 
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +24,6 @@ public class RawSpaceModel<V extends Vector> {
     }
 
     public VectorIterator<V> getVectorIterator() throws FileNotFoundException {
-        return new VectorIterator<V>(this.vectorFileAbsolutePath, clazz);
+        return new VectorIterator<V>(this.vectorFileAbsolutePath, modelMetadata.dimensions, clazz);
     }
 }

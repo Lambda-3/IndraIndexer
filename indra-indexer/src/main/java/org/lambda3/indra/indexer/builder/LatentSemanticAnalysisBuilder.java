@@ -8,8 +8,8 @@ import java.util.Properties;
 
 public class LatentSemanticAnalysisBuilder extends SSpaceModelBuilder {
 
-    public LatentSemanticAnalysisBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
-        super(outDir, dimensions, windowSize, minWordFrequency);
+    public LatentSemanticAnalysisBuilder(String outDir, int dimensions) {
+        super(outDir, dimensions, NOT_APPLIED);
     }
 
     @Override
@@ -23,16 +23,9 @@ public class LatentSemanticAnalysisBuilder extends SSpaceModelBuilder {
     }
 
     @Override
-    public Properties getProperties() {
-        Properties properties = new Properties();
-        properties.put(LatentSemanticAnalysis.LSA_DIMENSIONS_PROPERTY, this.dimensions);
-        return properties;
-    }
-
-    @Override
     public SemanticSpace getSemanticSpace() {
         try {
-            return new LatentSemanticAnalysis();
+            return new LatentSemanticAnalysis(this.dimensions, true);
         } catch (IOException e) {
             //TODO trhow exception here
             e.printStackTrace();

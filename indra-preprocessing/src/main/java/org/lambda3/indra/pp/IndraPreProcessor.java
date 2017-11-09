@@ -31,7 +31,9 @@ public class IndraPreProcessor {
 
             while (generator.hasNext()) {
                 Document doc = generator.next();
-                writer.addDocument(pp.process(doc));
+
+                Iterable<String> iterable = () -> pp.process(doc.content);
+                writer.addDocument(new Document(doc.id, String.join(" ", iterable)));
             }
         } catch (IOException e) {
             e.printStackTrace();

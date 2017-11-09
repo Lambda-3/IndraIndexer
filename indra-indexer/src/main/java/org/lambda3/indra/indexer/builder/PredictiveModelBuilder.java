@@ -12,19 +12,20 @@ import org.deeplearning4j.text.sentenceiterator.SentencePreProcessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.model.ModelMetadata;
 
 public abstract class PredictiveModelBuilder extends ModelBuilder {
 
     private SequenceVectors.Builder<VocabWord> builder;
 
     PredictiveModelBuilder(String outDir, int dimensions, int windowSize,
-                                  int minWordFrequency, SequenceVectors.Builder<VocabWord> builder) {
+                           int minWordFrequency, SequenceVectors.Builder<VocabWord> builder) {
         super(outDir, dimensions, windowSize, minWordFrequency);
         this.builder = builder;
     }
 
     @Override
-    public void build(Corpus corpus) {
+    public ModelMetadata build(Corpus corpus) {
 
         SequenceIterator<VocabWord> iter = getSentenceIterator(corpus);
         VocabCache<VocabWord> cache = new AbstractCache.Builder<VocabWord>().build();
@@ -33,7 +34,10 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
                 windowSize(windowSize).layerSize(dimensions).iterate(iter).build();
         vectors.fit();
 
-        ModelWriter.save(this.outDir, getModelMetadata(corpus), cache, vectors);
+        ModelMetadata metadata = getModelMetadata(corpus);
+        ModelWriter.save(this.outDir, metadata, cache, vectors);
+
+        return metadata;
     }
 
     private SequenceIterator<VocabWord> getSentenceIterator(Corpus corpus) {
