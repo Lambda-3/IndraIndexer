@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.indexer.builder;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,46 +22,41 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
-import java.util.Objects;
+import edu.ucla.sspace.common.SemanticSpace;
+import edu.ucla.sspace.esa.ExplicitSemanticAnalysis;
 
-public class Document {
-    public final int id;
-    public final String content;
+import java.io.IOException;
+import java.util.Properties;
 
-    public Document(int id, String content) {
-        this.id = id;
-        this.content = content;
-    }
+public class ExplicitSemanticAnalysisBuilder extends SSpaceModelBuilder {
 
-    public static Document simpleDocument(String content) {
-        return new Document(0, content);
-    }
-
-    public static Document simpleDocument(Iterator<String> content) {
-        Iterable<String> iterable = () -> content;
-        return Document.simpleDocument(String.join(" ", iterable));
+    public ExplicitSemanticAnalysisBuilder(String outDir) throws IOException {
+        super(outDir, NOT_APPLIED, NOT_APPLIED);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Document document = (Document) o;
-        return id == document.id &&
-                Objects.equals(content, document.content);
+    public boolean isSparse() {
+        return true;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, content);
+    public String getModelName() {
+        return "ESA";
     }
 
     @Override
-    public String toString() {
-        return "Document{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                '}';
+    public SemanticSpace getSemanticSpace() {
+        try {
+            return new ExplicitSemanticAnalysis();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void processPosRunningInformation(SemanticSpace sspace) {
+        this.dimensions = sspace.getVectorLength();
     }
 }

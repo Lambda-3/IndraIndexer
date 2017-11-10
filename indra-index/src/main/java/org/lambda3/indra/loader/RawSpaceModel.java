@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.loader;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,27 +22,30 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
+import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.model.ModelMetadata;
+
 import java.io.File;
-public class Corpus {
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 
-    public final CorpusMetadata metadata;
-    private Iterator<Document> iter;
-    private DocumentGenerator.ContentType type;
-    private File file;
-    Corpus(CorpusMetadata metadata, DocumentGenerator.ContentType type, File file) {
-        this.metadata = metadata;
-        this.type = type;
-        this.file = file;
-        reset();
+public class RawSpaceModel<V extends Vector> {
+
+    public final ModelMetadata modelMetadata;
+    private File vectorFileAbsolutePath;
+    private Class<V> clazz;
+
+    public RawSpaceModel(String baseDir, ModelMetadata modelMetadata, Class<V> clazz) {
+        this.vectorFileAbsolutePath = Paths.get(baseDir, ModelWriter.MODEL_CONTENT_FILE_NAME).toFile();
+        this.modelMetadata = modelMetadata;
+        this.clazz = clazz;
     }
 
-    public synchronized Iterator<Document> getDocumentsIterator() {
-        return iter;
+    public boolean isSparse() {
+        return modelMetadata.sparse;
     }
 
-
-    public synchronized void reset(){
-        this.iter = new DocumentIterator(type, file);
+    public VectorIterator<V> getVectorIterator() throws FileNotFoundException {
+        return new VectorIterator<V>(this.vectorFileAbsolutePath, modelMetadata.dimensions, clazz);
     }
 }

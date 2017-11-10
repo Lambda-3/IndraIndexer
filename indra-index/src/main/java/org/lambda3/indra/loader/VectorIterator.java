@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.loader;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,27 +22,37 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
+import java.io.BufferedReader;
 import java.io.File;
-public class Corpus {
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Iterator;
 
-    public final CorpusMetadata metadata;
-    private Iterator<Document> iter;
-    private DocumentGenerator.ContentType type;
-    private File file;
-    Corpus(CorpusMetadata metadata, DocumentGenerator.ContentType type, File file) {
-        this.metadata = metadata;
-        this.type = type;
-        this.file = file;
-        reset();
+public class VectorIterator<V extends Vector> implements Iterator<V> {
+
+    private final boolean sparse;
+    private Iterator<String> iterator;
+    private int dimensions;
+
+    public VectorIterator(File vectorsFile, long dimensions, Class<V> clazz) throws FileNotFoundException {
+        this.sparse = clazz.equals(SparseVector.class);
+        this.dimensions = (int) dimensions;
+        this.iterator = new BufferedReader(new FileReader(vectorsFile)).lines().iterator();
     }
 
-    public synchronized Iterator<Document> getDocumentsIterator() {
-        return iter;
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
     }
 
-
-    public synchronized void reset(){
-        this.iter = new DocumentIterator(type, file);
+    @Override
+    @SuppressWarnings("unchecked")
+    public V next() {
+        String content = iterator.next();
+        if (this.sparse) {
+            return (V) new SparseVector(dimensions, content);
+        } else {
+            return (V) new DenseVector(content);
+        }
     }
 }

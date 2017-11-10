@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.loader;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,27 +22,10 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
-import java.io.File;
-public class Corpus {
+import java.io.Closeable;
+import java.io.FileNotFoundException;
 
-    public final CorpusMetadata metadata;
-    private Iterator<Document> iter;
-    private DocumentGenerator.ContentType type;
-    private File file;
-    Corpus(CorpusMetadata metadata, DocumentGenerator.ContentType type, File file) {
-        this.metadata = metadata;
-        this.type = type;
-        this.file = file;
-        reset();
-    }
+public interface IndraLoader<V extends Vector> extends Closeable {
 
-    public synchronized Iterator<Document> getDocumentsIterator() {
-        return iter;
-    }
-
-
-    public synchronized void reset(){
-        this.iter = new DocumentIterator(type, file);
-    }
+    void load(RawSpaceModel<V> rsm) throws FileNotFoundException;
 }

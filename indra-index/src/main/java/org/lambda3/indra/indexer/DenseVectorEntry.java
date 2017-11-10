@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.indexer;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,46 +22,30 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
-public class Document {
-    public final int id;
-    public final String content;
+public final class DenseVectorEntry implements Map.Entry<String, double[]> {
+    private String word;
+    private double[] vector;
 
-    public Document(int id, String content) {
-        this.id = id;
-        this.content = content;
-    }
-
-    public static Document simpleDocument(String content) {
-        return new Document(0, content);
-    }
-
-    public static Document simpleDocument(Iterator<String> content) {
-        Iterable<String> iterable = () -> content;
-        return Document.simpleDocument(String.join(" ", iterable));
+    public DenseVectorEntry(String word, double[] vector) {
+        this.word = Objects.requireNonNull(word);
+        this.vector = Objects.requireNonNull(vector);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Document document = (Document) o;
-        return id == document.id &&
-                Objects.equals(content, document.content);
+    public String getKey() {
+        return word;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, content);
+    public double[] getValue() {
+        return vector;
     }
 
     @Override
-    public String toString() {
-        return "Document{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                '}';
+    public double[] setValue(double[] value) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,8 +1,8 @@
-package org.lambda3.indra.corpus;
+package org.lambda3.indra.loader;
 
 /*-
  * ==========================License-Start=============================
- * indra-preprocessing
+ * indra-index
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -22,27 +22,23 @@ package org.lambda3.indra.corpus;
  * ==========================License-End===============================
  */
 
-import java.util.Iterator;
-import java.io.File;
-public class Corpus {
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 
-    public final CorpusMetadata metadata;
-    private Iterator<Document> iter;
-    private DocumentGenerator.ContentType type;
-    private File file;
-    Corpus(CorpusMetadata metadata, DocumentGenerator.ContentType type, File file) {
-        this.metadata = metadata;
-        this.type = type;
-        this.file = file;
-        reset();
+public class DenseVector extends Vector {
+
+    public DenseVector(String content) {
+        super(-1, content.split("\t"));
     }
 
-    public synchronized Iterator<Document> getDocumentsIterator() {
-        return iter;
-    }
+    @Override
+    public RealVector digestContent(String content) {
+        String[] parts = content.split(" ");
+        double[] vector = new double[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            vector[i] = Double.parseDouble(parts[i]);
+        }
 
-
-    public synchronized void reset(){
-        this.iter = new DocumentIterator(type, file);
+        return new ArrayRealVector(vector, false);
     }
 }
