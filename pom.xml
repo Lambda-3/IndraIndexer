@@ -12,7 +12,6 @@
         <module>indra-preprocessing</module>
     </modules>
 
-
     <name>Indra Loader</name>
     <description>A set of utilities to load distributional models for Indra consumption.</description>
 

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class ExportTranslation {
+public class TranslationExporter {
 
     private static final String NULL_VALUE = "NULL";
 
@@ -94,7 +94,7 @@ public class ExportTranslation {
             String baseOutputDir = Paths.get(baseDir, lang).toString();
             String dbName = String.format(baseDbName, lang);
 
-            ExportTranslation.export(baseOutputDir, "mongodb://alphard.fim.uni-passau.de:27017", dbName, lang);
+            TranslationExporter.export(baseOutputDir, "mongodb://alphard.fim.uni-passau.de:27017", dbName, lang);
         }
     }
 }
