@@ -102,6 +102,12 @@ public class LuceneTranslatorLoader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public static void main(String[] args) {
+        String input = args[0];
+        String output = args[1];
+
+        load(input, output);
     }
 }
