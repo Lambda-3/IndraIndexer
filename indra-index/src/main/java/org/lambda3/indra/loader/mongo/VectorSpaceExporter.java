@@ -132,14 +132,18 @@ public class VectorSpaceExporter {
             String[] models = {"esa", "w2v", "lsa", "glove"};
             String[] langs = {"en", "pt", "de", "it", "nl", "fr", "es", "ar", "fa", "ru", "zh", "sv"};
 
-            for(String model : models) {
-                for(String lang : langs) {
+            for (String model : models) {
+                for (String lang : langs) {
+                    System.out.println(String.format("exporting model '%s' and language '%s'", model, lang));
                     VectorSpaceExporter vse = new VectorSpaceExporter(ALPHARD, lang, model, "wiki-2014");
                     ModelMetadata metadata = vse.getModelMetadata();
                     Iterable<MongoVector> vectors = vse.getVectors();
                     ModelWriter.save(baseDir, metadata, vectors);
+                    System.out.println("--- done");
                 }
             }
         }
+
+        System.out.println("THE END!");
     }
 }
