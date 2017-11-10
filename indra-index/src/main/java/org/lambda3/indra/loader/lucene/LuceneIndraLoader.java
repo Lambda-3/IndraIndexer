@@ -49,6 +49,10 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
 
     public LuceneIndraLoader(String baseDir, ModelMetadata metadata) throws IOException {
         super(baseDir, metadata);
+        if (!metadata.sparse) {
+            throw new UnsupportedOperationException("Lucene loader does not supports dense vectors.");
+        }
+
         Directory dir = FSDirectory.open(Paths.get(this.modelDir, LuceneVectorSpace.TERMS_INDEX));
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);

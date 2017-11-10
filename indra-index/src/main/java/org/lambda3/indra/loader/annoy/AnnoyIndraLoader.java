@@ -47,6 +47,10 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
     public AnnoyIndraLoader(String baseDir, ModelMetadata metadata) {
         super(baseDir, metadata);
+        if (metadata.sparse) {
+            throw new UnsupportedOperationException("Annoy loader does not supports sparse vectors.");
+        }
+
         this.dimensions = (int) metadata.dimensions;
         this.vocabSize = metadata.vocabSize;
         this.indexFile = Paths.get(this.modelDir, AnnoyVectorSpace.TREE_FILE).toString();

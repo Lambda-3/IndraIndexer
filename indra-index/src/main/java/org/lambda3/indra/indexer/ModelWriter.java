@@ -24,10 +24,12 @@ package org.lambda3.indra.indexer;
 
 import edu.ucla.sspace.common.SemanticSpace;
 import edu.ucla.sspace.vector.Vector;
+import org.apache.commons.math3.linear.RealVectorUtil;
 import org.deeplearning4j.models.sequencevectors.SequenceVectors;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.lambda3.indra.MetadataIO;
+import org.lambda3.indra.loader.mongo.MongoVector;
 import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
@@ -76,6 +78,44 @@ public class ModelWriter {
                         Vector<Double> vector = sspace.getVector(word);
                         double[] newVector = convertToDenseVector(vector);
                         String repr = denseVectorRepresentation(word, newVector);
+                        fw.write(repr);
+                        fw.write("\n");
+                    }
+                }
+
+                fw.flush();
+                fw.close();
+            } finally {
+                fw.close();
+            }
+
+        } catch (IOException e) {
+            //TODO review here - log
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void save(String outDir, ModelMetadata metadata, Iterable<MongoVector> vectors) throws IOException {
+
+        File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
+
+        FileWriter fw;
+        try {
+            fw = new FileWriter(modelFile);
+
+            try {
+
+                if (metadata.sparse) {
+                    for (MongoVector vector : vectors) {
+                        Map<Integer, Double> newVector = RealVectorUtil.vectorToMap(vector.vector);
+                        String repr = sparseVectorRepresentation(vector.term, newVector);
+                        fw.write(repr);
+                        fw.write("\n");
+                    }
+                } else {
+                    for (MongoVector vector : vectors) {
+                        double[] newVector = vector.vector.toArray();
+                        String repr = denseVectorRepresentation(vector.term, newVector);
                         fw.write(repr);
                         fw.write("\n");
                     }
