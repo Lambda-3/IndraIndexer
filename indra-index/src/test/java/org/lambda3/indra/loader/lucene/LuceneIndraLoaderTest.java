@@ -28,9 +28,9 @@ import org.lambda3.indra.AnalyzedTerm;
 import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
-import org.lambda3.indra.loader.RawSpaceModel;
-import org.lambda3.indra.loader.SparseVector;
-import org.lambda3.indra.loader.VectorIterator;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -55,7 +55,8 @@ public class LuceneIndraLoaderTest {
             loader.load(esa);
             loader.close();
 
-            String modelDir = Paths.get(baseDir, esa.modelMetadata.getConciseName()).toString();
+            String modelDir = Paths.get(baseDir, esa.modelMetadata.modelName,
+                    esa.modelMetadata.corpusMetadata.language, esa.modelMetadata.corpusMetadata.corpusName).toString();
             LuceneVectorSpace vs = new LuceneVectorSpace(modelDir);
             Assert.assertEquals(esa.modelMetadata, vs.getMetadata());
 

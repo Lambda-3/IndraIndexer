@@ -36,9 +36,9 @@ import org.apache.lucene.store.FSDirectory;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
-import org.lambda3.indra.loader.SparseVector;
-import org.lambda3.indra.loader.VectorIterator;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.VectorIterator;
 
 import java.io.IOException;
 import java.nio.file.Paths;

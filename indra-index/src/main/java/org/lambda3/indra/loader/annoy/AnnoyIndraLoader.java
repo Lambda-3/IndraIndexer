@@ -25,10 +25,10 @@ package org.lambda3.indra.loader.annoy;
 import com.spotify.annoy.jni.base.Annoy;
 import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.lambda3.indra.exception.IndraRuntimeException;
-import org.lambda3.indra.loader.DenseVector;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
-import org.lambda3.indra.loader.VectorIterator;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.DenseVector;
+import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -22,6 +22,9 @@ package org.lambda3.indra.loader;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.Vector;
+
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 

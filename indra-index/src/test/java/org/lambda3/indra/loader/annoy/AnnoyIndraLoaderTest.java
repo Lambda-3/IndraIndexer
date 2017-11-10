@@ -25,13 +25,15 @@ package org.lambda3.indra.loader.annoy;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.AnalyzedTerm;
 import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
+import org.lambda3.indra.indexer.ModelWriter;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
-import org.lambda3.indra.loader.DenseVector;
-import org.lambda3.indra.loader.RawSpaceModel;
-import org.lambda3.indra.loader.VectorIterator;
+import org.lambda3.indra.util.DenseVector;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -44,18 +46,6 @@ import java.util.Map;
 
 public class AnnoyIndraLoaderTest {
 
-
-    private RealVector loosePrecision(RealVector rv) {
-        double[] arv = rv.toArray();
-
-        double[] nrv = new double[rv.getDimension()];
-        for (int i = 0; i < arv.length; i++) {
-            nrv[i] = (float) arv[i];
-        }
-
-        return new ArrayRealVector(nrv, false);
-    }
-
     public void insertAndReadDenseTest(RawSpaceModel<DenseVector> rsm) {
         String baseDir = null;
         try {
@@ -64,7 +54,8 @@ public class AnnoyIndraLoaderTest {
             loader.load(rsm);
             loader.close();
 
-            String modelDir = Paths.get(baseDir, rsm.modelMetadata.getConciseName()).toString();
+            String modelDir = Paths.get(baseDir, rsm.modelMetadata.modelName,
+                    rsm.modelMetadata.corpusMetadata.language, rsm.modelMetadata.corpusMetadata.corpusName).toString();
             AnnoyVectorSpace vs = new AnnoyVectorSpace(modelDir);
             Assert.assertEquals(rsm.modelMetadata, vs.getMetadata());
 
@@ -72,7 +63,7 @@ public class AnnoyIndraLoaderTest {
 
             while (iter.hasNext()) {
                 DenseVector sv = iter.next();
-                RealVector approx = loosePrecision(sv.content);
+                RealVector approx = RealVectorUtil.loosePrecision(sv.content);
 
                 AnalyzedTerm at = new AnalyzedTerm(sv.term, Collections.singletonList(sv.term));
                 Map<String, RealVector> vectors = vs.getVectors(Collections.singletonList(at), new SumVectorComposer());

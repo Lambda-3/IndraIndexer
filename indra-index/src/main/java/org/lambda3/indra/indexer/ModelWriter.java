@@ -31,6 +31,7 @@ import org.deeplearning4j.models.word2vec.wordstore.VocabCache;
 import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.loader.mongo.MongoVector;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.RawSpaceModel;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -41,17 +42,16 @@ import java.util.Map;
 
 public class ModelWriter {
 
-    public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
-
     private static File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
-        File modelDir = Paths.get(outDir, metadata.getConciseName()).toFile();
+        File modelDir = Paths.get(outDir, metadata.modelName, metadata.corpusMetadata.language,
+                metadata.corpusMetadata.corpusName).toFile();
         if (!modelDir.exists()) {
             modelDir.mkdirs();
         }
 
         MetadataIO.write(modelDir.getAbsolutePath(), metadata);
 
-        return Paths.get(modelDir.getAbsolutePath(), MODEL_CONTENT_FILE_NAME).toFile();
+        return Paths.get(modelDir.getAbsolutePath(), RawSpaceModel.MODEL_CONTENT_FILE_NAME).toFile();
     }
 
     public static void save(String outDir, ModelMetadata metadata, SemanticSpace sspace) throws IOException {

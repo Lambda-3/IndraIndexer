@@ -27,11 +27,11 @@ import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.CorpusLoader;
-import org.lambda3.indra.loader.DenseVector;
-import org.lambda3.indra.loader.RawSpaceModel;
-import org.lambda3.indra.loader.SparseVector;
-import org.lambda3.indra.loader.VectorIterator;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.DenseVector;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
@@ -56,7 +56,8 @@ public class ModelBuilderTest {
 
         ModelMetadata metadata = builder.build(corpus);
 
-        return Paths.get(baseDir, metadata.getConciseName()).toString();
+        return Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
+                metadata.corpusMetadata.corpusName).toString();
     }
 
     public RawSpaceModel<DenseVector> testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
@@ -122,7 +123,7 @@ public class ModelBuilderTest {
         return null;
     }
 
-    public  RawSpaceModel<DenseVector> createWord2VecModelBuilder() {
+    public RawSpaceModel<DenseVector> createWord2VecModelBuilder() {
         try {
             String baseDir = Files.createTempDirectory("indra-w2v-test").toString();
             tmpDir.add(new File(baseDir));

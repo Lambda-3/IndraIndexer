@@ -30,8 +30,8 @@ import com.mongodb.MongoClientURI;
 import org.lambda3.indra.indexer.DenseVectorGenerator;
 import org.lambda3.indra.indexer.Word2VecGenerator;
 import org.lambda3.indra.loader.IndraLoader;
-import org.lambda3.indra.loader.RawSpaceModel;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.RawSpaceModel;
 
 import java.io.File;
 import java.io.IOException;

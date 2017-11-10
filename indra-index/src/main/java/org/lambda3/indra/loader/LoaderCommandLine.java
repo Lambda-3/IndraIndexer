@@ -32,6 +32,10 @@ import org.lambda3.indra.loader.annoy.AnnoyIndraLoader;
 import org.lambda3.indra.loader.lucene.LuceneIndraLoader;
 import org.lambda3.indra.loader.mongo.MongoIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.DenseVector;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.Vector;
 
 import java.io.IOException;
 

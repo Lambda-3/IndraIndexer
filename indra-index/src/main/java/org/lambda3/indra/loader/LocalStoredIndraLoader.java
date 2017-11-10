@@ -24,6 +24,9 @@ package org.lambda3.indra.loader;
 
 import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,7 +37,8 @@ public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraL
     protected String modelDir;
 
     public LocalStoredIndraLoader(String baseDir, ModelMetadata metadata) {
-        File modelDirFile = Paths.get(baseDir, metadata.getConciseName()).toFile();
+        File modelDirFile = Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
+                metadata.corpusMetadata.corpusName).toFile();
         if (!modelDirFile.exists()) {
             modelDirFile.mkdirs();
         }
