@@ -39,7 +39,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.licenseName>lgpl_v3</license.licenseName>
         <slf4j-version>1.7.12</slf4j-version>
-        <main.indra.version>2.2.0-rc1</main.indra.version>
+        <main.indra.version>2.2.0-rc2</main.indra.version>
     </properties>
 
     <profiles>

@@ -30,7 +30,6 @@ import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.indexer.IndraIndexerCommandLine;
 import org.lambda3.indra.loader.annoy.AnnoyIndraLoader;
 import org.lambda3.indra.loader.lucene.LuceneIndraLoader;
-import org.lambda3.indra.loader.mongo.MongoIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.util.DenseVector;
 import org.lambda3.indra.util.RawSpaceModel;
@@ -41,16 +40,16 @@ import java.io.IOException;
 
 public class LoaderCommandLine {
 
-    private static final String INDEXER_NAME = "Indra Loader v.%s";
+    private static final String LOADER_NAME = "Indra Loader v. %s";
 
     public static void main(String... args) {
         String version = IndraIndexerCommandLine.class.getPackage().getImplementationVersion();
 
         LoaderCommandLine.MainCommand main = new LoaderCommandLine.MainCommand();
         JCommander jc = new JCommander(main);
-        jc.setProgramName(String.format(INDEXER_NAME, version));
+        jc.setProgramName(String.format(LOADER_NAME, version));
         LoaderCommandLine.IndexerCommand indexCmd = new LoaderCommandLine.IndexerCommand();
-        jc.addCommand("indexer", indexCmd);
+        jc.addCommand("loader", indexCmd);
 
         try {
             jc.parse(args);
@@ -67,15 +66,10 @@ public class LoaderCommandLine {
             ModelMetadata metadata = MetadataIO.load(indexCmd.inputModelDir, ModelMetadata.class);
 
             IndraLoader loader;
-            if (indexCmd.targetPlatform.equalsIgnoreCase("LUCENE"))
+            if (metadata.sparse)
                 loader = new LuceneIndraLoader(indexCmd.output, metadata);
-            else if (indexCmd.targetPlatform.equalsIgnoreCase("ANNOY"))
-                loader = new AnnoyIndraLoader(indexCmd.output, metadata);
-            else if (indexCmd.targetPlatform.equalsIgnoreCase("MONGO"))
-                loader = new MongoIndraLoader();
             else
-                throw new IllegalStateException(String.format("Model '%s' is not supported. Please, choose one " +
-                        "of the following: LUCENE, ANNOY or MONGO.", indexCmd.targetPlatform));
+                loader = new AnnoyIndraLoader(indexCmd.output, metadata);
 
             RawSpaceModel<? extends Vector> rsm;
             if (metadata.sparse) {
@@ -103,11 +97,8 @@ public class LoaderCommandLine {
 
     @Parameters(commandDescription = "Generate Models.", separators = "=")
     private static class IndexerCommand {
-        @Parameter(names = {"-i", "--input"}, required = true, description = "Input directory.", order = 0)
+        @Parameter(names = {"-i", "--input"}, required = true, description = "Directory in which the generated DSM's files are placed.", order = 0)
         String inputModelDir;
-
-        @Parameter(names = {"-t", "--target"}, required = true, description = ".", order = 1)
-        String targetPlatform;
 
         @Parameter(names = {"-o", "--output"}, required = true, description = "The output directory.", order = 4)
         String output;
