@@ -65,11 +65,17 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     @Override
     protected void doLoad(VectorIterator<SparseVector> iter) {
 
+        int counter = 0;
         while (iter.hasNext()) {
             SparseVector sv = iter.next();
             try {
                 Document doc = createSparseDocument(sv);
                 writer.addDocument(doc);
+
+                counter++;
+                if (counter % PRINT_MESSAGE_EACH == 0) {
+                    System.out.println(String.format("indexing %d terms out of %d...", counter, this.vocabSize));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
