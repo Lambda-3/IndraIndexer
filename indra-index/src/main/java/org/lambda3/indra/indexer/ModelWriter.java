@@ -68,9 +68,11 @@ public class ModelWriter {
                     for (String word : sspace.getWords()) {
                         Vector<Double> vector = sspace.getVector(word);
                         Map<Integer, Double> newVector = convertToSparseVector(vector);
-                        String repr = sparseVectorRepresentation(word, newVector);
-                        fw.write(repr);
-                        fw.write("\n");
+                        if (newVector.size()!= 0) {
+                            String repr = sparseVectorRepresentation(word, newVector);
+                            fw.write(repr);
+                            fw.write("\n");
+                        }
                     }
                 } else {
 
@@ -106,7 +108,7 @@ public class ModelWriter {
             try {
 
                 if (metadata.sparse) {
-                    for (MongoVector vector : vectors) {
+                        for (MongoVector vector : vectors) {
                         Map<Integer, Double> newVector = RealVectorUtil.vectorToMap(vector.vector);
                         String repr = sparseVectorRepresentation(vector.term, newVector);
                         fw.write(repr);

@@ -64,13 +64,12 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
 
     @Override
     protected void doLoad(VectorIterator<SparseVector> iter) {
-
         while (iter.hasNext()) {
-            SparseVector sv = iter.next();
             try {
+                SparseVector sv = iter.next();
                 Document doc = createSparseDocument(sv);
                 writer.addDocument(doc);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

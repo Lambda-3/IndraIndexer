@@ -36,6 +36,7 @@ import org.lambda3.indra.util.RawSpaceModel;
 import org.lambda3.indra.util.SparseVector;
 import org.lambda3.indra.util.Vector;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class LoaderCommandLine {
