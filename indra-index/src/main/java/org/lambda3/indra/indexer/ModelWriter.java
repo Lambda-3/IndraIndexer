@@ -108,7 +108,7 @@ public class ModelWriter {
             try {
 
                 if (metadata.sparse) {
-                        for (MongoVector vector : vectors) {
+                    for (MongoVector vector : vectors) {
                         Map<Integer, Double> newVector = RealVectorUtil.vectorToMap(vector.vector);
                         String repr = sparseVectorRepresentation(vector.term, newVector);
                         fw.write(repr);

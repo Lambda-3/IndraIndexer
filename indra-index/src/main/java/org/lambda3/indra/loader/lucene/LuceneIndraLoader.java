@@ -65,7 +65,6 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     @Override
     protected void doLoad(VectorIterator<SparseVector> iter) {
 
-
         int counter = 0;
         while (iter.hasNext()) {
             SparseVector sv = iter.next();
