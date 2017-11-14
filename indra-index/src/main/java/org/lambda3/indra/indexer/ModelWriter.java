@@ -68,7 +68,7 @@ public class ModelWriter {
                     for (String word : sspace.getWords()) {
                         Vector<Double> vector = sspace.getVector(word);
                         Map<Integer, Double> newVector = convertToSparseVector(vector);
-                        if (newVector.size()!= 0) {
+                        if (!newVector.isEmpty()) {
                             String repr = sparseVectorRepresentation(word, newVector);
                             fw.write(repr);
                             fw.write("\n");
