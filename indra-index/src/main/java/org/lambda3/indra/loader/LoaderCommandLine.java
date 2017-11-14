@@ -67,6 +67,8 @@ public class LoaderCommandLine {
             ModelMetadata metadata = MetadataIO.load(indexCmd.inputModelDir, ModelMetadata.class);
 
             IndraLoader loader;
+            System.out.println(String.format("Loading model=%s | lang=%s | corpus=%s...", metadata.modelName,
+                    metadata.corpusMetadata.language, metadata.corpusMetadata.corpusName));
             if (metadata.sparse)
                 loader = new LuceneIndraLoader(indexCmd.output, metadata);
             else
@@ -81,6 +83,7 @@ public class LoaderCommandLine {
 
             loader.load(rsm);
             loader.close();
+            System.out.println("Done!");
 
         } catch (IOException e) {
             e.printStackTrace();

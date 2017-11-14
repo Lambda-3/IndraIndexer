@@ -41,7 +41,6 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
     private static final Integer NTREES = 1000;
     private int dimensions;
-    private long vocabSize;
     private String indexFile;
     private File mappingsFile;
 
@@ -52,7 +51,6 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
         }
 
         this.dimensions = (int) metadata.dimensions;
-        this.vocabSize = metadata.vocabSize;
         this.indexFile = Paths.get(this.modelDir, AnnoyVectorSpace.TREE_FILE).toString();
         this.mappingsFile = Paths.get(this.modelDir, AnnoyVectorSpace.WORD_MAPPING_FILE).toFile();
     }
@@ -86,6 +84,10 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
                 fw.write("\n");
 
                 counter++;
+
+                if (counter % PRINT_MESSAGE_EACH == 0) {
+                    System.out.println(String.format("indexing %d terms out of %d...", counter, this.vocabSize));
+                }
             }
 
             annoyBuilder.build(NTREES).save(indexFile);

@@ -34,7 +34,9 @@ import java.nio.file.Paths;
 
 public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraLoader<V> {
 
+    protected static final int PRINT_MESSAGE_EACH = 100_000;
     protected String modelDir;
+    protected long vocabSize;
 
     public LocalStoredIndraLoader(String baseDir, ModelMetadata metadata) {
         File modelDirFile = Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
@@ -44,6 +46,7 @@ public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraL
         }
 
         this.modelDir = modelDirFile.getAbsolutePath();
+        this.vocabSize = metadata.vocabSize;
     }
 
     protected abstract void doLoad(VectorIterator<V> iter);
@@ -51,6 +54,8 @@ public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraL
     @Override
     public void load(RawSpaceModel<V> rsm) throws FileNotFoundException {
         MetadataIO.write(this.modelDir, rsm.modelMetadata);
+        System.out.println(String.format(" --- Loader %s - loading %d terms...", getClass().getSimpleName(),
+                rsm.modelMetadata.vocabSize));
         doLoad(rsm.getVectorIterator());
     }
 
