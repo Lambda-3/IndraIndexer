@@ -64,7 +64,7 @@ public class ModelBuilderTest {
         String modelDir = buildModel(builder, baseDir);
 
         ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
-        RawSpaceModel<DenseVector> denseModel = new RawSpaceModel<>(modelDir, mm, DenseVector.class);
+        RawSpaceModel<DenseVector> denseModel = new RawSpaceModel<>(modelDir);
 
         Assert.assertFalse(denseModel.isSparse());
         Assert.assertEquals(mm, denseModel.modelMetadata);
@@ -100,7 +100,7 @@ public class ModelBuilderTest {
             String modelDir = buildModel(builder, baseDir);
 
             ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
-            RawSpaceModel<SparseVector> esa = new RawSpaceModel<>(modelDir, mm, SparseVector.class);
+            RawSpaceModel<SparseVector> esa = new RawSpaceModel<>(modelDir);
 
             Assert.assertTrue(esa.isSparse());
             Assert.assertEquals(mm, esa.modelMetadata);
