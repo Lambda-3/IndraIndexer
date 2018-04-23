@@ -26,16 +26,16 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class Document {
-    public final int id;
+    public final String id;
     public final String content;
 
-    public Document(int id, String content) {
+    public Document(String id, String content) {
         this.id = id;
         this.content = content;
     }
 
     public static Document simpleDocument(String content) {
-        return new Document(0, content);
+        return new Document("", content);
     }
 
     public static Document simpleDocument(Iterator<String> content) {
@@ -48,7 +48,7 @@ public class Document {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Document document = (Document) o;
-        return id == document.id &&
+        return Objects.equals(id, document.id) &&
                 Objects.equals(content, document.content);
     }
 

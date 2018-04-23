@@ -49,7 +49,7 @@ public class WikipediaDocumentIterator extends DocumentIterator {
             e.printStackTrace();
         }
 
-        int id = (int) page.get(ID);
+        String id = (String) page.get(ID);
         String title = (String) page.get(URL);
         int offset = title.indexOf(WIKI_DESC);
         if (offset > 0) {
