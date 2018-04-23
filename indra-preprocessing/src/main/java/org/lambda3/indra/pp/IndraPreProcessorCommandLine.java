@@ -62,21 +62,21 @@ public class IndraPreProcessorCommandLine {
 
         if (jc.getParsedCommand() == null) {
             jc.usage();
-        }
+        } else {
 
-        switch (jc.getParsedCommand()) {
-            case PreProcessCommand.CMD:
-                new IndraPreProcessor().doPreProcess(ppCmd.getMetadata(), ppCmd.corpusFiles,
-                        ppCmd.patternRegex, ppCmd.fileType, ppCmd.contentType, ppCmd.outputDir);
-                break;
-            case CheckFilesCommand.CMD:
-                List<File> files = new IndraPreProcessor().doCheckFiles(checkCmd.corpusFiles, checkCmd.patternRegex);
-                files.stream().forEach(System.out::println);
-            default:
-                System.out.println("invalid command");
-                jc.usage();
+            switch (jc.getParsedCommand()) {
+                case PreProcessCommand.CMD:
+                    new IndraPreProcessor().doPreProcess(ppCmd.getMetadata(), ppCmd.corpusFiles,
+                            ppCmd.patternRegex, ppCmd.fileType, ppCmd.contentType, ppCmd.outputDir);
+                    break;
+                case CheckFilesCommand.CMD:
+                    List<File> files = new IndraPreProcessor().doCheckFiles(checkCmd.corpusFiles, checkCmd.patternRegex);
+                    files.stream().forEach(System.out::println);
+                default:
+                    System.out.println("invalid command");
+                    jc.usage();
+            }
         }
-
 
     }
 

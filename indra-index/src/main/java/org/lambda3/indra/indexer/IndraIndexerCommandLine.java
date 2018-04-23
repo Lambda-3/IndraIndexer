@@ -45,7 +45,7 @@ public class IndraIndexerCommandLine {
         JCommander jc = new JCommander(main);
         jc.setProgramName(String.format(INDEXER_NAME, version));
         IndexerCommand indexCmd = new IndexerCommand();
-        jc.addCommand("indexer", indexCmd);
+        jc.addCommand("index", indexCmd);
 
         try {
             jc.parse(args);
@@ -56,34 +56,35 @@ public class IndraIndexerCommandLine {
 
         if (jc.getParsedCommand() == null) {
             jc.usage();
-        }
+        } else {
 
-        try {
-            ModelBuilder builder;
-            Corpus corpus = CorpusLoader.load(indexCmd.corpusDir);
+            try {
+                ModelBuilder builder;
+                Corpus corpus = CorpusLoader.load(indexCmd.corpusDir);
 
-            if (indexCmd.modelName.equalsIgnoreCase("ESA")) {
-                if (indexCmd.numOfDimensions > 0) {
-                    System.out.println("WARN: 'numOfDimensions' was provided but it's value is ignored by ESA.");
-                }
-                builder = new ExplicitSemanticAnalysisBuilder(indexCmd.output);
+                if (indexCmd.modelName.equalsIgnoreCase("ESA")) {
+                    if (indexCmd.numOfDimensions > 0) {
+                        System.out.println("WARN: 'numOfDimensions' was provided but it's value is ignored by ESA.");
+                    }
+                    builder = new ExplicitSemanticAnalysisBuilder(indexCmd.output);
 
-            } else if (indexCmd.modelName.equalsIgnoreCase("LSA"))
-                builder = new LatentSemanticAnalysisBuilder(indexCmd.output, indexCmd.numOfDimensions);
-            else if (indexCmd.modelName.equalsIgnoreCase("GLOVE"))
-                builder = new GloveModelBuilder(indexCmd.output, indexCmd.numOfDimensions,
-                        indexCmd.windowsSize, indexCmd.minWordFrequency);
-            else if (indexCmd.modelName.equalsIgnoreCase("W2V"))
-                builder = new Word2VecModelBuilder(indexCmd.output, indexCmd.numOfDimensions,
-                        indexCmd.windowsSize, indexCmd.minWordFrequency);
-            else
-                throw new IllegalStateException(String.format("Model '%s' is not supported. Please, choose one " +
-                        "of the following: ESA, LSA, GLOVE, W2V.", indexCmd.modelName));
+                } else if (indexCmd.modelName.equalsIgnoreCase("LSA"))
+                    builder = new LatentSemanticAnalysisBuilder(indexCmd.output, indexCmd.numOfDimensions);
+                else if (indexCmd.modelName.equalsIgnoreCase("GLOVE"))
+                    builder = new GloveModelBuilder(indexCmd.output, indexCmd.numOfDimensions,
+                            indexCmd.windowsSize, indexCmd.minWordFrequency);
+                else if (indexCmd.modelName.equalsIgnoreCase("W2V"))
+                    builder = new Word2VecModelBuilder(indexCmd.output, indexCmd.numOfDimensions,
+                            indexCmd.windowsSize, indexCmd.minWordFrequency);
+                else
+                    throw new IllegalStateException(String.format("Model '%s' is not supported. Please, choose one " +
+                            "of the following: ESA, LSA, GLOVE, W2V.", indexCmd.modelName));
 
-            builder.build(corpus);
+                builder.build(corpus);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
