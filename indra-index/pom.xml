@@ -11,6 +11,10 @@
 
     <artifactId>indra-index</artifactId>
 
+    <properties>
+        <deeplearning4j.version>1.0.0-alpha</deeplearning4j.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
@@ -33,13 +37,13 @@
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-nlp</artifactId>
-            <version>0.9.1</version>
+            <version>${deeplearning4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-platform</artifactId>
-            <version>0.9.1</version>
+            <artifactId>nd4j-native</artifactId>
+            <version>${deeplearning4j.version}</version>
         </dependency>
 
         <dependency>
@@ -47,13 +51,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.4.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.spotify/annoy-jni -->
+
         <dependency>
             <groupId>com.spotify</groupId>
             <artifactId>annoy-jni</artifactId>
             <version>0.1.2</version>
         </dependency>
-
     </dependencies>
 
 </project>

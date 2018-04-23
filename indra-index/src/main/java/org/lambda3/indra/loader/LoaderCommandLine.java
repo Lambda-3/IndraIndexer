@@ -49,7 +49,7 @@ import java.util.Map;
 
 public class LoaderCommandLine {
 
-    private static final String LOADER_NAME = "Indra Loader v. %s";
+    private static final String LOADER_NAME = "Indra Loader v. %s\nindrashell ";
 
     public static RealVector getVector(VectorSpace vs, String term) {
         AnalyzedTerm at = new AnalyzedTerm(term, Collections.singletonList(term));
@@ -77,13 +77,15 @@ public class LoaderCommandLine {
         try {
             jc.parse(args);
         } catch (ParameterException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             jc.usage();
+            return;
         }
 
         String parsedCommand = jc.getParsedCommand();
         if (jc.getParsedCommand() == null) {
             jc.usage();
+            return;
         }
 
         try {

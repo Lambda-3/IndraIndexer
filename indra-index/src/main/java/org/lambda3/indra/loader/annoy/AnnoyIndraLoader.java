@@ -39,7 +39,7 @@ import java.util.List;
 
 public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
-    private static final Integer NTREES = 1000;
+    private static final Integer NTREES = 100;
     private int dimensions;
     private String indexFile;
     private File mappingsFile;
@@ -92,7 +92,7 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
             annoyBuilder.build(NTREES).save(indexFile);
         } catch (IOException e) {
-            throw new IndraRuntimeException("error indxing annoy", e);
+            throw new IndraRuntimeException("error indexing annoy", e);
         } finally {
             try {
                 fw.close();
