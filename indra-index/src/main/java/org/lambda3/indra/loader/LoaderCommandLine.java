@@ -90,12 +90,12 @@ public class LoaderCommandLine {
 
         try {
 
-            RawSpaceModel<? extends Vector> rsm;
+            RawSpaceModel rsm;
 
             switch (parsedCommand) {
                 case LoaderCommand.NAME:
 
-                    rsm = new RawSpaceModel<>(loadCmd.inputModelDir);
+                    rsm = new RawSpaceModel(loadCmd.inputModelDir);
 
                     IndraLoader loader;
                     System.out.println(String.format("Loading model=%s | lang=%s | corpus=%s...", rsm.modelMetadata.modelName,
@@ -124,7 +124,7 @@ public class LoaderCommandLine {
 
                     VectorSpace vsm = factory.create(request);
 
-                    VectorIterator<? extends Vector> iter = rsm.getVectorIterator();
+                    VectorIterator iter = rsm.getVectorIterator();
                     int counter = 0;
                     while (iter.hasNext()) {
 

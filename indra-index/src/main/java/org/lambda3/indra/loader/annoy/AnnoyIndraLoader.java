@@ -27,7 +27,7 @@ import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.lambda3.indra.exception.IndraRuntimeException;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
-import org.lambda3.indra.util.DenseVector;
+import org.lambda3.indra.util.Vector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
+public class AnnoyIndraLoader extends LocalStoredIndraLoader {
 
     private static final Integer NTREES = 100;
     private int dimensions;
@@ -66,7 +66,7 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
     }
 
     @Override
-    protected void doLoad(VectorIterator<DenseVector> iter) {
+    protected void doLoad(VectorIterator iter) {
         Annoy.Builder annoyBuilder = Annoy.newIndex(dimensions);
 
         FileWriter fw = null;
@@ -76,7 +76,7 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader<DenseVector> {
 
             int counter = 0;
             while (iter.hasNext()) {
-                DenseVector dv = iter.next();
+                Vector dv = iter.next();
                 List<Float> vec = toList(dv.content.toArray());
                 annoyBuilder.addItem(counter, vec);
 

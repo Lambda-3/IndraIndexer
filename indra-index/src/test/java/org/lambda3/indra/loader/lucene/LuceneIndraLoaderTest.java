@@ -29,7 +29,7 @@ import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.Vector;
 import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -49,7 +49,7 @@ public class LuceneIndraLoaderTest {
         try {
             baseDir = Files.createTempDirectory("indra-esa-test").toString();
             ModelBuilderTest modelTest = new ModelBuilderTest();
-            RawSpaceModel<SparseVector> esa = modelTest.createExplicitSemanticAnalysisBuilder();
+            RawSpaceModel esa = modelTest.createExplicitSemanticAnalysisBuilder();
 
             LuceneIndraLoader loader = new LuceneIndraLoader(baseDir, esa.modelMetadata);
             loader.load(esa);
@@ -60,10 +60,10 @@ public class LuceneIndraLoaderTest {
             LuceneVectorSpace vs = new LuceneVectorSpace(modelDir);
             Assert.assertEquals(esa.modelMetadata, vs.getMetadata());
 
-            VectorIterator<SparseVector> iter = esa.getVectorIterator();
+            VectorIterator iter = esa.getVectorIterator();
 
             while (iter.hasNext()) {
-                SparseVector sv = iter.next();
+                Vector sv = iter.next();
                 AnalyzedTerm at = new AnalyzedTerm(sv.term, Collections.singletonList(sv.term));
                 Map<String, RealVector> vectors = vs.getVectors(Collections.singletonList(at), new SumVectorComposer());
 

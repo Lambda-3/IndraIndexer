@@ -25,14 +25,13 @@ package org.lambda3.indra.loader;
 import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Paths;
 
-public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraLoader<V> {
+public abstract class LocalStoredIndraLoader implements IndraLoader {
 
     protected static final int PRINT_MESSAGE_EACH = 100_000;
     protected String modelDir;
@@ -49,10 +48,10 @@ public abstract class LocalStoredIndraLoader<V extends Vector> implements IndraL
         this.vocabSize = metadata.vocabSize;
     }
 
-    protected abstract void doLoad(VectorIterator<V> iter);
+    protected abstract void doLoad(VectorIterator iter);
 
     @Override
-    public void load(RawSpaceModel<V> rsm) throws FileNotFoundException {
+    public void load(RawSpaceModel rsm) throws IOException {
         MetadataIO.write(this.modelDir, rsm.modelMetadata);
         System.out.println(String.format(" --- Loader %s - loading %d terms...", getClass().getSimpleName(),
                 rsm.modelMetadata.vocabSize));

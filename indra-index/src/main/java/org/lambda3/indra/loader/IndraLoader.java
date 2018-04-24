@@ -23,12 +23,11 @@ package org.lambda3.indra.loader;
  */
 
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
 
 import java.io.Closeable;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
-public interface IndraLoader<V extends Vector> extends Closeable {
+public interface IndraLoader extends Closeable {
 
-    void load(RawSpaceModel<V> rsm) throws FileNotFoundException;
+    void load(RawSpaceModel rsm) throws IOException;
 }

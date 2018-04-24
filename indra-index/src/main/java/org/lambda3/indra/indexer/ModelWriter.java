@@ -33,9 +33,11 @@ import org.lambda3.indra.loader.mongo.MongoVector;
 import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.util.RawSpaceModel;
 
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,9 +60,9 @@ public class ModelWriter {
 
         File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
 
-        FileWriter fw;
+        DataOutputStream out;
         try {
-            fw = new FileWriter(modelFile);
+            out = new DataOutputStream(new FileOutputStream(modelFile));
 
             try {
 
@@ -69,9 +71,8 @@ public class ModelWriter {
                         Vector<Double> vector = sspace.getVector(word);
                         Map<Integer, Double> newVector = convertToSparseVector(vector);
                         if (!newVector.isEmpty()) {
-                            String repr = sparseVectorRepresentation(word, newVector);
-                            fw.write(repr);
-                            fw.write("\n");
+                            byte[] repr = sparseVectorRepresentation(word, newVector);
+                            out.write(repr);
                         }
                     }
                 } else {
@@ -79,16 +80,15 @@ public class ModelWriter {
                     for (String word : sspace.getWords()) {
                         Vector<Double> vector = sspace.getVector(word);
                         double[] newVector = convertToDenseVector(vector);
-                        String repr = denseVectorRepresentation(word, newVector);
-                        fw.write(repr);
-                        fw.write("\n");
+                        byte[] repr = denseVectorRepresentation(word, newVector);
+                        out.write(repr);
                     }
                 }
 
-                fw.flush();
-                fw.close();
+                out.flush();
+                out.close();
             } finally {
-                fw.close();
+                out.close();
             }
 
         } catch (IOException e) {
@@ -101,32 +101,33 @@ public class ModelWriter {
 
         File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
 
-        FileWriter fw;
+        DataOutputStream out;
         try {
-            fw = new FileWriter(modelFile);
+            out = new DataOutputStream(new FileOutputStream(modelFile));
 
             try {
 
                 if (metadata.sparse) {
+                    out.writeChars(String.format("%d\n", metadata.vocabSize));
+
                     for (MongoVector vector : vectors) {
                         Map<Integer, Double> newVector = RealVectorUtil.vectorToMap(vector.vector);
-                        String repr = sparseVectorRepresentation(vector.term, newVector);
-                        fw.write(repr);
-                        fw.write("\n");
+                        byte[] repr = sparseVectorRepresentation(vector.term, newVector);
+                        out.write(repr);
                     }
                 } else {
+                    out.writeChars(String.format("%d %d\n", metadata.vocabSize, metadata.dimensions));
                     for (MongoVector vector : vectors) {
                         double[] newVector = vector.vector.toArray();
-                        String repr = denseVectorRepresentation(vector.term, newVector);
-                        fw.write(repr);
-                        fw.write("\n");
+                        byte[] repr = denseVectorRepresentation(vector.term, newVector);
+                        out.write(repr);
                     }
                 }
 
-                fw.flush();
-                fw.close();
+                out.flush();
+                out.close();
             } finally {
-                fw.close();
+                out.close();
             }
 
         } catch (IOException e) {
@@ -138,22 +139,21 @@ public class ModelWriter {
     public static void save(String outDir, ModelMetadata metadata, VocabCache<VocabWord> cache, SequenceVectors<VocabWord> vectors) {
         File modelFile = prepereTargetDirAndSaveMetadata(outDir, metadata);
 
-        FileWriter fw;
+        DataOutputStream out;
         try {
-            fw = new FileWriter(modelFile);
+            out = new DataOutputStream(new FileOutputStream(modelFile));
 
             try {
                 for (String word : cache.words()) {
                     double[] vector = vectors.getWordVector(word);
-                    String repr = denseVectorRepresentation(word, vector);
-                    fw.write(repr);
-                    fw.write("\n");
+                    byte[] repr = denseVectorRepresentation(word, vector);
+                    out.write(repr);
                 }
 
-                fw.flush();
-                fw.close();
+                out.flush();
+                out.close();
             } finally {
-                fw.close();
+                out.close();
             }
 
         } catch (IOException e) {
@@ -184,29 +184,37 @@ public class ModelWriter {
         return newVector;
     }
 
-    private static String sparseVectorRepresentation(String term, Map<Integer, Double> vector) {
-        StringBuilder sb = new StringBuilder(term);
-        sb.append("\t");
+    //binary representation
+    private static byte[] sparseVectorRepresentation(String term, Map<Integer, Double> vector) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(term.length() + Integer.BYTES + 2 + (vector.size() * (Integer.BYTES + Double.BYTES)));
 
-        for (int key : vector.keySet()) {
-            sb.append(key);
-            sb.append(":");
-            sb.append(vector.get(key));
-            sb.append(" ");
+        byte[] termBytes = term.getBytes();
+        byteBuffer.put(termBytes, 0, termBytes.length);
+        byteBuffer.put((byte) ' ');
+        byteBuffer.putInt(vector.size());
+
+        for (Integer i : vector.keySet()) {
+            byteBuffer.putInt(i);
+            byteBuffer.putDouble(vector.get(i));
         }
 
-        return sb.toString().trim();
+        byteBuffer.put((byte) '\n');
+        return byteBuffer.array();
     }
 
-    private static String denseVectorRepresentation(String term, double[] vector) {
-        StringBuilder sb = new StringBuilder(term);
-        sb.append("\t");
+    //binary representation
+    private static byte[] denseVectorRepresentation(String term, double[] vector) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(term.length() + 2 + (vector.length * Double.BYTES));
 
-        for (double d : vector) {
-            sb.append(d);
-            sb.append(" ");
+        byte[] termBytes = term.getBytes();
+        byteBuffer.put(termBytes, 0, termBytes.length);
+        byteBuffer.put((byte) ' ');
+
+        for (Double d : vector) {
+            byteBuffer.putDouble(d);
         }
 
-        return sb.toString().trim();
+        byteBuffer.put((byte) '\n');
+        return byteBuffer.array();
     }
 }

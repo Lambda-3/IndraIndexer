@@ -37,14 +37,14 @@ import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
-import org.lambda3.indra.util.SparseVector;
+import org.lambda3.indra.util.Vector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
+public class LuceneIndraLoader extends LocalStoredIndraLoader {
     private IndexWriter writer;
 
     public LuceneIndraLoader(String baseDir, ModelMetadata metadata) throws IOException {
@@ -63,11 +63,11 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
     }
 
     @Override
-    protected void doLoad(VectorIterator<SparseVector> iter) {
+    protected void doLoad(VectorIterator iter) {
 
         int counter = 0;
         while (iter.hasNext()) {
-            SparseVector sv = iter.next();
+            Vector sv = iter.next();
             try {
                 Document doc = createSparseDocument(sv);
                 writer.addDocument(doc);
@@ -82,7 +82,7 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader<SparseVector> {
         }
     }
 
-    private Document createSparseDocument(SparseVector sv) throws IOException {
+    private Document createSparseDocument(Vector sv) throws IOException {
         Document doc = new Document();
 
         Map<Integer, Double> vecMap = RealVectorUtil.vectorToMap(sv.content);
