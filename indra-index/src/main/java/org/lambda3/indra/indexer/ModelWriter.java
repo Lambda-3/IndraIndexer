@@ -186,7 +186,7 @@ public class ModelWriter {
 
     //binary representation
     private static byte[] sparseVectorRepresentation(String term, Map<Integer, Double> vector) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(term.length() + Integer.BYTES + 2 + (vector.size() * (Integer.BYTES + Double.BYTES)));
+        ByteBuffer byteBuffer = ByteBuffer.allocate(((term.length() + 2) * Character.BYTES) + Integer.BYTES  + (vector.size() * (Integer.BYTES + Float.BYTES)));
 
         byte[] termBytes = term.getBytes();
         byteBuffer.put(termBytes, 0, termBytes.length);
@@ -195,7 +195,7 @@ public class ModelWriter {
 
         for (Integer i : vector.keySet()) {
             byteBuffer.putInt(i);
-            byteBuffer.putDouble(vector.get(i));
+            byteBuffer.putFloat(vector.get(i).floatValue());
         }
 
         byteBuffer.put((byte) '\n');
@@ -204,14 +204,14 @@ public class ModelWriter {
 
     //binary representation
     private static byte[] denseVectorRepresentation(String term, double[] vector) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(term.length() + 2 + (vector.length * Double.BYTES));
+        ByteBuffer byteBuffer = ByteBuffer.allocate(((term.length() + 2) * Character.BYTES) + (vector.length * Float.BYTES));
 
         byte[] termBytes = term.getBytes();
         byteBuffer.put(termBytes, 0, termBytes.length);
         byteBuffer.put((byte) ' ');
 
         for (Double d : vector) {
-            byteBuffer.putDouble(d);
+            byteBuffer.putFloat(d.floatValue());
         }
 
         byteBuffer.put((byte) '\n');
