@@ -44,6 +44,8 @@ import java.util.Map;
 
 public class ModelWriter {
 
+    private static final int EFFECTIVE_CHAR_BYTES = " ".getBytes().length;
+
     private static File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
         File modelDir = Paths.get(outDir, metadata.modelName, metadata.corpusMetadata.language,
                 metadata.corpusMetadata.corpusName).toFile();
@@ -186,11 +188,10 @@ public class ModelWriter {
 
     //binary representation
     private static byte[] sparseVectorRepresentation(String term, Map<Integer, Double> vector) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(((term.length() + 2) * Character.BYTES) + Integer.BYTES  + (vector.size() * (Integer.BYTES + Float.BYTES)));
-
         byte[] termBytes = term.getBytes();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(termBytes.length + 2 + Integer.BYTES + (vector.size() * (Integer.BYTES + Float.BYTES)));
         byteBuffer.put(termBytes, 0, termBytes.length);
-        byteBuffer.put((byte) ' ');
+        byteBuffer.put((byte)' ');
         byteBuffer.putInt(vector.size());
 
         for (Integer i : vector.keySet()) {
@@ -198,15 +199,14 @@ public class ModelWriter {
             byteBuffer.putFloat(vector.get(i).floatValue());
         }
 
-        byteBuffer.put((byte) '\n');
+        byteBuffer.put((byte)'\n');
         return byteBuffer.array();
     }
 
     //binary representation
     private static byte[] denseVectorRepresentation(String term, double[] vector) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(((term.length() + 2) * Character.BYTES) + (vector.length * Float.BYTES));
-
         byte[] termBytes = term.getBytes();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(termBytes.length + 2 + (vector.length * Float.BYTES));
         byteBuffer.put(termBytes, 0, termBytes.length);
         byteBuffer.put((byte) ' ');
 
