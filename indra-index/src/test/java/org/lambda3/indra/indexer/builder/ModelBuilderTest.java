@@ -22,6 +22,8 @@ package org.lambda3.indra.indexer.builder;
  * ==========================License-End===============================
  */
 
+import edu.ucla.sspace.vector.SparseVector;
+import edu.ucla.sspace.vector.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.MetadataIO;
@@ -29,7 +31,7 @@ import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.CorpusLoader;
 import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -37,7 +39,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -51,16 +52,16 @@ public class ModelBuilderTest {
     private Collection<File> tmpDir = new ConcurrentLinkedQueue<>();
 
     private String buildModel(ModelBuilder builder, String baseDir) throws IOException {
-        String corpusDir = getClass().getClassLoader().getResource("corpora/frei").getPath();
+        String corpusDir = ModelBuilderTest.class.getClassLoader().getResource("corpora/frei").getPath();
         Corpus corpus = CorpusLoader.load(new File(corpusDir));
 
-        ModelMetadata metadata = builder.build(corpus);
+        ModelMetadata metadata = builder.build(corpus, true);
 
         return Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
                 metadata.corpusMetadata.corpusName).toString();
     }
 
-    public RawSpaceModel testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
+    private RawSpaceModel testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
         String modelDir = buildModel(builder, baseDir);
 
         ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
@@ -70,13 +71,42 @@ public class ModelBuilderTest {
         Assert.assertEquals(mm, denseModel.modelMetadata);
 
         VectorIterator vectors = denseModel.getVectorIterator();
-        if (vectors.hasNext()) {
-            try {
-                Vector vector = vectors.next();
-                Assert.assertEquals(DIM, vector.content.getDimension());
-                Assert.assertTrue(DoubleStream.of(vector.content.toArray()).sum() != 0);
-            } catch (BufferUnderflowException e) {
-                e.printStackTrace();
+
+        if (!vectors.hasNext()) {
+            Assert.fail("empty vector space.");
+        }
+
+        while (vectors.hasNext()) {
+            TermVector vector = vectors.next();
+            Assert.assertEquals(DIM, vector.content.getDimension());
+            Assert.assertTrue(DoubleStream.of(vector.content.toArray()).sum() != 0);
+
+            if (builder instanceof LatentSemanticAnalysisBuilder) {
+                Vector sourceVector = ((LatentSemanticAnalysisBuilder) builder).sspace.getVector(vector.term);
+
+                if (sourceVector == null) {
+                    Assert.fail("term does not exist in the original model.");
+                }
+
+                Assert.assertEquals(vector.content.toArray().length, sourceVector.length());
+
+                for (int i = 0; i < sourceVector.length(); i++) {
+                    Assert.assertEquals((float) vector.content.toArray()[i], sourceVector.getValue(i).floatValue());
+                }
+            } else if (builder instanceof PredictiveModelBuilder) {
+                double[] sourceVector = ((PredictiveModelBuilder) builder).vectors.getWordVector(vector.term);
+
+                if (sourceVector == null) {
+                    Assert.fail("term does not exist in the original model.");
+                }
+
+                Assert.assertEquals(vector.content.toArray().length, sourceVector.length);
+
+                for (int i = 0; i < sourceVector.length; i++) {
+                    Assert.assertEquals((float) vector.content.toArray()[i], (float) sourceVector[i]);
+                }
+            } else {
+                Assert.fail("Builder not supported for this test.");
             }
         }
 
@@ -92,6 +122,8 @@ public class ModelBuilderTest {
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
+
+        Assert.fail("model is null");
         return null;
     }
 
@@ -110,12 +142,28 @@ public class ModelBuilderTest {
             Assert.assertEquals(mm, esa.modelMetadata);
 
             VectorIterator vectors = esa.getVectorIterator();
-            if (vectors.hasNext()) {
-                Vector vector = vectors.next();
+
+            if (!vectors.hasNext()) {
+                Assert.fail("empty vector space.");
+            }
+
+            while (vectors.hasNext()) {
+                TermVector vector = vectors.next();
                 Assert.assertTrue(vector.content.getDimension() > 0);
                 Assert.assertEquals(vector.content.getDimension(), mm.dimensions);
                 Map<Integer, Double> vecMap = RealVectorUtil.vectorToMap(vector.content);
                 Assert.assertTrue(vecMap.values().stream().mapToDouble(a -> a).sum() != 0);
+
+                SparseVector sourceVector = (SparseVector) builder.sspace.getVector(vector.term);
+                if (sourceVector == null) {
+                    Assert.fail("term does not exist in the original model.");
+                }
+
+                Assert.assertEquals(vecMap.size(), sourceVector.getNonZeroIndices().length);
+
+                for (int index : sourceVector.getNonZeroIndices()) {
+                    Assert.assertEquals(vecMap.get(index).floatValue(), sourceVector.getValue(index).floatValue());
+                }
             }
 
             return esa;
@@ -124,6 +172,7 @@ public class ModelBuilderTest {
             Assert.fail(e.getMessage());
         }
 
+        Assert.fail("model is null");
         return null;
     }
 
@@ -136,6 +185,7 @@ public class ModelBuilderTest {
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
+        Assert.fail("model is null");
         return null;
     }
 
@@ -148,6 +198,7 @@ public class ModelBuilderTest {
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
+        Assert.fail("model is null");
         return null;
     }
 

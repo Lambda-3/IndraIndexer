@@ -27,7 +27,7 @@ import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.lambda3.indra.exception.IndraRuntimeException;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
@@ -76,7 +76,7 @@ public class AnnoyIndraLoader extends LocalStoredIndraLoader {
 
             int counter = 0;
             while (iter.hasNext()) {
-                Vector dv = iter.next();
+                TermVector dv = iter.next();
                 List<Float> vec = toList(dv.content.toArray());
                 annoyBuilder.addItem(counter, vec);
 

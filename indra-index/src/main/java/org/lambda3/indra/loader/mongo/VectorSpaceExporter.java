@@ -32,9 +32,10 @@ import org.bson.types.Binary;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.corpus.CorpusMetadataBuilder;
 import org.lambda3.indra.exception.IndraException;
-import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.indexer.writer.TermVectorModelWriter;
 import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.pp.StandardPreProcessorIterator;
+import org.lambda3.indra.util.TermVector;
 
 import java.io.IOException;
 import java.util.Set;
@@ -77,9 +78,9 @@ public class VectorSpaceExporter {
         this.vocabSize = termsColl.count();
     }
 
-    public Iterable<MongoVector> getVectors() {
+    public Iterable<TermVector> getVectors() {
         FindIterable<Document> docs = termsColl.find();
-        return docs.map(doc -> new MongoVector(doc.getString(TERM_FIELD_NAME), unmarshall(doc, dimensions, legacy, sparse)));
+        return docs.map(doc -> new TermVector(false, doc.getString(TERM_FIELD_NAME), unmarshall(doc, dimensions, legacy, sparse)));
     }
 
     public ModelMetadata getModelMetadata() {
@@ -125,8 +126,8 @@ public class VectorSpaceExporter {
         if (google) {
             VectorSpaceExporter googleVse = new VectorSpaceExporter(ALPHARD, "en", "w2v", "googlenews300neg");
             ModelMetadata metadata = googleVse.getModelMetadata();
-            Iterable<MongoVector> vectors = googleVse.getVectors();
-            ModelWriter.save(baseDir, metadata, vectors);
+            Iterable<TermVector> vectors = googleVse.getVectors();
+            new TermVectorModelWriter(metadata, vectors).save(baseDir);
         } else {
 
             String[] models = {"esa", "w2v", "lsa", "glove"};
@@ -137,8 +138,8 @@ public class VectorSpaceExporter {
                     System.out.println(String.format("exporting model '%s' and language '%s'", model, lang));
                     VectorSpaceExporter vse = new VectorSpaceExporter(ALPHARD, lang, model, "wiki-2014");
                     ModelMetadata metadata = vse.getModelMetadata();
-                    Iterable<MongoVector> vectors = vse.getVectors();
-                    ModelWriter.save(baseDir, metadata, vectors);
+                    Iterable<TermVector> vectors = vse.getVectors();
+                    new TermVectorModelWriter(metadata, vectors).save(baseDir);
                     System.out.println("--- done");
                 }
             }

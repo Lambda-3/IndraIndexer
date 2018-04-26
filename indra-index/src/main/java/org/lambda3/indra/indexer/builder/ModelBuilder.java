@@ -45,6 +45,8 @@ public abstract class ModelBuilder {
 
     public abstract ModelMetadata build(Corpus corpus);
 
+    abstract ModelMetadata build(Corpus corpus, boolean keepModel);
+
     ModelMetadata getModelMetadata(Corpus corpus) {
         if (dimensions <= 0) {
             throw new IndraRuntimeException("dimensions should be greater than 0 (dim=" + dimensions + ")");

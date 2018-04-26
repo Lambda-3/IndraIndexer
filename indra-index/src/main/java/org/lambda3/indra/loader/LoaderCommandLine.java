@@ -39,7 +39,7 @@ import org.lambda3.indra.loader.annoy.AnnoyIndraLoader;
 import org.lambda3.indra.loader.lucene.LuceneIndraLoader;
 import org.lambda3.indra.request.VectorRequest;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.File;
@@ -133,7 +133,7 @@ public class LoaderCommandLine {
                                     counter, rsm.modelMetadata.vocabSize));
                         }
 
-                        Vector v = iter.next();
+                        TermVector v = iter.next();
                         RealVector indexedVector = getVector(vsm, v.term);
                         if (!indexedVector.equals(rsm.modelMetadata.sparse ? v.content : RealVectorUtil.loosePrecision(v.content))) {
                             throw new Error(String.format("Vectors are not equal for term '%s' - %s | %s", v.term,

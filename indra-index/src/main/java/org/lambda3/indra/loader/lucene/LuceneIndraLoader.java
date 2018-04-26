@@ -37,7 +37,7 @@ import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.loader.LocalStoredIndraLoader;
 import org.lambda3.indra.model.ModelMetadata;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader {
 
         int counter = 0;
         while (iter.hasNext()) {
-            Vector sv = iter.next();
+            TermVector sv = iter.next();
             try {
                 Document doc = createSparseDocument(sv);
                 writer.addDocument(doc);
@@ -82,7 +82,7 @@ public class LuceneIndraLoader extends LocalStoredIndraLoader {
         }
     }
 
-    private Document createSparseDocument(Vector sv) throws IOException {
+    private Document createSparseDocument(TermVector sv) throws IOException {
         Document doc = new Document();
 
         Map<Integer, Double> vecMap = RealVectorUtil.vectorToMap(sv.content);

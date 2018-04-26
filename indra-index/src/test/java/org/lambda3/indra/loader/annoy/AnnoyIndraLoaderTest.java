@@ -30,7 +30,7 @@ import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -60,7 +60,7 @@ public class AnnoyIndraLoaderTest {
             VectorIterator iter = rsm.getVectorIterator();
 
             while (iter.hasNext()) {
-                Vector sv = iter.next();
+                TermVector sv = iter.next();
                 RealVector approx = RealVectorUtil.loosePrecision(sv.content);
 
                 AnalyzedTerm at = new AnalyzedTerm(sv.term, Collections.singletonList(sv.term));

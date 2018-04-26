@@ -34,12 +34,13 @@ import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.sentenceiterator.SentencePreProcessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.lambda3.indra.corpus.Corpus;
-import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.indexer.writer.DeepLearning4JModelWriter;
 import org.lambda3.indra.model.ModelMetadata;
 
 public abstract class PredictiveModelBuilder extends ModelBuilder {
 
     private SequenceVectors.Builder<VocabWord> builder;
+    SequenceVectors<VocabWord> vectors;
 
     PredictiveModelBuilder(String outDir, int dimensions, int windowSize, int minWordFrequency) {
         super(outDir, dimensions, windowSize, minWordFrequency);
@@ -48,6 +49,11 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
 
     @Override
     public ModelMetadata build(Corpus corpus) {
+        return build(corpus, false);
+    }
+
+    @Override
+    public ModelMetadata build(Corpus corpus, boolean keepModel) {
 
         VocabCache<VocabWord> cache = new AbstractCache.Builder<VocabWord>().build();
         SequenceVectors<VocabWord> vectors = builder.iterations(1).minWordFrequency(minWordFrequency).
@@ -56,7 +62,11 @@ public abstract class PredictiveModelBuilder extends ModelBuilder {
 
         this.vocabSize = cache.vocabWords().size();
         ModelMetadata metadata = getModelMetadata(corpus);
-        ModelWriter.save(this.outDir, metadata, cache, vectors);
+        new DeepLearning4JModelWriter(metadata, cache, vectors).save(this.outDir);
+
+        if(keepModel) {
+            this.vectors = vectors;
+        }
 
         return metadata;
     }

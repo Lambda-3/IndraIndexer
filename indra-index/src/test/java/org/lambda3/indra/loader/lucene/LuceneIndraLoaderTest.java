@@ -29,7 +29,7 @@ import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.lucene.LuceneVectorSpace;
 import org.lambda3.indra.indexer.builder.ModelBuilderTest;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -63,7 +63,7 @@ public class LuceneIndraLoaderTest {
             VectorIterator iter = esa.getVectorIterator();
 
             while (iter.hasNext()) {
-                Vector sv = iter.next();
+                TermVector sv = iter.next();
                 AnalyzedTerm at = new AnalyzedTerm(sv.term, Collections.singletonList(sv.term));
                 Map<String, RealVector> vectors = vs.getVectors(Collections.singletonList(at), new SumVectorComposer());
 

@@ -25,7 +25,7 @@ package org.lambda3.indra.indexer.builder;
 import edu.ucla.sspace.common.SemanticSpace;
 import org.lambda3.indra.corpus.Corpus;
 import org.lambda3.indra.corpus.Document;
-import org.lambda3.indra.indexer.ModelWriter;
+import org.lambda3.indra.indexer.writer.SSpaceModelWriter;
 import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.BufferedReader;
@@ -36,12 +36,19 @@ import java.util.Properties;
 
 public abstract class SSpaceModelBuilder extends ModelBuilder {
 
+    SemanticSpace sspace;
+
     SSpaceModelBuilder(String outDir, int dimensions, int windowSize) {
         super(outDir, dimensions, windowSize, NOT_APPLIED);
     }
 
     @Override
     public ModelMetadata build(Corpus corpus) {
+        return build(corpus, false);
+    }
+
+    @Override
+    ModelMetadata build(Corpus corpus, boolean keepModel) {
         SemanticSpace sspace = getSemanticSpace();
         Iterator<? extends Document> iter = corpus.getDocumentsIterator();
 
@@ -59,7 +66,12 @@ public abstract class SSpaceModelBuilder extends ModelBuilder {
 
             this.vocabSize = sspace.getWords().size();
             ModelMetadata metadata = getModelMetadata(corpus);
-            ModelWriter.save(outDir, metadata, sspace);
+            new SSpaceModelWriter(metadata, sspace).save(outDir);
+
+            //for test proposes.
+            if(keepModel) {
+                this.sspace = sspace;
+            }
 
             return metadata;
 
