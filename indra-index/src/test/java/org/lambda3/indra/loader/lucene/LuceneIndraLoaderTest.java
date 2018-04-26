@@ -43,6 +43,8 @@ import java.util.Map;
 
 public class LuceneIndraLoaderTest {
 
+    private boolean deleteFiles = true;
+
     @Test
     public void insertAndReadTest() {
         String baseDir = null;
@@ -71,12 +73,16 @@ public class LuceneIndraLoaderTest {
                 Assert.assertEquals(sv.content, vector);
             }
 
-            modelTest.deleteTmpFiles();
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         } finally {
             try {
-                FileUtils.deleteDirectory(new File(baseDir));
+                if (deleteFiles) {
+                    FileUtils.deleteDirectory(new File(baseDir));
+                }
             } catch (IOException e) {
                 Assert.fail(e.getMessage());
             }

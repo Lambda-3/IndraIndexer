@@ -44,6 +44,8 @@ import java.util.Map;
 
 public class AnnoyIndraLoaderTest {
 
+    private boolean deleteFiles = true;
+
     public void insertAndReadDenseTest(RawSpaceModel rsm) {
         String baseDir = null;
         try {
@@ -74,7 +76,9 @@ public class AnnoyIndraLoaderTest {
             Assert.fail(e.getMessage());
         } finally {
             try {
-                FileUtils.deleteDirectory(new File(baseDir));
+                if (deleteFiles) {
+                    FileUtils.deleteDirectory(new File(baseDir));
+                }
             } catch (IOException e) {
                 Assert.fail(e.getMessage());
             }
@@ -87,7 +91,9 @@ public class AnnoyIndraLoaderTest {
         RawSpaceModel w2v = modelTest.createWord2VecModelBuilder();
         insertAndReadDenseTest(w2v);
         try {
-            modelTest.deleteTmpFiles();
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
@@ -99,7 +105,9 @@ public class AnnoyIndraLoaderTest {
         RawSpaceModel lsa = modelTest.createLatentSemanticAnalysisBuilder();
         insertAndReadDenseTest(lsa);
         try {
-            modelTest.deleteTmpFiles();
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
@@ -111,7 +119,9 @@ public class AnnoyIndraLoaderTest {
         RawSpaceModel glove = modelTest.createGloveModelBuilder();
         insertAndReadDenseTest(glove);
         try {
-            modelTest.deleteTmpFiles();
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
