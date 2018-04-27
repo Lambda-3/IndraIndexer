@@ -46,12 +46,21 @@ public class LuceneIndraLoaderTest {
     private boolean deleteFiles = true;
 
     @Test
-    public void insertAndReadTest() {
+    public void insertAndReadPortugueseTest() {
+        insertAndReadTest("frei");
+    }
+
+    @Test
+    public void insertAndReadChineseTest() {
+        insertAndReadTest("chinese");
+    }
+
+    public void insertAndReadTest(String corpusName) {
         String baseDir = null;
         try {
             baseDir = Files.createTempDirectory("indra-esa-test").toString();
             ModelBuilderTest modelTest = new ModelBuilderTest();
-            RawSpaceModel esa = modelTest.createExplicitSemanticAnalysisBuilder();
+            RawSpaceModel esa = modelTest.createExplicitSemanticAnalysisBuilder(corpusName);
 
             LuceneIndraLoader loader = new LuceneIndraLoader(baseDir, esa.modelMetadata);
             loader.load(esa);

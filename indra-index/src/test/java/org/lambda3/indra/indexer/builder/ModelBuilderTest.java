@@ -48,11 +48,11 @@ import java.util.stream.DoubleStream;
 
 public class ModelBuilderTest {
 
-    private static final int DIM = 25;
+    private static final int DIM = 5;
     private Collection<File> tmpDir = new ConcurrentLinkedQueue<>();
 
-    private String buildModel(ModelBuilder builder, String baseDir) throws IOException {
-        String corpusDir = ModelBuilderTest.class.getClassLoader().getResource("corpora/frei").getPath();
+    private String buildModel(ModelBuilder builder, String baseDir, String corpusName) throws IOException {
+        String corpusDir = ModelBuilderTest.class.getClassLoader().getResource("corpora/" + corpusName).getPath();
         Corpus corpus = CorpusLoader.load(new File(corpusDir));
 
         ModelMetadata metadata = builder.build(corpus, true);
@@ -61,8 +61,8 @@ public class ModelBuilderTest {
                 metadata.corpusMetadata.corpusName).toString();
     }
 
-    private RawSpaceModel testDenseBuilder(String baseDir, ModelBuilder builder) throws IOException {
-        String modelDir = buildModel(builder, baseDir);
+    private RawSpaceModel testDenseBuilder(String baseDir, ModelBuilder builder, String corpusName) throws IOException {
+        String modelDir = buildModel(builder, baseDir, corpusName);
 
         ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
         RawSpaceModel denseModel = new RawSpaceModel(modelDir);
@@ -113,12 +113,12 @@ public class ModelBuilderTest {
         return denseModel;
     }
 
-    public RawSpaceModel createLatentSemanticAnalysisBuilder() {
+    public RawSpaceModel createLatentSemanticAnalysisBuilder(String corpusName) {
         try {
             String baseDir = Files.createTempDirectory("indra-lsa-test").toString();
             tmpDir.add(new File(baseDir));
             LatentSemanticAnalysisBuilder builder = new LatentSemanticAnalysisBuilder(baseDir, DIM);
-            return testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder, corpusName);
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
@@ -127,13 +127,13 @@ public class ModelBuilderTest {
         return null;
     }
 
-    public RawSpaceModel createExplicitSemanticAnalysisBuilder() {
+    public RawSpaceModel createExplicitSemanticAnalysisBuilder(String corpusName) {
         try {
             String baseDir = Files.createTempDirectory("indra-esa-test").toString();
             tmpDir.add(new File(baseDir));
 
             ExplicitSemanticAnalysisBuilder builder = new ExplicitSemanticAnalysisBuilder(baseDir);
-            String modelDir = buildModel(builder, baseDir);
+            String modelDir = buildModel(builder, baseDir, corpusName);
 
             ModelMetadata mm = MetadataIO.load(modelDir, ModelMetadata.class);
             RawSpaceModel esa = new RawSpaceModel(modelDir);
@@ -176,12 +176,12 @@ public class ModelBuilderTest {
         return null;
     }
 
-    public RawSpaceModel createWord2VecModelBuilder() {
+    public RawSpaceModel createWord2VecModelBuilder(String corpusName) {
         try {
             String baseDir = Files.createTempDirectory("indra-w2v-test").toString();
             tmpDir.add(new File(baseDir));
             Word2VecModelBuilder builder = new Word2VecModelBuilder(baseDir, DIM, 5, 5);
-            return testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder, corpusName);
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
@@ -189,12 +189,12 @@ public class ModelBuilderTest {
         return null;
     }
 
-    public RawSpaceModel createGloveModelBuilder() {
+    public RawSpaceModel createGloveModelBuilder(String corpusName) {
         try {
             String baseDir = Files.createTempDirectory("indra-glove-test").toString();
             tmpDir.add(new File(baseDir));
             GloveModelBuilder builder = new GloveModelBuilder(baseDir, DIM, 5, 5);
-            return testDenseBuilder(baseDir, builder);
+            return testDenseBuilder(baseDir, builder, corpusName);
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }
@@ -203,24 +203,45 @@ public class ModelBuilderTest {
     }
 
     @Test
-    public void testExplicitSemanticAnalysisBuilder() {
-        createExplicitSemanticAnalysisBuilder();
+    public void testPortugueseExplicitSemanticAnalysisBuilder() {
+        createExplicitSemanticAnalysisBuilder("frei");
     }
 
     @Test
-    public void testGloveModelBuilder() {
-        createGloveModelBuilder();
+    public void testPortugueseGloveModelBuilder() {
+        createGloveModelBuilder("frei");
     }
 
     @Test
-    public void testWord2VecModelBuilder() {
-        createWord2VecModelBuilder();
+    public void testPortugueseWord2VecModelBuilder() {
+        createWord2VecModelBuilder("frei");
     }
 
     @Test
-    public void testLatentSemanticAnalysisBuilder() {
-        createLatentSemanticAnalysisBuilder();
+    public void testPortugueseLatentSemanticAnalysisBuilder() {
+        createLatentSemanticAnalysisBuilder("frei");
     }
+
+    @Test
+    public void testChineseExplicitSemanticAnalysisBuilder() {
+        createExplicitSemanticAnalysisBuilder("chinese");
+    }
+
+    @Test
+    public void testChineseGloveModelBuilder() {
+        createGloveModelBuilder("chinese");
+    }
+
+    @Test
+    public void testChineseWord2VecModelBuilder() {
+        createWord2VecModelBuilder("chinese");
+    }
+
+    @Test
+    public void testChineseLatentSemanticAnalysisBuilder() {
+        createLatentSemanticAnalysisBuilder("chinese");
+    }
+
 
     @AfterTest
     public void deleteTmpFiles() throws IOException {

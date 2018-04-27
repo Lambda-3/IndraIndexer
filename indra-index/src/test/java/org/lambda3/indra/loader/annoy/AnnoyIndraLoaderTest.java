@@ -86,9 +86,9 @@ public class AnnoyIndraLoaderTest {
     }
 
     @Test
-    public void insertAndReadW2VTest() {
+    public void insertAndReadPortugueseW2VTest() {
         ModelBuilderTest modelTest = new ModelBuilderTest();
-        RawSpaceModel w2v = modelTest.createWord2VecModelBuilder();
+        RawSpaceModel w2v = modelTest.createWord2VecModelBuilder("frei");
         insertAndReadDenseTest(w2v);
         try {
             if (deleteFiles) {
@@ -100,9 +100,9 @@ public class AnnoyIndraLoaderTest {
     }
 
     @Test
-    public void insertAndReadLSATest() {
+    public void insertAndReadPortugueseLSATest() {
         ModelBuilderTest modelTest = new ModelBuilderTest();
-        RawSpaceModel lsa = modelTest.createLatentSemanticAnalysisBuilder();
+        RawSpaceModel lsa = modelTest.createLatentSemanticAnalysisBuilder("frei");
         insertAndReadDenseTest(lsa);
         try {
             if (deleteFiles) {
@@ -114,9 +114,51 @@ public class AnnoyIndraLoaderTest {
     }
 
     @Test
-    public void insertAndReadGloveTest() {
+    public void insertAndReadPortugueseGloveTest() {
         ModelBuilderTest modelTest = new ModelBuilderTest();
-        RawSpaceModel glove = modelTest.createGloveModelBuilder();
+        RawSpaceModel glove = modelTest.createGloveModelBuilder("frei");
+        insertAndReadDenseTest(glove);
+        try {
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void insertAndReadChineseW2VTest() {
+        ModelBuilderTest modelTest = new ModelBuilderTest();
+        RawSpaceModel w2v = modelTest.createWord2VecModelBuilder("chinese");
+        insertAndReadDenseTest(w2v);
+        try {
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void insertAndReadChineseLSATest() {
+        ModelBuilderTest modelTest = new ModelBuilderTest();
+        RawSpaceModel lsa = modelTest.createLatentSemanticAnalysisBuilder("chinese");
+        insertAndReadDenseTest(lsa);
+        try {
+            if (deleteFiles) {
+                modelTest.deleteTmpFiles();
+            }
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void insertAndReadChineseGloveTest() {
+        ModelBuilderTest modelTest = new ModelBuilderTest();
+        RawSpaceModel glove = modelTest.createGloveModelBuilder("chinese");
         insertAndReadDenseTest(glove);
         try {
             if (deleteFiles) {
