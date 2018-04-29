@@ -57,7 +57,7 @@ public class ModelBuilderTest {
 
         ModelMetadata metadata = builder.build(corpus, true);
 
-        return Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
+        return Paths.get(baseDir, metadata.modelName.toLowerCase(), metadata.corpusMetadata.language,
                 metadata.corpusMetadata.corpusName).toString();
     }
 
