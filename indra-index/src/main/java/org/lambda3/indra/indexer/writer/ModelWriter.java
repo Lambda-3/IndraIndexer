@@ -47,7 +47,7 @@ public abstract class ModelWriter {
     }
 
     private File prepereTargetDirAndSaveMetadata(String outDir, ModelMetadata metadata) {
-        File modelDir = Paths.get(outDir, metadata.modelName, metadata.corpusMetadata.language,
+        File modelDir = Paths.get(outDir, metadata.modelName.toLowerCase(), metadata.corpusMetadata.language,
                 metadata.corpusMetadata.corpusName).toFile();
         if (!modelDir.exists()) {
             modelDir.mkdirs();
