@@ -38,7 +38,7 @@ public abstract class LocalStoredIndraLoader implements IndraLoader {
     protected long vocabSize;
 
     public LocalStoredIndraLoader(String baseDir, ModelMetadata metadata) {
-        File modelDirFile = Paths.get(baseDir, metadata.modelName, metadata.corpusMetadata.language,
+        File modelDirFile = Paths.get(baseDir, metadata.modelName.toLowerCase(), metadata.corpusMetadata.language,
                 metadata.corpusMetadata.corpusName).toFile();
         if (!modelDirFile.exists()) {
             modelDirFile.mkdirs();

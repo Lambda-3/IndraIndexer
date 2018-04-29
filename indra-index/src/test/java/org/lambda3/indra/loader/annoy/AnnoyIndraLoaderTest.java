@@ -54,7 +54,7 @@ public class AnnoyIndraLoaderTest {
             loader.load(rsm);
             loader.close();
 
-            String modelDir = Paths.get(baseDir, rsm.modelMetadata.modelName,
+            String modelDir = Paths.get(baseDir, rsm.modelMetadata.modelName.toLowerCase(),
                     rsm.modelMetadata.corpusMetadata.language, rsm.modelMetadata.corpusMetadata.corpusName).toString();
             AnnoyVectorSpace vs = new AnnoyVectorSpace(modelDir);
             Assert.assertEquals(rsm.modelMetadata, vs.getMetadata());

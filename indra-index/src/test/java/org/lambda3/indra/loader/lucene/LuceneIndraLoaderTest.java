@@ -66,7 +66,7 @@ public class LuceneIndraLoaderTest {
             loader.load(esa);
             loader.close();
 
-            String modelDir = Paths.get(baseDir, esa.modelMetadata.modelName,
+            String modelDir = Paths.get(baseDir, esa.modelMetadata.modelName.toLowerCase(),
                     esa.modelMetadata.corpusMetadata.language, esa.modelMetadata.corpusMetadata.corpusName).toString();
             LuceneVectorSpace vs = new LuceneVectorSpace(modelDir);
             Assert.assertEquals(esa.modelMetadata, vs.getMetadata());

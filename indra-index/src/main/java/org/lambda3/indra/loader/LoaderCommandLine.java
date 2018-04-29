@@ -51,7 +51,7 @@ public class LoaderCommandLine {
 
     private static final String LOADER_NAME = "Indra Loader v. %s\nindrashell ";
 
-    public static RealVector getVector(VectorSpace vs, String term) {
+    private static RealVector getVector(VectorSpace vs, String term) {
         AnalyzedTerm at = new AnalyzedTerm(term, Collections.singletonList(term));
         Map<String, RealVector> vectors = vs.getVectors(Collections.singletonList(at), new SumVectorComposer());
 
@@ -62,7 +62,7 @@ public class LoaderCommandLine {
         }
     }
 
-    public static void main(String... args) {
+    public static void main(String[] args) {
         String version = IndraIndexerCommandLine.class.getPackage().getImplementationVersion();
 
         JCommander jc = new JCommander(new LoaderCommandLine.MainCommand());
@@ -109,6 +109,7 @@ public class LoaderCommandLine {
                     loader.close();
                     System.out.println("Done!");
 
+                    break;
                 case TestCommand.NAME:
                     rsm = new RawSpaceModel(testCmd.rawDir);
 
@@ -142,6 +143,7 @@ public class LoaderCommandLine {
                     }
 
                     System.out.println("Models are equivalents! :)");
+                    break;
             }
 
         } catch (IOException e) {
@@ -161,7 +163,7 @@ public class LoaderCommandLine {
     @Parameters(commandDescription = "Generate Models.", separators = "=")
     private static class LoaderCommand {
 
-        public static final String NAME = "load";
+        private static final String NAME = "load";
 
         @Parameter(names = {"-i", "--input"}, required = true, description = "Directory in which the generated DSM's files are placed.", order = 0)
         String inputModelDir;
@@ -173,7 +175,7 @@ public class LoaderCommandLine {
     @Parameters(commandDescription = "Test if a given model was correctly loaded.", separators = "=")
     private static class TestCommand {
 
-        public static final String NAME = "test";
+        private static final String NAME = "test";
 
         @Parameter(names = {"-r", "--raw"}, required = true, description = "Directory in which the generated DSM's files are placed.", order = 0)
         String rawDir;
