@@ -47,17 +47,20 @@ public class LuceneTranslatorLoader {
 
     private static Document createDocument(String content) throws IOException {
         String[] parts = content.split("\t");
-        Map<String, Double> translations = getTranslations(parts[1]);
+        if (parts.length > 1) {
+            Map<String, Double> translations = getTranslations(parts[1]);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(translations);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(translations);
 
-        Document doc = new Document();
-        doc.add(new StringField(LuceneTranslator.TERM_FIELD, parts[0], Field.Store.YES));
-        doc.add(new StoredField(LuceneTranslator.TRANSLATION_FIELD, bos.toByteArray()));
+            Document doc = new Document();
+            doc.add(new StringField(LuceneTranslator.TERM_FIELD, parts[0], Field.Store.YES));
+            doc.add(new StoredField(LuceneTranslator.TRANSLATION_FIELD, bos.toByteArray()));
 
-        return doc;
+            return doc;
+        }
+        return null;
     }
 
     private static Map<String, Double> getTranslations(String content) {
@@ -95,7 +98,9 @@ public class LuceneTranslatorLoader {
 
             while ((line = reader.readLine()) != null) {
                 Document doc = createDocument(line);
-                writer.addDocument(doc);
+                if (doc != null) {
+                    writer.addDocument(doc);
+                }
             }
 
             writer.close();
@@ -105,8 +110,11 @@ public class LuceneTranslatorLoader {
     }
 
     public static void main(String[] args) {
+        System.out.println("Lucene Translator Loader");
         String input = args[0];
         String output = args[1];
+
+        System.out.println(String.format("Loading from %s to %s", input, output));
 
         load(input, output);
     }
