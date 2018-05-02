@@ -9,19 +9,19 @@ dump=$2
 
 for MODEL in w2v lsa esa glove
 do
-  for LANG in ar de en es fa fr it nl pt ru sv zh
+  for LANG in ko en de it pt es fr zh ja fa ar sv nl el ru
   do
     for NAME in wiki-2018
-    do	
+    do
+    	cd $deploy	    
 	if [ -e $MODEL/$LANG/$NAME ]; then
-		cd $deploy
 		if [[ $1 != esa* ]] ; then
 			FULL="$MODEL-$LANG-$NAME.annoy.tar.gz"
 		else
 			FULL="$MODEL-$LANG-$NAME.lucene.tar.gz"
 		fi
 
-		echo 'packing $FULL'
+		echo "packing $FULL"
 		tar -czf "$dump$FULL" $MODEL/$LANG/$NAME
 
 		cd $dump
